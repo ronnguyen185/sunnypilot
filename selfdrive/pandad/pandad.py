@@ -69,10 +69,11 @@ def flash_panda(panda_serial: str) -> Panda:
 
 def check_panda_support(panda) -> bool:
   hw_type = panda.get_type()
-  if hw_type in Panda.SUPPORTED_DEVICES:
-    return True
+  # A panda is supported if it's not deprecated
+  if hw_type in Panda.DEPRECATED_DEVICES:
+    return False
 
-  return False
+  return True
 
 
 def main() -> None:

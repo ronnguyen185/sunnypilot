@@ -1,0 +1,961 @@
+VERSION "10.7.10"
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: ADAS_Chassis AVAS DUMMY_ECU EPS IDB_Chassis MRGEN RCU_Chassis SCAM SRR VCU_Chassis XGW_Chassis YSS
+
+
+BO_ 198 IDB_ACCActive: 8 IDB_Chassis
+ SG_ ESC_ADAS_CtrlAbortFeedback : 3|3@0+ (1,0) [0|7] ""  ADAS_Chassis,SCAM
+ SG_ ESC_ADAS_BrakeMode : 5|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM
+ SG_ ESC_ADAS_Available : 6|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM
+ SG_ ESC_ADAS_Active : 7|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM
+ SG_ ESC_ADAS_FuncMode : 15|3@0+ (1,0) [0|7] ""  ADAS_Chassis,SCAM
+ SG_ ESC_PrefillSts : 31|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM
+ 
+BO_ 200 ESC_FUNCTION: 8 IDB_Chassis
+ SG_ CHKSM_ESC_FUNCTION : 7|8@0+ (1,0) [0|255] "" VCU_Chassis,XGW_Chassis,RCU_Chassis
+ SG_ ALV_ESC_FUNCTION : 11|4@0+ (1,0) [0|14] "" VCU_Chassis,XGW_Chassis,RCU_Chassis
+ SG_ AVH_ActiveStatus : 17|2@0+ (1,0) [0|3] "" VCU_Chassis,XGW_Chassis,RCU_Chassis
+ SG_ AVH_DispMSG : 19|2@0+ (1,0) [0|3] "" VCU_Chassis,XGW_Chassis,RCU_Chassis
+ SG_ AVH_LampReq : 21|2@0+ (1,0) [0|3] "" VCU_Chassis,XGW_Chassis,RCU_Chassis
+
+BO_ 241 IDB_RecuBrakeTorqueRequest: 8 IDB_Chassis
+ SG_ CRC_RecuBrakeTorqueRequest : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ALIV_RecuBrakeTorqueRequest : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_RecuBrakeTorqueRequest_FR : 23|14@0+ (1,0) [0|8000] "Nm"  RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ IDB_RecuBrakeTorqueRequest_RR : 39|14@0+ (1,0) [0|8000] "Nm"  RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ IDB_RecuBrakeControl_Sts : 40|1@0+ (1,0) [0|1] ""  RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ IDB_RecuBrkTorqueReq_Sts : 41|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ IDB_Brake_Pedal_position : 55|12@0+ (0.0625,0) [0|100] "%"  ADAS_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_Brake_Pedal_position_sts : 59|1@0+ (1,0) [0|1] ""  ADAS_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+
+BO_ 244 IDB_TorqueIncrease_Req: 8 IDB_Chassis
+ SG_ CRC_IDB_TorqueIncrease : 7|8@0+ (1,0) [0|255] ""  VCU_Chassis
+ SG_ ALIV_IDB_TorqueIncrease : 11|4@0+ (1,0) [0|14] ""  VCU_Chassis
+ SG_ IDB_TorqueIncrease_FR : 23|14@0- (1,0) [-8000|8000] "Nm"  VCU_Chassis
+ SG_ IDB_TorqueIncrease_Active_FR : 24|1@0+ (1,0) [0|1] ""  VCU_Chassis
+ SG_ IDB_TorqueIncrease_RR : 39|14@0- (1,0) [-8000|8000] "Nm"  VCU_Chassis
+ SG_ IDB_TorqueIncrease_Active_RR : 40|1@0+ (1,0) [0|1] ""  VCU_Chassis
+ SG_ SECCAN_IDB_TorqueIncrease : 63|8@0+ (1,0) [0|255] ""  VCU_Chassis
+
+BO_ 245 IDB_TorqueReduce_Req: 8 IDB_Chassis
+ SG_ CRC_IDB_TorqueControl : 7|8@0+ (1,0) [0|255] ""  VCU_Chassis
+ SG_ ALIV_IDB_TorqueControl : 11|4@0+ (1,0) [0|14] ""  VCU_Chassis
+ SG_ IDB_TorqueReduce_FR : 23|14@0- (1,0) [-8000|8000] "Nm"  VCU_Chassis
+ SG_ IDB_TorqueReduce_Active_FR : 24|1@0+ (1,0) [0|1] ""  VCU_Chassis
+ SG_ IDB_TorqueReduce_RR : 39|14@0- (1,0) [-8000|8000] "Nm"  VCU_Chassis
+ SG_ IDB_TorqueReduce_Active_RR : 40|1@0+ (1,0) [0|1] ""  VCU_Chassis
+ SG_ SECCAN_IDB_TorqueControl : 63|8@0+ (1,0) [0|255] ""  VCU_Chassis
+
+BO_ 258 EPS_0x102: 8 VCU_Chassis
+ SG_ PDCU_102_CheckSum : 7|8@0+ (1,0) [0|255] ""  EPS
+ SG_ PDCU_102_AliveCounter : 11|4@0+ (1,0) [0|14] ""  EPS
+ SG_ PDCU_DrvModSig : 15|4@0+ (1,0) [0|15] ""  EPS
+ SG_ SECCAN_EPS_102 : 63|8@0+ (1,0) [0|255] ""  EPS
+
+BO_ 263 BCM_STAT_CENTRAL_LOCK: 3 XGW_Chassis
+ SG_ CHKSM_BCM_CENTRAL_LOCK : 7|8@0+ (1,0) [0|255] ""  VCU_Chassis
+ SG_ ALV_BCM_CENTRAL_LOCK : 11|4@0+ (1,0) [0|14] ""  VCU_Chassis
+ SG_ STAT_CDL_LED : 15|2@0+ (1,0) [0|3] "-"  VCU_Chassis
+ SG_ STAT_DoorUnlockFL : 17|2@0+ (1,0) [0|3] "Bit"  VCU_Chassis
+ SG_ STAT_ATWS : 20|3@0+ (1,0) [0|7] "Bit"  VCU_Chassis
+ SG_ STAT_DoorLockFL : 23|2@0+ (1,0) [0|3] "Bit"  VCU_Chassis
+
+BO_ 266 BCM_VOLTAGE: 8 XGW_Chassis
+ SG_ CHKSM_BCM_VOLTAGE : 7|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ ALIVE_BCM_VOLTAGE : 11|4@0+ (1,0) [0|14] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ UBatt : 23|14@0+ (0.0009777,3) [3|18] "V"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ LV_Batt_Temp : 39|8@0+ (1,-40) [-40|105] "Degree C"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ LV_SOC : 47|8@0+ (1,0) [0|100] "%"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ LV_Batt_Current : 55|16@0+ (0.03125,-1536) [-1536|511.90625] "A"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+
+BO_ 274 BCM_CLAMP_STAT: 8 XGW_Chassis
+ SG_ CHKSM_BCM_CLAMP_STAT : 7|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ ALIVE_BCM_CLAMP_STAT : 11|4@0+ (1,0) [0|14] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ RemoteFunctionState : 13|2@0+ (1,0) [0|3] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ STAT_BLS : 15|2@0+ (1,0) [0|3] "-"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ STAT_CL_50_L : 17|2@0+ (1,0) [0|3] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Clamp50AdviceRemoteStart : 19|2@0+ (1,0) [0|3] "-"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Clamp50AdviceESS : 21|2@0+ (1,0) [0|3] "-"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ STAT_CL_R_L : 25|2@0+ (1,0) [0|3] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ STAT_CL_15_1_L : 27|2@0+ (1,0) [0|3] "-"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ STAT_CL_15_1_DME_L : 29|2@0+ (1,0) [0|3] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ FobId : 31|2@0+ (1,0) [0|3] "Bit"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ STAT_Terminal : 34|3@0+ (1,0) [0|7] "Bit"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ STAT_CL30_C_BEV : 36|2@0+ (1,0) [0|3] "Bit"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ BCM_Clamp_Transport : 39|3@0+ (1,0) [0|7] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+
+BO_ 275 IDB_BRAKE_PRESSURE: 5 IDB_Chassis
+ SG_ MainCylinderPres : 7|16@0+ (0.01,0) [0|250] "bar"  ADAS_Chassis,SCAM,VCU_Chassis
+ SG_ STAT_MainCylinderPresValid : 21|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM,VCU_Chassis
+ SG_ BreakeVacuumPressure : 31|12@0- (0.1,0) [-100|10] "kPa"  VCU_Chassis
+
+BO_ 305 ADAS_IDB: 6 SCAM
+ SG_ ADAS_IDB_Checksum : 7|8@0+ (1,0) [0|255] ""  IDB_Chassis
+ SG_ ADAS_IDB_Alive : 11|4@0+ (1,0) [0|14] ""  IDB_Chassis
+ SG_ SECCAN_ADAS_IDB : 39|8@0+ (1,0) [0|255] ""  IDB_Chassis
+ SG_ ADAS_ACC_IDB_DriveOff : 46|1@0+ (1,0) [0|1] ""  IDB_Chassis
+
+BO_ 306 ADAS_LKA: 4 SCAM
+ SG_ ADAS_LKA_Checksum : 7|8@0+ (1,0) [0|255] ""  EPS
+ SG_ ADAS_LKA_Alive : 11|4@0+ (1,0) [0|14] ""  EPS
+ SG_ LSS_Activation : 15|2@0+ (1,0) [0|3] ""  EPS
+ SG_ SECCAN_ADAS_LKA : 23|8@0+ (1,0) [0|255] ""  EPS
+ SG_ ADAS_HapWarning : 27|1@0+ (1,0) [0|1] ""  EPS
+
+BO_ 309 ADAS_IDB_APA: 8 ADAS_Chassis
+ SG_ ADAS_IDB_APA_Checksum : 7|8@0+ (1,0) [0|255] ""  IDB_Chassis,RCU_Chassis,VCU_Chassis
+ SG_ ADAS_IDB_APA_Alive : 11|4@0+ (1,0) [0|14] ""  IDB_Chassis,RCU_Chassis,VCU_Chassis
+ SG_ ADAS_EPBRequest : 13|2@0+ (1,0) [0|3] ""  IDB_Chassis,RCU_Chassis,VCU_Chassis
+ SG_ ADAS_IDB_BrakeModeReq : 15|2@0+ (1,0) [0|3] ""  IDB_Chassis
+ SG_ ADAS_IDB_FuncMode : 18|3@0+ (1,0) [0|7] ""  IDB_Chassis
+ SG_ ADAS_IDB_PrefillReq : 19|1@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ ADAS_IDB_Status : 22|3@0+ (1,0) [0|7] ""  IDB_Chassis
+ SG_ ADAS_IDB_Stoprequest : 23|1@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ ADAS_IDB_TargetDecel : 30|10@0+ (0.01,0) [0|2.55] "m/s2"  IDB_Chassis
+ SG_ ADAS_IDB_ControlReq : 31|1@0+ (1,0) [0|1] ""  IDB_Chassis
+
+BO_ 340 EPS_0x154: 8 EPS
+ SG_ EPS_154_CheckSum : 7|8@0+ (1,0) [0|255] ""  VCU_Chassis
+ SG_ EPS_154_AliveCounter : 11|4@0+ (1,0) [0|14] ""  VCU_Chassis
+ SG_ EPS_SteerPrsnlMod : 15|3@0+ (1,0) [0|7] ""  VCU_Chassis
+ SG_ EPS_ModChgEna : 16|1@0+ (1,0) [0|1] ""  VCU_Chassis
+ SG_ SECCAN_EPS_154 : 63|8@0+ (1,0) [0|255] ""  VCU_Chassis
+
+BO_ 376 YSS_LongAcc: 8 YSS
+ SG_ CHKSM_YSS_LongAcc : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ALV_YSS_LongAcc : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_LONG_ACCUNFILTERED_QUAL : 15|4@0+ (1,0) [0|15] ""  ADAS_Chassis,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_LONG_ACC_UNFILTERED : 23|16@0+ (0.002,-65.532) [-65.532|65.532] "m/s2"  ADAS_Chassis,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_LONG_ACC_QUAL : 35|4@0+ (1,0) [0|15] ""  ADAS_Chassis,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_LONG_ACC : 47|16@0+ (0.002,-65.532) [-65.532|65.532] "m/s2"  ADAS_Chassis,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+
+BO_ 377 YSS_LateralAcc: 8 YSS
+ SG_ CHKSM_YSS_LateralAcc : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ALV_YSS_LateralAcc : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_LAT_ACCUNFILTERED_QUAL : 15|4@0+ (1,0) [0|15] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_LAT_ACC_UNFILTERED : 23|16@0+ (0.002,-65.532) [-65.532|65.532] "m/s2"  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_LAT_ACC_QUAL : 35|4@0+ (1,0) [0|15] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_LAT_ACC : 47|16@0+ (0.002,-65.532) [-65.532|65.532] "m/s2"  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+
+BO_ 381 YSS_YawRate: 8 YSS
+ SG_ CHKSM_YSS_YawRate : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ALV_YSS_YawRate : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_YAW_RATEUNFILTERED_QUAL : 15|4@0+ (1,0) [0|15] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_YAW_RATE_UNFILTERED : 23|16@0+ (0.005,-163.83) [-163.83|163.83] "°/s"  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_YAW_RATE_QUAL : 35|4@0+ (1,0) [0|15] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_SC_STATUS : 39|4@0+ (1,0) [0|15] ""  EPS,IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ YSS_YAW_RATE : 47|16@0+ (0.005,-163.83) [-163.83|163.83] "°/s"  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ YSS_TEMPERATURE : 63|8@0+ (1,-40) [-40|115] "°C"  EPS,IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+
+BO_ 382 SAS_Sensor: 7 EPS
+ SG_ CHKSM_SAS_Sensor : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ALV_SAS_Sensor : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ SAS_SASStsSnsr : 13|2@0+ (1,0) [0|1] "-"  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ SAS_SteerWhlRotSpd : 21|14@0+ (0.125,-1024) [-1024|1023.875] "degree/s"  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ SAS_SteerWhlRotSpdStatus : 23|2@0+ (1,0) [0|1] ""  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ SAS_SASFailure : 33|2@0+ (1,0) [0|1] ""  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ SAS_Calibrated : 35|2@0+ (1,0) [0|1] ""  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ SAS_SteerWheelAngleValid : 39|2@0+ (1,0) [0|1] ""  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ SAS_SteerWheelAngle : 47|16@0+ (0.0238,-780) [-780|779.7] "deg"  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+
+BO_ 383 EPS_ADAS_TOI: 8 EPS
+ SG_ EPS_ADAS_function_feed : 23|2@0+ (1,0) [0|3] "0"  ADAS_Chassis,SCAM
+
+BO_ 504 EDS_OutPut_FR: 8 XGW_Chassis
+ SG_ CHKSM_EDS_OutPut_FR : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ ALV_EDS_OutPut_FR : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_Work_STS_FR : 15|4@0+ (1,0) [0|15] "-"  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_Spd_FR : 23|16@0+ (1,-20000) [-20000|20000] "rpm"  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_output_trqValid_FR : 33|2@0+ (1,0) [0|1] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_MotorDriveSts_FR : 35|2@0+ (1,0) [0|3] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_powoff_req_FR : 37|2@0+ (1,0) [0|1] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_SpdValid_FR : 39|2@0+ (1,0) [0|1] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_output_trq_FR : 47|16@0+ (1,-2000) [-2000|2000] "Nm"  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_VCU_6SO_flag_FWD : 63|2@0+ (1,0) [0|1] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+
+BO_ 505 EDS_OutPut_RR: 8 XGW_Chassis
+ SG_ CHKSM_EDS_OutPut_RR : 7|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ ALV_EDS_OutPut_RR : 11|4@0+ (1,0) [0|14] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_Work_STS_RR : 15|4@0+ (1,0) [0|15] "-"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_Spd_RR : 23|16@0+ (1,-20000) [-20000|20000] "rpm"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_output_trqValid_RR : 33|2@0+ (1,0) [0|1] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_MotorDriveSts_RR : 35|2@0+ (1,0) [0|3] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_powoff_req_RR : 37|2@0+ (1,0) [0|1] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_SpdValid_RR : 39|2@0+ (1,0) [0|1] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_output_trq_RR : 47|16@0+ (1,-2000) [-2000|2000] "Nm"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ EDS_VCU_6SO_flag_RWD : 63|2@0+ (1,0) [0|1] "-"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+
+BO_ 524 IC_ODO: 8 XGW_Chassis
+ SG_ CHKSM_IC_ODO : 7|8@0+ (1,0) [0|255] ""  EPS,IDB_Chassis,RCU_Chassis,YSS
+ SG_ ALIV_IC_ODO : 11|4@0+ (1,0) [0|14] ""  EPS,IDB_Chassis,RCU_Chassis,YSS
+ SG_ MHU_Odometer_IC : 23|20@0+ (1,0) [0|999999] "km"  EPS,IDB_Chassis,RCU_Chassis,YSS
+
+BO_ 525 IDB_STATUS: 8 IDB_Chassis
+ SG_ CHKSM_IDB_STATUS : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,AVAS,EPS,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,XGW_Chassis,YSS
+ SG_ ALV_IDB_STATUS : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,AVAS,EPS,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,XGW_Chassis,YSS
+ SG_ ESPTransRequestType : 13|2@0+ (1,0) [0|3] ""  VCU_Chassis,XGW_Chassis
+ SG_ ABSFault : 14|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ABSActive : 15|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ VehicleSpd : 23|13@0+ (0.05625,0) [0|300] "km/h"  AVAS,EPS,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,XGW_Chassis,YSS
+ SG_ ESC_VehicleStandstill : 24|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM,XGW_Chassis
+ SG_ MCPressureSts : 25|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ VehicleSpdSts : 26|1@0+ (1,0) [0|1] ""  ADAS_Chassis,EPS,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ MCPressure : 39|8@0+ (2,-42.5) [-42.5|465.5] "bar"  ADAS_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ESC_Braking_effort : 40|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM,XGW_Chassis
+ SG_ BRAKE_LightonRequestEPBi : 42|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ VDCActive : 43|1@0+ (1,0) [0|1] ""  ADAS_Chassis,EPS,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ TCSActive : 44|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ TCSAvailable : 45|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDBActive : 46|1@0+ (1,0) [0|1] ""  ADAS_Chassis,EPS,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDBFault : 47|1@0+ (1,0) [0|1] ""  ADAS_Chassis,EPS,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ESC_VehicleHoldStat : 51|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM,XGW_Chassis
+ SG_ IDB_Power_Stage : 55|4@0+ (1,0) [0|15] ""  VCU_Chassis,XGW_Chassis
+ SG_ ESC_BrakeReleasedFailsafe : 56|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM,XGW_Chassis
+
+BO_ 528 RCU_STATUS: 8 RCU_Chassis
+ SG_ CHKSM_RCU_Status : 7|8@0+ (1,0) [0|255] ""  IDB_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ ALV_RCU_Status : 11|4@0+ (1,0) [0|14] ""  IDB_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ RCU_DAA_NoOpDoorOpen_1 : 12|1@0+ (1,0) [0|1] ""  IDB_Chassis,XGW_Chassis
+ SG_ RCU_EPBParkingStatus : 15|2@0+ (1,0) [0|3] ""  ADAS_Chassis,IDB_Chassis,SCAM,VCU_Chassis
+ SG_ EPB_Swch_Mafnc : 17|1@0+ (1,0) [0|1] ""  IDB_Chassis,XGW_Chassis
+ SG_ RCU_ParkBrkApplied_1 : 18|1@0+ (1,0) [0|1] ""  IDB_Chassis,XGW_Chassis
+ SG_ RCU_ReleaseEPB_Wo_PressBrk_1 : 19|1@0+ (1,0) [0|1] ""  IDB_Chassis,XGW_Chassis
+ SG_ RCU_BrkForceNotEnough_1 : 20|1@0+ (1,0) [0|1] ""  IDB_Chassis,XGW_Chassis
+ SG_ RCU_ParkOnSteepInclination_1 : 21|1@0+ (1,0) [0|1] ""  IDB_Chassis,XGW_Chassis
+ SG_ RCU_ECD_RWU_active_1 : 22|1@0+ (1,0) [0|1] ""  IDB_Chassis,XGW_Chassis
+ SG_ RCU_EHandBrk_fault_1 : 23|1@0+ (1,0) [0|1] ""  IDB_Chassis,XGW_Chassis
+ SG_ RCU_BRAKE_LightonRequestEPBi : 31|2@0+ (1,0) [0|3] ""  IDB_Chassis,VCU_Chassis,XGW_Chassis
+
+BO_ 529 Post_Collision_Brake: 1 IDB_Chassis
+ SG_ PcbCtrlFail : 6|1@0+ (1,0) [0|1] ""  RCU_Chassis
+ SG_ PcbActiveFlg : 7|1@0+ (1,0) [0|1] ""  RCU_Chassis
+
+BO_ 530 IDB_RCU_Ref: 5 IDB_Chassis
+ SG_ IDB_VehicleSpeed : 7|16@0- (0.01563,0) [0|255] "km/h"  RCU_Chassis
+ SG_ IDB_AxOffsetComp : 23|16@0- (0.00156,0) [-51.11808|51.11652] "g"  RCU_Chassis
+ SG_ IDB_BLSInvalidSts : 36|2@0+ (1,0) [0|2] ""  RCU_Chassis
+ SG_ IDB_AxInvalidSts : 38|2@0+ (1,0) [0|2] ""  RCU_Chassis
+ SG_ IDB_AxOffsetCompSts : 39|1@0+ (1,0) [0|1] ""  RCU_Chassis
+
+BO_ 596 IDB_AVL_RPM_WHL_REAR: 8 IDB_Chassis
+ SG_ CRC_AVL_RPM_WHL_REAR : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ALIV_AVL_RPM_WHL_REAR : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ AVL_RPM_WHL_RLH : 23|16@0+ (0.0156,-511.9844) [-400|400] "rad/s"  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ AVL_RPM_WHL_RRH : 39|16@0+ (0.0156,-511.9844) [-400|400] "rad/s"  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ QU_AVL_RPM_WHL_RLH : 55|4@0+ (1,0) [0|15] "Bit"  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ QU_AVL_RPM_WHL_RRH : 63|4@0+ (1,0) [0|15] "Bit"  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+
+BO_ 597 IDB_AVL_RPM_WHL_FRONT: 8 IDB_Chassis
+ SG_ CRC_AVL_RPM_WHL_FRONT : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ ALIV_AVL_RPM_WHL_FRONT : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ AVL_RPM_WHL_FLH : 23|16@0+ (0.0156,-511.9844) [-400|400] "rad/s"  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ AVL_RPM_WHL_FRH : 39|16@0+ (0.0156,-511.9844) [-400|400] "rad/s"  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ QU_AVL_RPM_WHL_FLH : 55|4@0+ (1,0) [0|15] "Bit"  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ QU_AVL_RPM_WHL_FRH : 63|4@0+ (1,0) [0|15] "Bit"  ADAS_Chassis,EPS,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+
+BO_ 617 VCU_HV_Status: 2 VCU_Chassis
+ SG_ CHKSM_VCU_HV_Status : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,XGW_Chassis
+ SG_ ALV_VCU_HV_Status : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,XGW_Chassis
+ SG_ VCU_VehicleHVStatus : 15|2@0+ (1,0) [0|3] ""  ADAS_Chassis,EPS,IDB_Chassis,RCU_Chassis,SCAM,XGW_Chassis
+
+BO_ 649 IDB_ACC_LONG_LAT_YAW: 8 IDB_Chassis
+ SG_ CHKSM_IDB_ZF2 : 7|8@0+ (1,0) [0|255] ""  VCU_Chassis,XGW_Chassis
+ SG_ ALIVE_IDB_ZF2 : 11|4@0+ (1,0) [0|14] ""  VCU_Chassis,XGW_Chassis
+ SG_ AxOutStatus : 15|3@0+ (1,0) [0|7] ""  XGW_Chassis
+ SG_ QU_VYAW_VEH : 19|4@0+ (1,0) [0|15] ""  XGW_Chassis
+ SG_ AyOutStatus : 23|3@0+ (1,0) [0|7] ""  XGW_Chassis
+ SG_ AcceleratorY : 31|12@0+ (0.02713,-21.5928) [-21.593|21.5928] "m/s^2"  XGW_Chassis
+ SG_ AcceleratorX : 35|12@0+ (0.02713,-21.5928) [-21.593|21.5928] "m/s^2"  VCU_Chassis,XGW_Chassis
+ SG_ VYAW_VEH : 55|16@0+ (0.005,-163.84) [-163.84|163.83] "°/s"  XGW_Chassis
+
+BO_ 714 IC_SENSOR: 8 XGW_Chassis
+ SG_ CHKSM_IC_SENSOR : 7|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ ALV_IC_SENSOR : 11|4@0+ (1,0) [0|14] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ MHU_STAT_AmbientTempRaw : 23|8@0+ (0.5,-40) [-40|85] "°C"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ MHU_STAT_FuelLevel : 31|8@0+ (1,0) [0|100] "l"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ MHU_STAT_AmbientTemp : 39|8@0+ (0.5,-40) [-40|85] "Degree C"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ MHU_STAT_CoolantLevelStatus : 47|2@0+ (1,0) [0|3] "-"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+
+BO_ 760 MHU_DATE_TIME: 8 XGW_Chassis
+ SG_ DISP_HR : 7|8@0+ (1,0) [0|23] "h"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ DISP_MN : 15|8@0+ (1,0) [0|59] "min"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ DISP_SEC : 23|8@0+ (1,0) [0|59] "s"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ DISP_DATE_DAY : 31|8@0+ (1,0) [1|31] "Day"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ DISP_DATE_MON : 35|4@0+ (1,0) [1|12] "Month"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ DISP_DATE_WDAY : 39|4@0+ (1,0) [0|15] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ DISP_DATE_YR : 47|16@0+ (1,0) [1|65534] "Year"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ ST_DISP_CTI_DATE : 63|4@0+ (1,0) [0|15] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+
+BO_ 770 CCU_TEMP_PRESSURE: 6 XGW_Chassis
+ SG_ CHKSM_CCU_TEMP_PRESSURE : 7|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ ALV_CCU_TEMP_PRESSURE : 11|4@0+ (1,0) [0|14] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ CCU_Pressure_AC : 23|6@0+ (1,0) [0|62] "bar"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ CCU_InteriorTemp : 31|8@0+ (0.5,-40) [-40|85] "Degree C"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ CCU_TempEx_AC : 39|8@0+ (0.5,-40) [-40|85] "Degree C"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ CCU_EvaporatorTemp : 47|8@0+ (0.5,-40) [-40|85] "Degree C"  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+
+BO_ 796 EPS_SteeringHoldState: 8 EPS
+ SG_ EPS_ADAS_StrAngRes : 0|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM
+ SG_ EPS_ADAS_FuncMode : 3|3@0+ (1,0) [0|7] ""  ADAS_Chassis,SCAM
+ SG_ EPS_ADAS_CtrlAbortFeedback : 6|3@0+ (1,0) [0|7] ""  ADAS_Chassis,SCAM
+ SG_ EPS_ADAS_ControlAvailable : 7|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM
+ SG_ EPS_Drive_Intervention : 15|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM
+ SG_ EPS_TorqueLimitationState : 19|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM
+
+BO_ 813 ADAS_ACC_Status: 5 SCAM
+ SG_ CRC_ACC_STATUS : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis
+ SG_ Alive_ACC_STATUS : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,IDB_Chassis
+ SG_ ADAS_ACC_Information : 14|2@0+ (1,0) [0|3] ""  IDB_Chassis
+ SG_ ADAS_ACC_Main_Mode : 15|1@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ ADAS_ACC_AccelDecel_Cmd : 19|12@0+ (0.005,-6) [-6|6] "m/s2"  IDB_Chassis
+ SG_ ADAS_ACC_StandstillReq : 20|1@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ ADAS_ACC_Mode : 23|3@0+ (1,0) [0|7] ""  ADAS_Chassis,IDB_Chassis
+ SG_ ADAS_ACC_IDB_DecCmdAct : 39|3@0+ (1,0) [0|1] ""  ADAS_Chassis,IDB_Chassis
+
+BO_ 814 ADAS_AEB_Status: 6 SCAM
+ SG_ CRC_AEB_STATUS : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis
+ SG_ Alive_AEB_STATUS : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,IDB_Chassis
+ SG_ ADAS_AEB_Prefill : 13|1@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ ADAS_AEB_HBA_Level : 15|2@0+ (1,0) [0|3] ""  IDB_Chassis
+ SG_ ADAS_AEB_Target_Deceleration : 23|8@0+ (0.1,-12.7) [-12.7|12.8] "m/s2"  IDB_Chassis
+ SG_ ADAS_AEB_HBA_Req : 25|1@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ ADAS_AEB_Braking_Progress : 29|1@0+ (1,0) [0|1] ""  ADAS_Chassis,IDB_Chassis
+ SG_ ADAS_AEB_Hold : 30|1@0+ (1,0) [0|1] ""  IDB_Chassis
+
+BO_ 815 IDB_Info_Flag: 3 IDB_Chassis
+ SG_ CHKSM_IDB_Info_Flag : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ALV_IDB_Info_Flag : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,SCAM
+ SG_ IDB_ACC_Available_Flag : 13|1@0+ (1,0) [0|1] ""  SCAM
+ SG_ IDB_ACC_Deceleration_Flag : 14|1@0+ (1,0) [0|1] ""  SCAM
+ SG_ IDB_ACC_Acceleration_Flag : 15|1@0+ (1,0) [0|1] ""  SCAM
+ SG_ IDB_RAEB_Active_Flag : 18|1@0+ (1,0) [0|1] ""  ADAS_Chassis
+ SG_ IDB_RAEB_Available_Flag : 19|1@0+ (1,0) [0|1] ""  ADAS_Chassis
+ SG_ IDB_AEB_Active_Flag : 20|1@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM
+ SG_ IDB_AEB_Available_Flag : 21|1@0+ (1,0) [0|1] ""  SCAM
+ SG_ IDB_ACC_DriverOverride : 23|2@0+ (1,0) [0|3] ""  SCAM
+
+BO_ 816 ADAS_RAEB_Status: 8 ADAS_Chassis
+ SG_ ADAS_RAEB_Checksum : 7|8@0+ (1,0) [0|255] ""  EPS,IDB_Chassis
+ SG_ ADAS_RAEB_Alive : 11|4@0+ (1,0) [0|14] ""  EPS,IDB_Chassis
+ SG_ ADAS_RAEB_Hold : 12|1@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ ADAS_RAEB_Braking_Progress : 13|1@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ ADAS_EPS_StrConReq : 15|1@0+ (1,0) [0|1] ""  EPS
+ SG_ ADAS_RAEB_Target_Deceleration : 23|8@0+ (0.1,-12.7) [-12.7|12.8] "m/s2"  IDB_Chassis
+ SG_ ADAS_EPS_Status : 28|3@0+ (1,0) [0|7] ""  EPS
+ SG_ ADAS_EPS_FuncMode : 31|3@0+ (1,0) [0|7] ""  EPS
+ SG_ ADAS_EPSAngleReq : 36|16@0+ (0.0238,-780) [-780|779.7] ""  EPS
+
+BO_ 817 IC_MILEAGE: 8 XGW_Chassis
+ SG_ MILE_KM : 7|24@0+ (1,0) [0|999999] "km"  EPS
+ SG_ FLLV_FUTA : 31|8@0+ (1,0) [0|254] "l"  EPS
+ SG_ RNG : 51|12@0+ (1,0) [0|4094] "km"  EPS
+ SG_ ST_FLLV_FUTA_SPAR : 55|2@0+ (1,0) [0|3] ""  EPS
+
+BO_ 890 ADAS_EPS_LATE_CON: 8 SCAM
+ SG_ CHKSM_ADAS_EPS_LATE_CON : 7|8@0+ (1,0) [0|255] ""  EPS
+ SG_ ALV_ADAS_EPS_LATE_CON : 11|4@0+ (1,0) [0|14] ""  EPS
+ SG_ ADAS_EPS_StrWhe_TOLAct : 25|2@0+ (1,0) [0|3] ""  EPS
+ SG_ ADAS_EPS_StrWhe_AOLAct : 27|2@0+ (1,0) [0|3] ""  EPS
+ SG_ ADAS_EPS_AOLReq : 39|16@0+ (0.0238,-780) [-780|779.7] "deg"  EPS
+ SG_ ADAS_EPS_Torq_Fact_Req : 55|7@0+ (0.01,0) [0|1] ""  EPS
+ SG_ SECCAN_ADAS_EPS_LATE_CON : 63|8@0+ (1,0) [0|255] ""  EPS
+
+BO_ 891 EPS_ADAS_Steering_Trq: 6 EPS
+ SG_ EPS_SteeringEMTorque : 13|12@0+ (0.01,-10.24) [-10.24|10.23] "Nm"  ADAS_Chassis,SCAM
+ SG_ EPS_ADAS_AOLAct : 15|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM
+ SG_ EPS_SteeringDriverTorque : 30|12@0+ (0.01,-10.24) [-10.24|10.23] "Nm"  ADAS_Chassis,SCAM
+
+BO_ 894 EPS_Advanced: 8 EPS
+ SG_ CHKSM_EPS_Advanced : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,SCAM
+ SG_ ALV_EPS_Advanced : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,IDB_Chassis,SCAM
+ SG_ EPS_TorqSensorSts : 15|2@0+ (1,0) [0|1] ""  IDB_Chassis
+ SG_ EPS_SteeringTorque : 19|12@0+ (0.01,-10.24) [-10.24|10.23] "Nm"  ADAS_Chassis,IDB_Chassis,SCAM
+ SG_ EPS_SteeringTorqueValid : 21|2@0+ (1,0) [0|1] ""  ADAS_Chassis,SCAM
+ SG_ EPS_Mode : 23|2@0+ (1,0) [0|3] ""  IDB_Chassis
+ SG_ EPS_Steering_angle_spd : 37|14@0+ (0.125,-1024) [-1024|1023.875] "degree/s"  ADAS_Chassis,SCAM
+ SG_ EPSAngRespSts : 39|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM
+ SG_ EPS_Steering_angle : 55|16@0+ (0.0238,-780) [-780|779.733] "deg"  ADAS_Chassis,SCAM
+
+BO_ 896 BCM_VEHICLE_IDENT_NUMBER: 8 XGW_Chassis
+ SG_ VIN_Byte1 : 7|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ VIN_Byte2 : 15|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ VIN_Byte3 : 23|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ VIN_Byte4 : 31|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ VIN_Byte5 : 39|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ VIN_Byte6 : 47|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ VIN_Byte7 : 55|8@0+ (1,0) [0|255] ""  AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+
+BO_ 960 IDB_WHEEL_SPEED_FRONT: 8 IDB_Chassis
+ SG_ CHKSM_IDB_WHEEL_SPEED_FRONT : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ALV_IDB_WHEEL_SPEED_FRONT : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,SCAM
+ SG_ WheelSpeedFR : 23|13@0+ (0.05625,0) [0|300] "km/h"  ADAS_Chassis,SCAM
+ SG_ WheelSpeedFRStatus : 26|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM
+ SG_ WheelSpeedFL : 39|13@0+ (0.05625,0) [0|300] "km/h"  ADAS_Chassis,SCAM
+ SG_ WheelSpeedFLStatus : 42|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM
+
+BO_ 961 IDB_WHEEL_SPEED_REAR: 8 IDB_Chassis
+ SG_ CHKSM_IDB_WHEEL_SPEED_REAR : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ALV_IDB_WHEEL_SPEED_REAR : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,SCAM
+ SG_ WheelSpeedRR : 23|13@0+ (0.05625,0) [0|300] "km/h"  ADAS_Chassis,SCAM
+ SG_ WheelSpeedRRStatus : 26|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM
+ SG_ WheelSpeedRL : 39|13@0+ (0.05625,0) [0|300] "km/h"  ADAS_Chassis,SCAM
+ SG_ WheelSpeedRLStatus : 42|2@0+ (1,0) [0|3] ""  ADAS_Chassis,SCAM
+
+BO_ 1035 MHU_Avas_Setting: 1 XGW_Chassis
+ SG_ MHU_SET_AvasSound : 1|2@0+ (1,0) [0|3] "-"  AVAS
+
+BO_ 1036 Vehicle_Direction: 1 XGW_Chassis
+ SG_ Vehicle_Dir : 1|2@0+ (1,0) [0|3] "-"  AVAS
+
+BO_ 1039 YSS_WarnMsg: 8 YSS
+ SG_ CHSKM_YSS_WarnMsg : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ALV_YSS_WarnMsg : 11|4@0+ (1,0) [0|14] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_1 : 12|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_2 : 13|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_3 : 14|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_4 : 15|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_5 : 16|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_6 : 17|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_7 : 18|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_8 : 19|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_9 : 20|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_10 : 21|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_11 : 22|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Warning_Flag_12 : 23|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ YSS_Reserved_signal1 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_Reserved_signal2 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_Reserved_signal3 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_Reserved_signal4 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_Reserved_signal5 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1059 AVAS_STATUS: 8 AVAS
+ SG_ AVAS_BatteryUnderVoltage : 0|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_BatteryOverVoltage : 1|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_VINInfoNotPrgm : 2|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_AMPVoltSplDrvOperationFail : 3|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_AMPIntFaultOverCurr : 4|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_AMPInternalFaultDCError : 5|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_AMPInternalFaultOverTemp : 6|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_AMPInternalFaultClockError : 7|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_SpkrMntPwrSwDrvHighFlt : 8|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_SpkrMntPwrSwDrvLowFlt : 9|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_InternalSpeakerOpen : 10|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_ECUMalFlshOperationErr : 11|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_ECUMalfunctionRamFailure : 12|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_ECUMalEEPROMFailure : 13|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_CANBusOff : 14|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_LossCommVehicleSpeed : 15|1@0+ (1,0) [0|1] ""  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_LossCommGearPosition : 16|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+ SG_ AVAS_LossCommAVASCloseCmd : 17|1@0+ (1,0) [0|1] "-"  VCU_Chassis,XGW_Chassis
+
+BO_ 1060 AVAS_SHMNumber: 8 AVAS
+ SG_ AVAS_SWNumber : 7|16@0+ (1,0) [0|65535] ""  VCU_Chassis
+ SG_ AVAS_HWNumber : 23|16@0+ (1,0) [0|65535] ""  VCU_Chassis
+ SG_ AVAS_MXNumber : 39|16@0+ (1,0) [0|65535] ""  VCU_Chassis
+
+BO_ 1061 VCU_AVAS_GearPosition_ECU: 8 VCU_Chassis
+ SG_ ActualGearShiftPosition : 50|3@0+ (1,0) [0|7] ""  AVAS,EPS
+
+BO_ 1062 VCU_AVAS_VehicleSpeed_ECU: 8 VCU_Chassis
+ SG_ ESP_VehicleSpeed : 4|13@0+ (0.05625,0) [0|460.6875] "kph"  AVAS
+ SG_ VCU_STAT_Terminal_BEV : 23|3@0+ (1,0) [0|7] ""  AVAS
+
+BO_ 1063 VCU_AVAS_Close_Cmd: 8 VCU_Chassis
+ SG_ IPC_AVASCloseCmd : 0|1@0+ (1,0) [0|1] ""  AVAS
+
+BO_ 1064 XGW_CH_1: 1 XGW_Chassis
+ SG_ BCM_Keyfob_Leftcar : 0|1@0+ (1,0) [0|1] ""  VCU_Chassis
+ SG_ TRMFitted : 2|2@0+ (1,0) [0|3] ""  ADAS_Chassis
+
+BO_ 1072 ADAS_DMS: 2 ADAS_Chassis
+ SG_ ADAS_DMS_Checksum : 7|8@0+ (1,0) [0|255] ""  EPS
+ SG_ ADAS_DMS_Alive : 11|4@0+ (1,0) [0|14] ""  EPS
+ SG_ ADAS_DMS_HapWarning : 15|1@0+ (1,0) [0|1] ""  EPS
+
+BO_ 1074 MHU_FOTA_STATUS: 8 XGW_Chassis
+ SG_ MHU_FOTA_Checksum : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ MHU_FOTA_Alive_Counter : 11|4@0+ (1,0) [0|14] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ MHU_FOTA_State : 15|4@0+ (1,0) [0|14] "-"  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ MHU_FOTA_Error_Code : 23|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+
+BO_ 1095 MHU_CarMode_Switch: 8 XGW_Chassis
+ SG_ CHKSM_MHU_SET_CarMode : 7|8@0+ (1,0) [0|255] ""  IDB_Chassis,RCU_Chassis
+ SG_ ALV_MHU_SET_CarMode : 11|4@0+ (1,0) [0|14] ""  IDB_Chassis,RCU_Chassis
+ SG_ MHU_Request_CarOFF : 17|2@0+ (1,0) [0|3] "-"  IDB_Chassis,RCU_Chassis
+ SG_ MHU_SET_ChildMode : 19|2@0+ (1,0) [0|3] ""  IDB_Chassis,RCU_Chassis
+ SG_ MHU_SET_GameMode : 21|2@0+ (1,0) [0|3] ""  IDB_Chassis,RCU_Chassis
+ SG_ MHU_SET_KaraokeMode : 23|2@0+ (1,0) [0|3] ""  IDB_Chassis,RCU_Chassis
+ SG_ MHU_SET_WashMode : 31|2@0+ (1,0) [0|3] ""  IDB_Chassis,RCU_Chassis
+ SG_ MHU_SET_StopMode : 33|2@0+ (1,0) [0|3] ""  IDB_Chassis,RCU_Chassis
+ SG_ MHU_AVH_Sw : 35|2@0+ (1,0) [0|3] "" IDB_Chassis,RCU_Chassis
+
+BO_ 1191 RCU_WarnMsg: 8 RCU_Chassis
+ SG_ CHSKM_RCU_WarnMsg : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ALV_RCU_WarnMsg : 11|4@0+ (1,0) [0|14] ""  XGW_Chassis
+ SG_ RCU_DAA_NoOpDoorOpen : 12|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_EHandBrk_fault : 13|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_EOL_NotDone : 14|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_ECD_RWU_active : 15|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_ParkOnSteepInclination : 16|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_BrkForceNotEnough : 17|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_ReleaseEPB_Wo_PressBrk : 20|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_ParkBrkApplied : 21|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_Swch_Mafnc : 27|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_DAA_NoOpBeltUnbuckled : 28|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_RollerBenchMode : 29|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_EPB_ParkLampState : 31|2@0+ (1,0) [0|3] ""  XGW_Chassis
+ SG_ RCU_EPB_WarnLampState : 34|2@0+ (1,0) [0|3] ""  XGW_Chassis
+ SG_ RCU_WflagRes36 : 36|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes37 : 37|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes38 : 38|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes39 : 39|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes40 : 40|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes41 : 41|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes42 : 42|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes43 : 43|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes44 : 44|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes45 : 45|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes46 : 46|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_WflagRes47 : 47|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ RCU_Reserved_signal1 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1192 EPS_WarnMsg: 8 EPS
+ SG_ CHSKM_EPS_WarnMsg : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ALV_EPS_WarnMsg : 11|4@0+ (1,0) [0|14] ""  XGW_Chassis
+ SG_ EPS_Malfunction : 12|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ EPS_Reduced : 13|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ EPS_Overheat : 14|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ EPS_NotReady : 15|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ EPS_Warning_Flag_5 : 16|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ EPS_Warning_Flag_6 : 17|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ EPS_Warning_Flag_7 : 18|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ EPS_Warning_Flag_8 : 19|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ EPS_Warning_Flag_9 : 20|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ EPS_Warning_Flag_10 : 21|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ EPS_Warning_Flag_11 : 22|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ EPS_Warning_Flag_12 : 23|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ EPS_Reserved_signal1 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ EPS_Reserved_signal2 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ EPS_Reserved_signal3 : 47|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ EPS_Reserved_signal4 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ EPS_Reserved_signal5 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1193 IDB_WarnMsg: 8 IDB_Chassis
+ SG_ CHSKM_IDB_WarnMsg : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ALV_IDB_WarnMsg : 11|4@0+ (1,0) [0|14] ""  XGW_Chassis
+ SG_ IDB_ESC_fault : 12|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ IDB_ABS_fault : 13|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ IDB_BrkLowFluid : 14|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ IDB_BrkSysFault : 15|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ IDB_fault : 28|1@0+ (1,0) [0|1] ""  SCAM,XGW_Chassis
+ SG_ IDB_HydraulicBrkAssist_Fault : 29|1@0+ (1,0) [0|1] "-"  XGW_Chassis
+ SG_ IDB_HAS_Fault : 30|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ IDB_TSM_Fault : 31|1@0+ (1,0) [0|1] ""  XGW_Chassis
+ SG_ IDB_Reserved_signal2 : 39|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ IDB_Reserved_signal3 : 47|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ IDB_Reserved_signal4 : 55|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ IDB_Reserved_signal5 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1282 XGW_NM: 8 XGW_Chassis
+ SG_ XGW_srcNodeID : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis
+ SG_ XGW_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis
+ SG_ XGW_usrData0 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis
+ SG_ XGW_usrData1 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis
+ SG_ XGW_usrData2 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis
+ SG_ XGW_usrData3 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis
+ SG_ XGW_usrData4 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis
+ SG_ XGW_usrData5 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis
+
+BO_ 1317 RCU_NM: 8 RCU_Chassis
+ SG_ RCU_srcNodeID : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ RCU_usrData0 : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ RCU_usrData1 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ RCU_usrData2 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ RCU_usrData3 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ RCU_usrData4 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ RCU_usrData5 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,SCAM,VCU_Chassis,XGW_Chassis
+
+BO_ 1321 IDB_NM: 8 IDB_Chassis
+ SG_ IDB_srcNodeID : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_usrData0 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_usrData1 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_usrData2 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_usrData3 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_usrData4 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+ SG_ IDB_usrData5 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis,MRGEN,RCU_Chassis,SCAM,VCU_Chassis,XGW_Chassis
+
+BO_ 1324 VCU_NM: 8 VCU_Chassis
+ SG_ VCU_srcNodeID : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,XGW_Chassis
+ SG_ VCU_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,XGW_Chassis
+ SG_ VCU_usrData0 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,XGW_Chassis
+ SG_ VCU_usrData1 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,XGW_Chassis
+ SG_ VCU_usrData2 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,XGW_Chassis
+ SG_ VCU_usrData3 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,XGW_Chassis
+ SG_ VCU_usrData4 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,XGW_Chassis
+ SG_ VCU_usrData5 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,XGW_Chassis
+
+BO_ 1344 ADAS_NM: 8 ADAS_Chassis
+ SG_ ADAS_srcNodeID : 7|8@0+ (1,0) [0|255] ""  IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ ADAS_CtrlBitVector : 15|8@0+ (1,0) [0|255] "-"  IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ ADAS_usrData0 : 23|8@0+ (1,0) [0|255] ""  IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ ADAS_usrData1 : 31|8@0+ (1,0) [0|255] ""  IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ ADAS_usrData2 : 39|8@0+ (1,0) [0|255] ""  IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ ADAS_usrData3 : 47|8@0+ (1,0) [0|255] "-"  IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ ADAS_usrData4 : 55|8@0+ (1,0) [0|255] "-"  IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+ SG_ ADAS_usrData5 : 63|8@0+ (1,0) [0|255] "-"  IDB_Chassis,RCU_Chassis,VCU_Chassis,XGW_Chassis
+
+BO_ 1551 YSS_DiagResp: 8 YSS
+ SG_ YSS_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_DiagRespData1 : 15|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_DiagRespData2 : 23|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ YSS_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ YSS_DiagRespData7 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1573 MRGEN_DiagResp: 8 MRGEN
+ SG_ MRGEN_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ MRGEN_DiagRespData1 : 15|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ MRGEN_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ MRGEN_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ MRGEN_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ MRGEN_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ MRGEN_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ MRGEN_DiagRespData7 : 63|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+
+BO_ 1574 SCAM_DiagResp: 8 SCAM
+ SG_ SCAM_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SCAM_DiagRespData1 : 15|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SCAM_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SCAM_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SCAM_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SCAM_DiagRespData5 : 47|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SCAM_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SCAM_DiagRespData7 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1575 RCU_DiagResp: 8 RCU_Chassis
+ SG_ RCU_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ RCU_DiagRespData1 : 15|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ RCU_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ RCU_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ RCU_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ RCU_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ RCU_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ RCU_DiagRespData7 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1576 EPS_DiagResp: 8 EPS
+ SG_ EPS_DiagRespData0 : 7|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ EPS_DiagRespData1 : 15|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ EPS_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ EPS_DiagRespData3 : 31|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ EPS_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ EPS_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ EPS_DiagRespData6 : 55|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ EPS_DiagRespData7 : 63|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+
+BO_ 1577 IDB_DiagResp: 8 IDB_Chassis
+ SG_ IDB_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ IDB_DiagRespData1 : 15|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ IDB_DiagRespData2 : 23|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ IDB_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ IDB_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ IDB_DiagRespData5 : 47|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ IDB_DiagRespData6 : 55|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ IDB_DiagRespData7 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1578 AVAS_DiagResp: 8 AVAS
+ SG_ AVAS_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ AVAS_DiagRespData1 : 15|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ AVAS_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ AVAS_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ AVAS_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ AVAS_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ AVAS_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ AVAS_DiagRespData7 : 63|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+
+BO_ 1580 VCU_DiagResp: 8 VCU_Chassis
+ SG_ VCU_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ VCU_DiagRespData1 : 15|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ VCU_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ VCU_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ VCU_DiagRespData4 : 39|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ VCU_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ VCU_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ VCU_DiagRespData7 : 63|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+
+BO_ 1588 SRR_FR_DiagResp: 8 ADAS_Chassis
+ SG_ SRR_FR_DiagRespData0 : 7|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_FR_DiagRespData1 : 15|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_FR_DiagRespData2 : 23|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_FR_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_FR_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_FR_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_FR_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_FR_DiagRespData7 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1589 SRR_FL_DiagResp: 8 ADAS_Chassis
+ SG_ SRR_FL_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_FL_DiagRespData1 : 15|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_FL_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_FL_DiagRespData3 : 31|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_FL_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_FL_DiagRespData5 : 47|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_FL_DiagRespData6 : 55|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_FL_DiagRespData7 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1590 SRR_RR_DiagResp: 8 ADAS_Chassis
+ SG_ SRR_RR_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_RR_DiagRespData1 : 15|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RR_DiagRespData2 : 23|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RR_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_RR_DiagRespData4 : 39|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RR_DiagRespData5 : 47|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RR_DiagRespData6 : 55|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RR_DiagRespData7 : 63|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+
+BO_ 1591 SRR_RL_DiagResp: 8 ADAS_Chassis
+ SG_ SRR_RL_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_RL_DiagRespData1 : 15|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RL_DiagRespData2 : 23|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RL_DiagRespData3 : 31|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RL_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ SRR_RL_DiagRespData5 : 47|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RL_DiagRespData6 : 55|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+ SG_ SRR_RL_DiagRespData7 : 63|8@0+ (1,0) [0|255] "-"  XGW_Chassis
+
+BO_ 1600 ADAS_DiagResp: 8 ADAS_Chassis
+ SG_ ADAS_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ADAS_DiagRespData1 : 15|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ADAS_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ADAS_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ADAS_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ADAS_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ADAS_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Chassis
+ SG_ ADAS_DiagRespData7 : 63|8@0+ (1,0) [0|255] ""  XGW_Chassis
+
+BO_ 1679 YSS_DiagReq: 8 XGW_Chassis
+ SG_ YSS_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  YSS
+ SG_ YSS_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  YSS
+ SG_ YSS_DiagReqData2 : 23|8@0+ (1,0) [0|255] "-"  YSS
+ SG_ YSS_DiagReqData3 : 31|8@0+ (1,0) [0|255] "-"  YSS
+ SG_ YSS_DiagReqData4 : 39|8@0+ (1,0) [0|255] "-"  YSS
+ SG_ YSS_DiagReqData5 : 47|8@0+ (1,0) [0|255] "-"  YSS
+ SG_ YSS_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  YSS
+ SG_ YSS_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  YSS
+
+BO_ 1701 MRGEN_DiagReq: 8 XGW_Chassis
+ SG_ MRGEN_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  MRGEN
+ SG_ MRGEN_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  MRGEN
+ SG_ MRGEN_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  MRGEN
+ SG_ MRGEN_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  MRGEN
+ SG_ MRGEN_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  MRGEN
+ SG_ MRGEN_DiagReqData5 : 47|8@0+ (1,0) [0|255] "-"  MRGEN
+ SG_ MRGEN_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  MRGEN
+ SG_ MRGEN_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  MRGEN
+
+BO_ 1702 SCAM_DiagReq: 8 XGW_Chassis
+ SG_ SCAM_DiagReqData0 : 7|8@0+ (1,0) [0|255] "-"  SCAM
+ SG_ SCAM_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  SCAM
+ SG_ SCAM_DiagReqData2 : 23|8@0+ (1,0) [0|255] "-"  SCAM
+ SG_ SCAM_DiagReqData3 : 31|8@0+ (1,0) [0|255] "-"  SCAM
+ SG_ SCAM_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  SCAM
+ SG_ SCAM_DiagReqData5 : 47|8@0+ (1,0) [0|255] "-"  SCAM
+ SG_ SCAM_DiagReqData6 : 55|8@0+ (1,0) [0|255] "-"  SCAM
+ SG_ SCAM_DiagReqData7 : 63|8@0+ (1,0) [0|255] "-"  SCAM
+
+BO_ 1703 RCU_DiagReq: 8 XGW_Chassis
+ SG_ RCU_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  RCU_Chassis
+ SG_ RCU_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  RCU_Chassis
+ SG_ RCU_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  RCU_Chassis
+ SG_ RCU_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  RCU_Chassis
+ SG_ RCU_DiagReqData4 : 39|8@0+ (1,0) [0|255] "-"  RCU_Chassis
+ SG_ RCU_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  RCU_Chassis
+ SG_ RCU_DiagReqData6 : 55|8@0+ (1,0) [0|255] "-"  RCU_Chassis
+ SG_ RCU_DiagReqData7 : 63|8@0+ (1,0) [0|255] "-"  RCU_Chassis
+
+BO_ 1704 EPS_DiagReq: 8 XGW_Chassis
+ SG_ EPS_DiagReqData0 : 7|8@0+ (1,0) [0|255] "-"  EPS
+ SG_ EPS_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_DiagReqData4 : 39|8@0+ (1,0) [0|255] "-"  EPS
+ SG_ EPS_DiagReqData5 : 47|8@0+ (1,0) [0|255] "-"  EPS
+ SG_ EPS_DiagReqData6 : 55|8@0+ (1,0) [0|255] "-"  EPS
+ SG_ EPS_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  EPS
+
+BO_ 1705 IDB_DiagReq: 8 XGW_Chassis
+ SG_ IDB_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  IDB_Chassis
+ SG_ IDB_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  IDB_Chassis
+ SG_ IDB_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  IDB_Chassis
+ SG_ IDB_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  IDB_Chassis
+ SG_ IDB_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  IDB_Chassis
+ SG_ IDB_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  IDB_Chassis
+ SG_ IDB_DiagReqData6 : 55|8@0+ (1,0) [0|255] "-"  IDB_Chassis
+ SG_ IDB_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  IDB_Chassis
+
+BO_ 1706 AVAS_DiagReq: 8 XGW_Chassis
+ SG_ AVAS_DiagReqData0 : 7|8@0+ (1,0) [0|255] "-"  AVAS
+ SG_ AVAS_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  AVAS
+ SG_ AVAS_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  AVAS
+ SG_ AVAS_DiagReqData3 : 31|8@0+ (1,0) [0|255] "-"  AVAS
+ SG_ AVAS_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  AVAS
+ SG_ AVAS_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  AVAS
+ SG_ AVAS_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  AVAS
+ SG_ AVAS_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  AVAS
+
+BO_ 1708 VCU_DiagReq: 8 XGW_Chassis
+ SG_ VCU_DiagReqData0 : 7|8@0+ (1,0) [0|255] "-"  VCU_Chassis
+ SG_ VCU_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  VCU_Chassis
+ SG_ VCU_DiagReqData2 : 23|8@0+ (1,0) [0|255] "-"  VCU_Chassis
+ SG_ VCU_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  VCU_Chassis
+ SG_ VCU_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  VCU_Chassis
+ SG_ VCU_DiagReqData5 : 47|8@0+ (1,0) [0|255] "-"  VCU_Chassis
+ SG_ VCU_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  VCU_Chassis
+ SG_ VCU_DiagReqData7 : 63|8@0+ (1,0) [0|255] "-"  VCU_Chassis
+
+BO_ 1716 SRR_FR_DiagReq: 8 XGW_Chassis
+ SG_ SRR_FR_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FR_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FR_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FR_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FR_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FR_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FR_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FR_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+
+BO_ 1717 SRR_FL_DiagReq: 8 XGW_Chassis
+ SG_ SRR_FL_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FL_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FL_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FL_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FL_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FL_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FL_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_FL_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+
+BO_ 1718 SRR_RR_DiagReq: 8 XGW_Chassis
+ SG_ SRR_RR_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RR_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RR_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RR_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RR_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RR_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RR_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RR_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+
+BO_ 1719 SRR_RL_DiagReq: 8 XGW_Chassis
+ SG_ SRR_RL_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RL_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RL_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RL_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RL_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RL_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RL_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+ SG_ SRR_RL_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis
+
+BO_ 1728 ADAS_DiagReq: 8 XGW_Chassis
+ SG_ ADAS_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ADAS_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ADAS_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ADAS_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ADAS_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ADAS_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ADAS_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+ SG_ ADAS_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis,SCAM
+
+BO_ 1775 DIAG_Req_All_CAN: 8 XGW_Chassis
+ SG_ DiagReqAllCANData0 : 7|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllCANData1 : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllCANData2 : 23|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllCANData3 : 31|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllCANData4 : 39|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllCANData5 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllCANData6 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllCANData7 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+
+BO_ 1791 DIAG_Req_All_Ecu: 8 XGW_Chassis
+ SG_ DiagReqAllEcuData0 : 7|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllEcuData1 : 15|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllEcuData2 : 23|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllEcuData3 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllEcuData4 : 39|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllEcuData5 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllEcuData6 : 55|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+ SG_ DiagReqAllEcuData7 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis,EPS,MRGEN,SCAM,SRR
+
+BO_ 1817 SEED_CAN_Req11_IDB_Chassis: 8 IDB_Chassis
+ SG_ SEED_CAN_Req11 : 7|64@0+ (1,0) [0|1.84467440737096E+019] ""  SCAM,VCU_Chassis
+
+BO_ 1827 SEED_CAN_Req13_VCU_Chassis: 8 VCU_Chassis
+ SG_ SEED_CAN_Req13 : 7|64@0+ (1,0) [0|1.84467440737096E+019] ""  EPS,IDB_Chassis
+
+BO_ 1829 SEED_CAN_Req14_EPS: 8 EPS
+ SG_ SEED_CAN_Req14 : 7|64@0+ (1,0) [0|1.84467440737096E+019] ""  SCAM,VCU_Chassis
+
+BO_ 1831 SEED_CAN_Req15_SCAM: 8 SCAM
+ SG_ SEED_CAN_Req15 : 7|64@0+ (1,0) [0|1.84467440737096E+019] ""  EPS,IDB_Chassis
+
+BO_ 1960 EPS_XCP_CCP_Resp: 8 EPS
+ SG_ EPS_XCP_CCPRespData0 : 7|8@0+ (1,0) [0|255] ""  DUMMY_ECU
+ SG_ EPS_XCP_CCPRespData1 : 15|8@0+ (1,0) [0|255] ""  DUMMY_ECU
+ SG_ EPS_XCP_CCPRespData2 : 23|8@0+ (1,0) [0|255] ""  DUMMY_ECU
+ SG_ EPS_XCP_CCPRespData3 : 31|8@0+ (1,0) [0|255] ""  DUMMY_ECU
+ SG_ EPS_XCP_CCPRespData4 : 39|8@0+ (1,0) [0|255] ""  DUMMY_ECU
+ SG_ EPS_XCP_CCPRespData5 : 47|8@0+ (1,0) [0|255] ""  DUMMY_ECU
+ SG_ EPS_XCP_CCPRespData6 : 55|8@0+ (1,0) [0|255] ""  DUMMY_ECU
+ SG_ EPS_XCP_CCPRespData7 : 63|8@0+ (1,0) [0|255] ""  DUMMY_ECU
+
+BO_ 2007 EPS_XCP_CCP_Req: 8 DUMMY_ECU
+ SG_ EPS_XCP_CCPReqData0 : 7|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_XCP_CCPReqData1 : 15|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_XCP_CCPReqData2 : 23|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_XCP_CCPReqData3 : 31|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_XCP_CCPReqData4 : 39|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_XCP_CCPReqData5 : 47|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_XCP_CCPReqData6 : 55|8@0+ (1,0) [0|255] ""  EPS
+ SG_ EPS_XCP_CCPReqData7 : 63|8@0+ (1,0) [0|255] ""  EPS
+
+BO_ 2015 Diag_Request_ECU: 8 XGW_Chassis
+ SG_ Diag_Request_ECU_Data0 : 7|8@0+ (1,0) [0|255] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Diag_Request_ECU_Data1 : 15|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Diag_Request_ECU_Data2 : 23|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Diag_Request_ECU_Data3 : 31|8@0+ (1,0) [0|255] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Diag_Request_ECU_Data4 : 39|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Diag_Request_ECU_Data5 : 47|8@0+ (1,0) [0|255] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Diag_Request_ECU_Data6 : 55|8@0+ (1,0) [0|255] "-"  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS
+ SG_ Diag_Request_ECU_Data7 : 63|8@0+ (1,0) [0|255] ""  ADAS_Chassis,AVAS,EPS,IDB_Chassis,MRGEN,RCU_Chassis,SCAM,SRR,VCU_Chassis,YSS

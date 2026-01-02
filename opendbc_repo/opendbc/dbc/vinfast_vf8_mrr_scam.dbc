@@ -1,0 +1,1473 @@
+VERSION "created by canmatrix"
+
+
+NS_ :
+
+BS_:
+
+BU_: ADAS 
+
+
+BO_ 400 ACCObj_Header_oMRR_SCAM: 32 Vector__XXX
+ SG_ ACCObj_Header_CRC_oACCObj_Header : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ ACCObj_Header_ALIVE_oACCObj_Head : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ ACCObj_Protocol_Major_oACCObj_He : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ ACCObj_Protocol_Minor_oACCObj_He : 32|8@1+ (1,0) [0|255] "" ADAS
+ SG_ ACCObj_FrameID_oACCObj_Header_oM : 40|32@1+ (1,0) [0|4294967295] "" ADAS
+ SG_ ACCObj_SnsrAv_oACCObj_Header_oMR : 72|2@1+ (1,0) [0|3] "" ADAS
+ SG_ ACCObj_SnsrSts_oACCObj_Header_oM : 74|3@1+ (1,0) [0|7] "" ADAS
+ SG_ FastLanePrsnt_oACCObj_Header_oMR : 77|1@1+ (1,0) [0|1] "" ADAS
+ SG_ SlowLanePrsnt_oACCObj_Header_oMR : 78|1@1+ (1,0) [0|1] "" ADAS
+ SG_ HstVehLaneWidth_oACCObj_Header_o : 80|8@1+ (0.0392156876,0) [0|10.000000338] "m" ADAS
+ SG_ HstLaneTraj_c0_oACCObj_Header_oM : 88|8@1- (0.0392156867,0) [-5.0196078976|4.9803922109] "m" ADAS
+ SG_ HstLaneTraj_c1_oACCObj_Header_oM : 96|10@1- (0.000697947,0) [-0.357348864|0.356650917] "rad" ADAS
+ SG_ HstLaneTraj_c2_oACCObj_Header_oM : 106|12@1- (1.6004e-05,0) [-0.032776192|0.032760188] "1/m" ADAS
+ SG_ HstLaneTraj_c3_oACCObj_Header_oM : 120|14@1- (1.6e-08,0) [-0.000131072|0.000131056] "1/m^2" ADAS
+ SG_ HstVehLaneChange_oACCObj_Header_ : 134|2@1+ (1,0) [0|3] "" ADAS
+ SG_ EnvSpeed_oACCObj_Header_oMRR_SCA : 136|12@1+ (0.0246,0) [0|100.737] "m/s" ADAS
+ SG_ TrffcDir_oACCObj_Header_oMRR_SCA : 148|2@1+ (1,0) [0|3] "" ADAS
+ SG_ RoadTyp_oACCObj_Header_oMRR_SCAM : 150|2@1+ (1,0) [0|3] "" ADAS
+ SG_ RoadTypConfdnc_oACCObj_Header_oM : 152|8@1+ (0.392157,0) [0|100.000035] "%" ADAS
+ SG_ ACCObj_Timestamp_MSB_oACCObj_Hea : 160|32@1+ (1,0) [0|4294967295] "" ADAS
+ SG_ ACCObj_Timestamp_LSB_oACCObj_Hea : 192|32@1+ (1,0) [0|4294967295] "" ADAS
+
+BO_ 401 IV_IIV_Info_oMRR_SCAM: 48 Vector__XXX
+ SG_ IV_IIV_Info_CRC_oIV_IIV_Info_oMR : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ IV_IIV_Info_ALIVE_oIV_IIV_Info_o : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ IV_ObjCartesianDstLgtRel_oIV_IIV : 24|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ IV_CartesianVLgtRel_oIV_IIV_Info : 40|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ IV_ObjCartesianDstLatRel_oIV_IIV : 53|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ IV_CartesianVLatRel_oIV_IIV_Info : 64|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ IV_ObjClass_oIV_IIV_Info_oMRR_SC : 73|3@1+ (1,0) [0|7] "" ADAS
+ SG_ IV_ObjSnsrDetn_oIV_IIV_Info_oMRR : 76|3@1+ (1,0) [0|7] "" ADAS
+ SG_ IV_ObjPrsnt_oIV_IIV_Info_oMRR_SC : 79|1@1+ (1,0) [0|1] "" ADAS
+ SG_ IV_ObjTrnOffProblty_oIV_IIV_Info : 80|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ IV_ObjExistncProblty_oIV_IIV_Inf : 88|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ IV_ObjPathCorrdALgtRel_oIV_IIV_I : 96|11@1- (0.019540791,0) [-20.009769984|19.990229193] "m/s2" ADAS
+ SG_ IV_ObjMtnDir_oIV_IIV_Info_oMRR_S : 107|2@1+ (1,0) [0|3] "" ADAS
+ SG_ IV_ObjMtnSts_oIV_IIV_Info_oMRR_S : 109|2@1+ (1,0) [0|3] "" ADAS
+ SG_ IV_ObjNewTar_oIV_IIV_Info_oMRR_S : 111|1@1+ (1,0) [0|1] "" ADAS
+ SG_ IV_ObjPathCorrdDstLgtRel_oIV_IIV : 112|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ IV_ObjPathCorrdVLgtRel_oIV_IIV_I : 128|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ IV_ObjPathCorrdDstLat_oIV_IIV_In : 141|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ IV_ObjPathCorrdVLatRel_oIV_IIV_I : 151|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ IIV_ObjCartesianDstLgtRel_oIV_II : 248|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ IIV_CartesianVLgtRel_oIV_IIV_Inf : 264|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ IIV_ObjCartesianDstLatRel_oIV_II : 277|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ IIV_CartesianVLatRel_oIV_IIV_Inf : 288|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ IIV_ObjClass_oIV_IIV_Info_oMRR_S : 297|3@1+ (1,0) [0|7] "" ADAS
+ SG_ IIV_ObjSnsrDetn_oIV_IIV_Info_oMR : 300|3@1+ (1,0) [0|7] "" ADAS
+ SG_ IIV_ObjPrsnt_oIV_IIV_Info_oMRR_S : 303|1@1+ (1,0) [0|1] "" ADAS
+ SG_ IIV_ObjTrnOffProblty_oIV_IIV_Inf : 304|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ IIV_ObjExistncProblty_oIV_IIV_In : 312|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ IIV_ObjPathCorrdALgtRel_oIV_IIV_ : 320|11@1- (0.019540791,0) [-20.009769984|19.990229193] "m/s2" ADAS
+ SG_ IIV_ObjMtnDir_oIV_IIV_Info_oMRR_ : 331|2@1+ (1,0) [0|3] "" ADAS
+ SG_ IIV_ObjMtnSts_oIV_IIV_Info_oMRR_ : 333|2@1+ (1,0) [0|3] "" ADAS
+ SG_ IIV_ObjNewTar_oIV_IIV_Info_oMRR_ : 335|1@1+ (1,0) [0|1] "" ADAS
+ SG_ IIV_ObjPathCorrdDstLgtRel_oIV_II : 336|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ IIV_ObjPathCorrdVLgtRel_oIV_IIV_ : 352|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ IIV_ObjPathCorrdDstLat_oIV_IIV_I : 365|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ IIV_ObjPathCorrdVLatRel_oIV_IIV_ : 375|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+
+BO_ 402 SLNIV_SLNIIV_Info_oMRR_SCAM: 48 Vector__XXX
+ SG_ SLNIV_SLNIIV_Info_CRC_oSLNIV_SLN : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ SLNIV_SLNIIV_Info_ALIVE_oSLNIV_S : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ SLNIV_ObjCartesianDstLgtRel_oSLN : 24|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ SLNIV_CartesianVLgtRel_oSLNIV_SL : 40|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ SLNIV_ObjCartesianDstLatRel_oSLN : 53|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ SLNIV_CartesianVLatRel_oSLNIV_SL : 64|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ SLNIV_ObjClass_oSLNIV_SLNIIV_Inf : 73|3@1+ (1,0) [0|7] "" ADAS
+ SG_ SLNIV_ObjSnsrDetn_oSLNIV_SLNIIV_ : 76|3@1+ (1,0) [0|7] "" ADAS
+ SG_ SLNIV_ObjPrsnt_oSLNIV_SLNIIV_Inf : 79|1@1+ (1,0) [0|1] "" ADAS
+ SG_ SLNIV_ObjTrnOffProblty_oSLNIV_SL : 80|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ SLNIV_ObjExistncProblty_oSLNIV_S : 88|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ SLNIV_ObjPathCorrdALgtRel_oSLNIV : 96|11@1- (0.019540791,0) [-20.009769984|19.990229193] "m/s2" ADAS
+ SG_ SLNIV_ObjMtnDir_oSLNIV_SLNIIV_In : 107|2@1+ (1,0) [0|3] "" ADAS
+ SG_ SLNIV_ObjMtnSts_oSLNIV_SLNIIV_In : 109|2@1+ (1,0) [0|3] "" ADAS
+ SG_ SLNIV_ObjNewTar_oSLNIV_SLNIIV_In : 111|1@1+ (1,0) [0|1] "" ADAS
+ SG_ SLNIV_ObjPathCorrdDstLgtRel_oSLN : 112|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ SLNIV_ObjPathCorrdVLgtRel_oSLNIV : 128|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ SLNIV_ObjPathCorrdDstLat_oSLNIV_ : 141|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ SLNIV_ObjPathCorrdVLatRel_oSLNIV : 151|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ SLNIIV_ObjCartesianDstLgtRel_oSL : 248|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ SLNIIV_CartesianVLgtRel_oSLNIV_S : 264|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ SLNIIV_ObjCartesianDstLatRel_oSL : 277|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ SLNIIV_CartesianVLatRel_oSLNIV_S : 288|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ SLNIIV_ObjClass_oSLNIV_SLNIIV_In : 297|3@1+ (1,0) [0|7] "" ADAS
+ SG_ SLNIIV_ObjSnsrDetn_oSLNIV_SLNIIV : 300|3@1+ (1,0) [0|7] "" ADAS
+ SG_ SLNIIV_ObjPrsnt_oSLNIV_SLNIIV_In : 303|1@1+ (1,0) [0|1] "" ADAS
+ SG_ SLNIIV_ObjTrnOffProblty_oSLNIV_S : 304|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ SLNIIV_ObjExistncProblty_oSLNIV_ : 312|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ SLNIIV_ObjPathCorrdALgtRel_oSLNI : 320|11@1- (0.019540791,0) [-20.009769984|19.990229193] "m/s2" ADAS
+ SG_ SLNIIV_ObjMtnDir_oSLNIV_SLNIIV_I : 331|2@1+ (1,0) [0|3] "" ADAS
+ SG_ SLNIIV_ObjMtnSts_oSLNIV_SLNIIV_I : 333|2@1+ (1,0) [0|3] "" ADAS
+ SG_ SLNIIV_ObjNewTar_oSLNIV_SLNIIV_I : 335|1@1+ (1,0) [0|1] "" ADAS
+ SG_ SLNIIV_ObjPathCorrdDstLgtRel_oSL : 336|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ SLNIIV_ObjPathCorrdVLgtRel_oSLNI : 352|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ SLNIIV_ObjPathCorrdDstLat_oSLNIV : 365|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ SLNIIV_ObjPathCorrdVLatRel_oSLNI : 375|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+
+BO_ 403 FLNIV_FLNIIV_Info_oMRR_SCAM: 48 Vector__XXX
+ SG_ FLNIV_FLNIIV_Info_CRC_oFLNIV_FLN : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ FLNIV_FLNIIV_Info_ALIVE_oFLNIV_F : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ FLNIV_ObjCartesianDstLgtRel_oFLN : 24|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ FLNIV_CartesianVLgtRel_oFLNIV_FL : 40|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ FLNIV_ObjCartesianDstLatRel_oFLN : 53|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ FLNIV_CartesianVLatRel_oFLNIV_FL : 64|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ FLNIV_ObjClass_oFLNIV_FLNIIV_Inf : 73|3@1+ (1,0) [0|7] "" ADAS
+ SG_ FLNIV_ObjSnsrDetn_oFLNIV_FLNIIV_ : 76|3@1+ (1,0) [0|7] "" ADAS
+ SG_ FLNIV_ObjPrsnt_oFLNIV_FLNIIV_Inf : 79|1@1+ (1,0) [0|1] "" ADAS
+ SG_ FLNIV_ObjTrnOffProblty_oFLNIV_FL : 80|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ FLNIV_ObjExistncProblty_oFLNIV_F : 88|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ FLNIV_ObjPathCorrdALgtRel_oFLNIV : 96|11@1- (0.019540791,0) [-20.009769984|19.990229193] "m/s2" ADAS
+ SG_ FLNIV_ObjMtnDir_oFLNIV_FLNIIV_In : 107|2@1+ (1,0) [0|3] "" ADAS
+ SG_ FLNIV_ObjMtnSts_oFLNIV_FLNIIV_In : 109|2@1+ (1,0) [0|3] "" ADAS
+ SG_ FLNIV_ObjNewTar_oFLNIV_FLNIIV_In : 111|1@1+ (1,0) [0|1] "" ADAS
+ SG_ FLNIV_ObjPathCorrdDstLgtRel_oFLN : 112|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ FLNIV_ObjPathCorrdVLgtRel_oFLNIV : 128|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ FLNIV_ObjPathCorrdDstLat_oFLNIV_ : 141|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ FLNIV_ObjPathCorrdVLatRel_oFLNIV : 151|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ FLNIIV_ObjCartesianDstLgtRel_oFL : 248|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ FLNIIV_CartesianVLgtRel_oFLNIV_F : 264|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ FLNIIV_ObjCartesianDstLatRel_oFL : 277|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ FLNIIV_CartesianVLatRel_oFLNIV_F : 288|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+ SG_ FLNIIV_ObjClass_oFLNIV_FLNIIV_In : 297|3@1+ (1,0) [0|7] "" ADAS
+ SG_ FLNIIV_ObjSnsrDetn_oFLNIV_FLNIIV : 300|3@1+ (1,0) [0|7] "" ADAS
+ SG_ FLNIIV_ObjPrsnt_oFLNIV_FLNIIV_In : 303|1@1+ (1,0) [0|1] "" ADAS
+ SG_ FLNIIV_ObjTrnOffProblty_oFLNIV_F : 304|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ FLNIIV_ObjExistncProblty_oFLNIV_ : 312|8@1+ (0.003921569,0) [0|1.000000095] "" ADAS
+ SG_ FLNIIV_ObjPathCorrdALgtRel_oFLNI : 320|11@1- (0.019540791,0) [-20.009769984|19.990229193] "m/s2" ADAS
+ SG_ FLNIIV_ObjMtnDir_oFLNIV_FLNIIV_I : 331|2@1+ (1,0) [0|3] "" ADAS
+ SG_ FLNIIV_ObjMtnSts_oFLNIV_FLNIIV_I : 333|2@1+ (1,0) [0|3] "" ADAS
+ SG_ FLNIIV_ObjNewTar_oFLNIV_FLNIIV_I : 335|1@1+ (1,0) [0|1] "" ADAS
+ SG_ FLNIIV_ObjPathCorrdDstLgtRel_oFL : 336|14@1+ (0.025,-10) [-10|399.575] "m" ADAS
+ SG_ FLNIIV_ObjPathCorrdVLgtRel_oFLNI : 352|13@1- (0.030521304,0) [-125.015261184|124.98473988] "m/s" ADAS
+ SG_ FLNIIV_ObjPathCorrdDstLat_oFLNIV : 365|10@1- (0.029325513,0) [-15.014662656|14.985337143] "m" ADAS
+ SG_ FLNIIV_ObjPathCorrdVLatRel_oFLNI : 375|9@1- (0.039138943,0) [-10.019569408|9.980430465] "m/s" ADAS
+
+BO_ 407 RM_EGOLANE_INFO_oMRR_SCAM: 24 Vector__XXX
+ SG_ RM_EGOLANE_INFO_CRC_oRM_EGOLANE_ : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ RM_EGOLANE_INFO_ALIVE_oRM_EGOLAN : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ RM_EgoLaneWidth_m_oRM_EGOLANE_IN : 24|9@1+ (0.01,2) [2|7.11] "m" ADAS
+ SG_ RM_EgoLaneC0_m_oRM_EGOLANE_INFO_ : 33|11@1- (0.01,0) [-10.24|10.23] "m" ADAS
+ SG_ RM_EgoLaneC1_1_oRM_EGOLANE_INFO_ : 44|10@1- (0.0008,0) [-0.4096|0.4088] "" ADAS
+ SG_ RM_EgoLaneC2_1pm_oRM_EGOLANE_INF : 54|18@1- (1e-06,0) [-0.131072|0.131071] "1/m" ADAS
+ SG_ RM_EgoLaneC3_1pm2_oRM_EGOLANE_IN : 72|19@1- (4e-09,0) [-0.001048576|0.001048572] "1/m^2" ADAS
+ SG_ RM_EgoLaneComposition_oRM_EGOLAN : 91|4@1+ (1,0) [0|15] "" ADAS
+ SG_ RM_EgoLaneWidthStd_m_oRM_EGOLANE : 96|8@1+ (0.01,0) [0|2.55] "m" ADAS
+ SG_ RM_EgoLaneLateralStdC0_m_oRM_EGO : 104|10@1+ (0.01,0) [0|10.23] "m" ADAS
+ SG_ RM_EgoLaneLateralStdC3_1pm2_oRM_ : 114|16@1- (2e-08,0) [-0.00065536|0.00065534] "1/m^2" ADAS
+ SG_ RM_EgoLaneLateralStdC2_1pm_oRM_E : 130|12@1- (4e-06,0) [-0.008192|0.008188] "1/m" ADAS
+ SG_ RM_EgoLaneLateralStdC1_1_oRM_EGO : 144|7@1- (0.0006,0) [-0.0384|0.0378] "" ADAS
+
+BO_ 408 ACC_LSS_State_oMRR_SCAM: 12 Vector__XXX
+ SG_ ACC_LSS_State_CRC_oACC_LSS_State : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ ACC_LSS_State_ALIVE_oACC_LSS_Sta : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Desired_Cruise_Speed_oACC_LSS_St : 24|13@1- (0.0305213,0) [-125.0152448|124.9847235] "m/s" ADAS
+ SG_ ICA_Status_oACC_LSS_State_oMRR_S : 37|3@1+ (1,0) [0|7] "" ADAS
+ SG_ LSS_HWA_State_oACC_LSS_State_oMR : 40|3@1+ (1,0) [0|7] "" ADAS
+ SG_ Hands_off_oACC_LSS_State_oMRR_SC : 43|1@1+ (1,0) [0|1] "" ADAS
+ SG_ LSS_Enabled_oACC_LSS_State_oMRR_ : 44|1@1+ (1,0) [0|1] "" ADAS
+ SG_ Handsoff_shutdown_Time_oACC_LSS_ : 48|9@1+ (0.1,0) [0|51.1] "s" ADAS
+ SG_ Acceleration_Demand_oACC_LSS_Sta : 57|13@1- (0.002,0) [-8.192|8.19] "m/s^2" ADAS
+ SG_ Final_Accel_Demand_oACC_LSS_Stat : 70|13@1- (0.002,0) [-8.192|8.19] "m/s^2" ADAS
+
+BO_ 528 CPB_Path_Center_oMRR_SCAM: 24 ADAS
+ SG_ CPB_Path_Center_CRC_oCPB_Path_Ce : 0|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ CPB_Path_Center_ALIVE_oCPB_Path_ : 16|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ CPB_Path_Center_C0_oCPB_Path_Cen : 24|11@1- (0.01,0) [-10.24|10.23] "m" Vector__XXX
+ SG_ CPB_Path_Center_C1_oCPB_Path_Cen : 35|10@1- (0.0009765625,0) [-0.5|0.4990234375] "rad" Vector__XXX
+ SG_ CPB_Path_Center_C2_oCPB_Path_Cen : 45|17@1- (1e-06,0) [-0.065536|0.065535] "1pm" Vector__XXX
+ SG_ CPB_Path_Center_C3_oCPB_Path_Cen : 62|20@1- (4e-09,0) [-0.002097152|0.002097148] "1pm2" Vector__XXX
+ SG_ CPB_Path_Center_Quality_oCPB_Pat : 82|2@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ CPB_SDE_Source_State_oCPB_Path_C : 84|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ CPB_Path_Center_View_Range_oCPB_ : 88|8@1+ (0.5,0) [0|127.5] "m" Vector__XXX
+ SG_ CPB_STD_PC_View_Range_oCPB_Path_ : 96|8@1+ (0.5,0) [0|127.5] "m" Vector__XXX
+ SG_ CPB_Path_Width_oCPB_Path_Center_ : 104|8@1+ (0.05,0) [0|12.75] "m" Vector__XXX
+ SG_ CPB_STD_PC_Path_Width_oCPB_Path_ : 112|8@1+ (0.05,0) [0|12.75] "m" Vector__XXX
+ SG_ CPB_SDE_Blending_State_oCPB_Path : 120|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ CPB_Error_oCPB_Path_Center_oMRR_ : 121|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ CPB_Path_Center_is_Lane_Center_o : 122|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ CPB_STD_PC_C0_oCPB_Path_Center_o : 123|11@1- (0.01,0) [-10.24|10.23] "m" Vector__XXX
+ SG_ CPB_STD_PC_C1_oCPB_Path_Center_o : 134|10@1- (0.0009765625,0) [-0.5|0.4990234375] "rad" Vector__XXX
+ SG_ CPB_STD_PC_C2_oCPB_Path_Center_o : 144|17@1- (1e-06,0) [-0.065536|0.065535] "1pm" Vector__XXX
+ SG_ CPB_STD_PC_C3_oCPB_Path_Center_o : 161|20@1- (4e-09,0) [-0.002097152|0.002097148] "1pm2" Vector__XXX
+
+BO_ 530 SDE_State_ELK_Flag_oMRR_SCAM: 8 ADAS
+ SG_ SDE_State_ELK_Flag_CRC_oSDE_Stat : 0|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ SDE_State_ELK_Flag_ALIVE_oSDE_St : 16|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ SDE_State_oSDE_State_ELK_Flag_oM : 24|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ LaneChange_Status_oSDE_State_ELK : 32|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ IsLeftLaneOccupied_oSDE_State_EL : 36|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ IsLeftLaneOccupiedStatus_oSDE_St : 37|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ IsRightLaneOccupied_oSDE_State_E : 38|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ IsRightLaneOccupiedStatus_oSDE_S : 39|1@1+ (1,0) [0|1] "" Vector__XXX
+
+BO_ 1040 A_CAMERA_OD1_OD2_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD1_OD2_CRC_oA_CAMERA_O : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD1_OD2_ALIVE_oA_CAMERA : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj01_ID_oA_CAMERA_OD1_OD2_oMRR_ : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj01_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj01_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj01_BrakeLight_oA_CAMERA_OD1_O : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj01_Dx_oA_CAMERA_OD1_OD2_oMRR_ : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj01_Type_oA_CAMERA_OD1_OD2_oMR : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj01_DirIndicator_oA_CAMERA_OD1 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj01_Width_oA_CAMERA_OD1_OD2_oM : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj01_DxStdDev_oA_CAMERA_OD1_OD2 : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj01_Rel_VxStdDev_oA_CAMERA_OD1 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj01_angle_rate_oA_CAMERA_OD1_O : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj01_PhiLeft_oA_CAMERA_OD1_OD2_ : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj01_PhiRight_oA_CAMERA_OD1_OD2 : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj01_ExistProb_oA_CAMERA_OD1_OD : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj01_Sync_Counter_oA_CAMERA_OD1 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ OBJ_VRU_Count_oA_CAMERA_OD1_OD2_ : 160|5@1+ (1,0) [0|31] "" ADAS
+ SG_ OBJ_VD_Count_oA_CAMERA_OD1_OD2_o : 168|5@1+ (1,0) [0|31] "" ADAS
+ SG_ obj01_Motion_Orientation_oA_CAME : 176|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj01_Rel_Vy_oA_CAMERA_OD1_OD2_o : 184|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj01_Rel_VyStdDev_oA_CAMERA_OD1 : 195|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj02_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj02_Rel_Vy_oA_CAMERA_OD1_OD2_o : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj02_Rel_VyStdDev_oA_CAMERA_OD1 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj02_ID_oA_CAMERA_OD1_OD2_oMRR_ : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj02_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj02_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj02_BrakeLight_oA_CAMERA_OD1_O : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj02_Dx_oA_CAMERA_OD1_OD2_oMRR_ : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj02_Rel_Vx_oA_CAMERA_OD1_OD2_o : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj02_Type_oA_CAMERA_OD1_OD2_oMR : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj02_DirIndicator_oA_CAMERA_OD1 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj02_Width_oA_CAMERA_OD1_OD2_oM : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj02_DxStdDev_oA_CAMERA_OD1_OD2 : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj02_Rel_VxStdDev_oA_CAMERA_OD1 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj02_angle_rate_oA_CAMERA_OD1_O : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj02_PhiLeft_oA_CAMERA_OD1_OD2_ : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj02_PhiRight_oA_CAMERA_OD1_OD2 : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj02_ExistProb_oA_CAMERA_OD1_OD : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj02_Sync_Counter_oA_CAMERA_OD1 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1041 A_CAMERA_OD3_OD4_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD3_OD4_CRC_oA_CAMERA_O : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD3_OD4_ALIVE_oA_CAMERA : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj03_ID_oA_CAMERA_OD3_OD4_oMRR_ : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj03_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj03_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj03_BrakeLight_oA_CAMERA_OD3_O : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj03_Dx_oA_CAMERA_OD3_OD4_oMRR_ : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj03_Rel_Vx_oA_CAMERA_OD3_OD4_o : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj03_Type_oA_CAMERA_OD3_OD4_oMR : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj03_DirIndicator_oA_CAMERA_OD3 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj03_Width_oA_CAMERA_OD3_OD4_oM : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj03_DxStdDev_oA_CAMERA_OD3_OD4 : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj03_Rel_VxStdDev_oA_CAMERA_OD3 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj03_angle_rate_oA_CAMERA_OD3_O : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj03_PhiLeft_oA_CAMERA_OD3_OD4_ : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj03_PhiRight_oA_CAMERA_OD3_OD4 : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj03_ExistProb_oA_CAMERA_OD3_OD : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj03_Sync_Counter_oA_CAMERA_OD3 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj03_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj03_Rel_Vy_oA_CAMERA_OD3_OD4_o : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj03_Rel_VyStdDev_oA_CAMERA_OD3 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj04_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj04_Rel_Vy_oA_CAMERA_OD3_OD4_o : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj04_Rel_VyStdDev_oA_CAMERA_OD3 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj04_ID_oA_CAMERA_OD3_OD4_oMRR_ : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj04_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj04_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj04_BrakeLight_oA_CAMERA_OD3_O : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj04_Dx_oA_CAMERA_OD3_OD4_oMRR_ : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj04_Rel_Vx_oA_CAMERA_OD3_OD4_o : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj04_Type_oA_CAMERA_OD3_OD4_oMR : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj04_DirIndicator_oA_CAMERA_OD3 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj04_Width_oA_CAMERA_OD3_OD4_oM : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj04_DxStdDev_oA_CAMERA_OD3_OD4 : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj04_Rel_VxStdDev_oA_CAMERA_OD3 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj04_angle_rate_oA_CAMERA_OD3_O : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj04_PhiLeft_oA_CAMERA_OD3_OD4_ : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj04_PhiRight_oA_CAMERA_OD3_OD4 : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj04_ExistProb_oA_CAMERA_OD3_OD : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj04_Sync_Counter_oA_CAMERA_OD3 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1042 A_CAMERA_OD5_OD6_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD5_OD6_CRC_oA_CAMERA_O : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD5_OD6_ALIVE_oA_CAMERA : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj05_ID_oA_CAMERA_OD5_OD6_oMRR_ : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj05_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj05_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj05_BrakeLight_oA_CAMERA_OD5_O : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj05_Dx_oA_CAMERA_OD5_OD6_oMRR_ : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj05_Rel_Vx_oA_CAMERA_OD5_OD6_o : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj05_Type_oA_CAMERA_OD5_OD6_oMR : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj05_DirIndicator_oA_CAMERA_OD5 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj05_Width_oA_CAMERA_OD5_OD6_oM : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj05_DxStdDev_oA_CAMERA_OD5_OD6 : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj05_Rel_VxStdDev_oA_CAMERA_OD5 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj05_angle_rate_oA_CAMERA_OD5_O : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj05_PhiLeft_oA_CAMERA_OD5_OD6_ : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj05_PhiRight_oA_CAMERA_OD5_OD6 : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj05_ExistProb_oA_CAMERA_OD5_OD : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj05_Sync_Counter_oA_CAMERA_OD5 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj05_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj05_Rel_Vy_oA_CAMERA_OD5_OD6_o : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj05_Rel_VyStdDev_oA_CAMERA_OD5 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj06_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj06_Rel_Vy_oA_CAMERA_OD5_OD6_o : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj06_Rel_VyStdDev_oA_CAMERA_OD5 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj06_ID_oA_CAMERA_OD5_OD6_oMRR_ : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj06_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj06_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj06_BrakeLight_oA_CAMERA_OD5_O : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj06_Dx_oA_CAMERA_OD5_OD6_oMRR_ : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj06_Rel_Vx_oA_CAMERA_OD5_OD6_o : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj06_Type_oA_CAMERA_OD5_OD6_oMR : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj06_DirIndicator_oA_CAMERA_OD5 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj06_Width_oA_CAMERA_OD5_OD6_oM : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj06_DxStdDev_oA_CAMERA_OD5_OD6 : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj06_Rel_VxStdDev_oA_CAMERA_OD5 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj06_angle_rate_oA_CAMERA_OD5_O : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj06_PhiLeft_oA_CAMERA_OD5_OD6_ : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj06_PhiRight_oA_CAMERA_OD5_OD6 : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj06_ExistProb_oA_CAMERA_OD5_OD : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj06_Sync_Counter_oA_CAMERA_OD5 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1043 A_CAMERA_OD7_OD8_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD7_OD8_CRC_oA_CAMERA_O : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD7_OD8_ALIVE_oA_CAMERA : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj07_ID_oA_CAMERA_OD7_OD8_oMRR_ : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj07_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj07_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj07_BrakeLight_oA_CAMERA_OD7_O : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj07_Dx_oA_CAMERA_OD7_OD8_oMRR_ : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj07_Rel_Vx_oA_CAMERA_OD7_OD8_o : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj07_Type_oA_CAMERA_OD7_OD8_oMR : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj07_DirIndicator_oA_CAMERA_OD7 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj07_Width_oA_CAMERA_OD7_OD8_oM : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj07_DxStdDev_oA_CAMERA_OD7_OD8 : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj07_Rel_VxStdDev_oA_CAMERA_OD7 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj07_angle_rate_oA_CAMERA_OD7_O : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj07_PhiLeft_oA_CAMERA_OD7_OD8_ : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj08_PhiRight_oA_CAMERA_OD7_OD8 : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj07_ExistProb_oA_CAMERA_OD7_OD : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj07_Sync_Counter_oA_CAMERA_OD7 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj07_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj07_Rel_Vy_oA_CAMERA_OD7_OD8_o : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj07_Rel_VyStdDev_oA_CAMERA_OD7 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj08_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj08_Rel_Vy_oA_CAMERA_OD7_OD8_o : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj08_Rel_VyStdDev_oA_CAMERA_OD7 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj08_ID_oA_CAMERA_OD7_OD8_oMRR_ : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj08_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj08_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj08_BrakeLight_oA_CAMERA_OD7_O : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj08_Dx_oA_CAMERA_OD7_OD8_oMRR_ : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj08_Rel_Vx_oA_CAMERA_OD7_OD8_o : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj08_Type_oA_CAMERA_OD7_OD8_oMR : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj08_DirIndicator_oA_CAMERA_OD7 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj08_Width_oA_CAMERA_OD7_OD8_oM : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj08_DxStdDev_oA_CAMERA_OD7_OD8 : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj08_Rel_VxStdDev_oA_CAMERA_OD7 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj08_angle_rate_oA_CAMERA_OD7_O : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj08_PhiLeft_oA_CAMERA_OD7_OD8_ : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj07_PhiRight_oA_CAMERA_OD7_OD8 : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj08_ExistProb_oA_CAMERA_OD7_OD : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj08_Sync_Counter_oA_CAMERA_OD7 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1044 A_CAMERA_OD9_OD10_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD9_OD10_CRC_oA_CAMERA_ : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD9_OD10_ALIVE_oA_CAMER : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj09_ID_oA_CAMERA_OD9_OD10_oMRR : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj09_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj09_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj09_BrakeLight_oA_CAMERA_OD9_O : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj09_Dx_oA_CAMERA_OD9_OD10_oMRR : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj09_Rel_Vx_oA_CAMERA_OD9_OD10_ : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj09_Type_oA_CAMERA_OD9_OD10_oM : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj09_DirIndicator_oA_CAMERA_OD9 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj09_Width_oA_CAMERA_OD9_OD10_o : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj09_DxStdDev_oA_CAMERA_OD9_OD1 : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj09_Rel_VxStdDev_oA_CAMERA_OD9 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj09_angle_rate_oA_CAMERA_OD9_O : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj09_PhiLeft_oA_CAMERA_OD9_OD10 : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj09_PhiRight_oA_CAMERA_OD9_OD1 : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj09_ExistProb_oA_CAMERA_OD9_OD : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj09_Sync_Counter_oA_CAMERA_OD9 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj09_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj09_Rel_Vy_oA_CAMERA_OD9_OD10_ : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj09_Rel_VyStdDev_oA_CAMERA_OD9 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj10_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj10_Rel_Vy_oA_CAMERA_OD9_OD10_ : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj10_Rel_VyStdDev_oA_CAMERA_OD9 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj10_ID_oA_CAMERA_OD9_OD10_oMRR : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj10_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj10_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj10_BrakeLight_oA_CAMERA_OD9_O : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj10_Dx_oA_CAMERA_OD9_OD10_oMRR : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj10_Rel_Vx_oA_CAMERA_OD9_OD10_ : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj10_Type_oA_CAMERA_OD9_OD10_oM : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj10_DirIndicator_oA_CAMERA_OD9 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj10_Width_oA_CAMERA_OD9_OD10_o : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj10_DxStdDev_oA_CAMERA_OD9_OD1 : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj10_Rel_VxStdDev_oA_CAMERA_OD9 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj10_angle_rate_oA_CAMERA_OD9_O : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj10_PhiLeft_oA_CAMERA_OD9_OD10 : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj10_PhiRight_oA_CAMERA_OD9_OD1 : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj10_ExistProb_oA_CAMERA_OD9_OD : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj10_Sync_Counter_oA_CAMERA_OD9 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1045 A_CAMERA_OD11_OD12_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD11_OD12_CRC_oA_CAMERA : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD11_OD12_ALIVE_oA_CAME : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj11_ID_oA_CAMERA_OD11_OD12_oMR : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj11_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj11_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj11_BrakeLight_oA_CAMERA_OD11_ : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj11_Dx_oA_CAMERA_OD11_OD12_oMR : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj11_Rel_Vx_oA_CAMERA_OD11_OD12 : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj11_Type_oA_CAMERA_OD11_OD12_o : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj11_DirIndicator_oA_CAMERA_OD1 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj11_Width_oA_CAMERA_OD11_OD12_ : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj11_DxStdDev_oA_CAMERA_OD11_OD : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj11_Rel_VxStdDev_oA_CAMERA_OD1 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj11_angle_rate_oA_CAMERA_OD11_ : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj11_PhiLeft_oA_CAMERA_OD11_OD1 : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj11_PhiRight_oA_CAMERA_OD11_OD : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj11_ExistProb_oA_CAMERA_OD11_O : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj11_Sync_Counter_oA_CAMERA_OD1 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj11_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj11_Rel_Vy_oA_CAMERA_OD11_OD12 : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj11_Rel_VyStdDev_oA_CAMERA_OD1 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj12_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj12_Rel_Vy_oA_CAMERA_OD11_OD12 : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj12_Rel_VyStdDev_oA_CAMERA_OD1 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj12_ID_oA_CAMERA_OD11_OD12_oMR : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj12_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj12_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj12_BrakeLight_oA_CAMERA_OD11_ : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj12_Dx_oA_CAMERA_OD11_OD12_oMR : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj12_Rel_Vx_oA_CAMERA_OD11_OD12 : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj12_Type_oA_CAMERA_OD11_OD12_o : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj12_DirIndicator_oA_CAMERA_OD1 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj12_Width_oA_CAMERA_OD11_OD12_ : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj12_DxStdDev_oA_CAMERA_OD11_OD : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj12_Rel_VxStdDev_oA_CAMERA_OD1 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj12_angle_rate_oA_CAMERA_OD11_ : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj12_PhiLeft_oA_CAMERA_OD11_OD1 : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj12_PhiRight_oA_CAMERA_OD11_OD : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj12_ExistProb_oA_CAMERA_OD11_O : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj12_Sync_Counter_oA_CAMERA_OD1 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1046 A_CAMERA_OD13_OD14_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD13_OD14_CRC_oA_CAMERA : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD13_OD14_ALIVE_oA_CAME : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj13_ID_oA_CAMERA_OD13_OD14_oMR : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj13_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj13_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj13_BrakeLight_oA_CAMERA_OD13_ : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj13_Dx_oA_CAMERA_OD13_OD14_oMR : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj13_Rel_Vx_oA_CAMERA_OD13_OD14 : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj13_Type_oA_CAMERA_OD13_OD14_o : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj13_DirIndicator_oA_CAMERA_OD1 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj13_Width_oA_CAMERA_OD13_OD14_ : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj13_DxStdDev_oA_CAMERA_OD13_OD : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj13_Rel_VxStdDev_oA_CAMERA_OD1 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj13_angle_rate_oA_CAMERA_OD13_ : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj13_PhiLeft_oA_CAMERA_OD13_OD1 : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj13_PhiRight_oA_CAMERA_OD13_OD : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj13_ExistProb_oA_CAMERA_OD13_O : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj13_Sync_Counter_oA_CAMERA_OD1 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj13_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj13_Rel_Vy_oA_CAMERA_OD13_OD14 : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj13_Rel_VyStdDev_oA_CAMERA_OD1 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj14_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj14_Rel_Vy_oA_CAMERA_OD13_OD14 : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj14_Rel_VyStdDev_oA_CAMERA_OD1 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj14_ID_oA_CAMERA_OD13_OD14_oMR : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj14_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj14_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj14_BrakeLight_oA_CAMERA_OD13_ : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj14_Dx_oA_CAMERA_OD13_OD14_oMR : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj14_Rel_Vx_oA_CAMERA_OD13_OD14 : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj14_Type_oA_CAMERA_OD13_OD14_o : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj14_DirIndicator_oA_CAMERA_OD1 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj14_Width_oA_CAMERA_OD13_OD14_ : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj14_DxStdDev_oA_CAMERA_OD13_OD : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj14_Rel_VxStdDev_oA_CAMERA_OD1 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj14_angle_rate_oA_CAMERA_OD13_ : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj14_PhiLeft_oA_CAMERA_OD13_OD1 : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj14_PhiRight_oA_CAMERA_OD13_OD : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj14_ExistProb_oA_CAMERA_OD13_O : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj14_Sync_Counter_oA_CAMERA_OD1 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1047 A_CAMERA_OD15_OD16_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD15_OD16_CRC_oA_CAMERA : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD15_OD16_ALIVE_oA_CAME : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj15_ID_oA_CAMERA_OD15_OD16_oMR : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj15_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj15_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj15_BrakeLight_oA_CAMERA_OD15_ : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj15_Dx_oA_CAMERA_OD15_OD16_oMR : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj15_Rel_Vx_oA_CAMERA_OD15_OD16 : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj15_Type_oA_CAMERA_OD15_OD16_o : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj15_DirIndicator_oA_CAMERA_OD1 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj15_Width_oA_CAMERA_OD15_OD16_ : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj15_DxStdDev_oA_CAMERA_OD15_OD : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj15_Rel_VxStdDev_oA_CAMERA_OD1 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj15_angle_rate_oA_CAMERA_OD15_ : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj15_PhiLeft_oA_CAMERA_OD15_OD1 : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj15_PhiRight_oA_CAMERA_OD15_OD : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj15_ExistProb_oA_CAMERA_OD15_O : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj15_Sync_Counter_oA_CAMERA_OD1 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj15_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj15_Rel_Vy_oA_CAMERA_OD15_OD16 : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj15_Rel_VyStdDev_oA_CAMERA_OD1 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj16_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj16_Rel_Vy_oA_CAMERA_OD15_OD16 : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj16_Rel_VyStdDev_oA_CAMERA_OD1 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj16_ID_oA_CAMERA_OD15_OD16_oMR : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj16_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj16_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj16_BrakeLight_oA_CAMERA_OD15_ : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj16_Dx_oA_CAMERA_OD15_OD16_oMR : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj16_Rel_Vx_oA_CAMERA_OD15_OD16 : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj16_Type_oA_CAMERA_OD15_OD16_o : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj16_DirIndicator_oA_CAMERA_OD1 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj16_Width_oA_CAMERA_OD15_OD16_ : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj16_DxStdDev_oA_CAMERA_OD15_OD : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj16_Rel_VxStdDev_oA_CAMERA_OD1 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj16_angle_rate_oA_CAMERA_OD15_ : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj16_PhiLeft_oA_CAMERA_OD15_OD1 : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj16_PhiRight_oA_CAMERA_OD15_OD : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj16_ExistProb_oA_CAMERA_OD15_O : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj16_Sync_Counter_oA_CAMERA_OD1 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1048 A_CAMERA_OD17_OD18_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD17_OD18_CRC_oA_CAMERA : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD17_OD18_ALIVE_oA_CAME : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj17_ID_oA_CAMERA_OD17_OD18_oMR : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj17_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj17_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj17_BrakeLight_oA_CAMERA_OD17_ : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj17_Dx_oA_CAMERA_OD17_OD18_oMR : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj17_Rel_Vx_oA_CAMERA_OD17_OD18 : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj17_Type_oA_CAMERA_OD17_OD18_o : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj17_DirIndicator_oA_CAMERA_OD1 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj17_Width_oA_CAMERA_OD17_OD18_ : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj17_DxStdDev_oA_CAMERA_OD17_OD : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj17_Rel_VxStdDev_oA_CAMERA_OD1 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj17_angle_rate_oA_CAMERA_OD17_ : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj17_PhiLeft_oA_CAMERA_OD17_OD1 : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj17_PhiRight_oA_CAMERA_OD17_OD : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj17_ExistProb_oA_CAMERA_OD17_O : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj17_Sync_Counter_oA_CAMERA_OD1 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj17_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj17_Rel_Vy_oA_CAMERA_OD17_OD18 : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj17_Rel_VyStdDev_oA_CAMERA_OD1 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj18_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj18_Rel_Vy_oA_CAMERA_OD17_OD18 : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj18_Rel_VyStdDev_oA_CAMERA_OD1 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj18_ID_oA_CAMERA_OD17_OD18_oMR : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj18_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj18_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj18_BrakeLight_oA_CAMERA_OD17_ : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj18_Dx_oA_CAMERA_OD17_OD18_oMR : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj18_Rel_Vx_oA_CAMERA_OD17_OD18 : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj18_Type_oA_CAMERA_OD17_OD18_o : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj18_DirIndicator_oA_CAMERA_OD1 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj18_Width_oA_CAMERA_OD17_OD18_ : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj18_DxStdDev_oA_CAMERA_OD17_OD : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj18_Rel_VxStdDev_oA_CAMERA_OD1 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj18_angle_rate_oA_CAMERA_OD17_ : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj18_PhiLeft_oA_CAMERA_OD17_OD1 : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj18_PhiRight_oA_CAMERA_OD17_OD : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj18_ExistProb_oA_CAMERA_OD17_O : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj18_Sync_Counter_oA_CAMERA_OD1 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1049 A_CAMERA_OD19_OD20_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_OD19_OD20_CRC_oA_CAMERA : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_OD19_OD20_ALIVE_oA_CAME : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj19_ID_oA_CAMERA_OD19_OD20_oMR : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj19_Motion_Status_oA_CAMERA_OD : 32|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj19_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj19_BrakeLight_oA_CAMERA_OD19_ : 38|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj19_Dx_oA_CAMERA_OD19_OD20_oMR : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj19_Rel_Vx_oA_CAMERA_OD19_OD20 : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj19_Type_oA_CAMERA_OD19_OD20_o : 66|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj19_DirIndicator_oA_CAMERA_OD1 : 69|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj19_Width_oA_CAMERA_OD19_OD20_ : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj19_DxStdDev_oA_CAMERA_OD19_OD : 81|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj19_Rel_VxStdDev_oA_CAMERA_OD1 : 94|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj19_angle_rate_oA_CAMERA_OD19_ : 105|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj19_PhiLeft_oA_CAMERA_OD19_OD2 : 117|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj19_PhiRight_oA_CAMERA_OD19_OD : 131|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj19_ExistProb_oA_CAMERA_OD19_O : 145|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj19_Sync_Counter_oA_CAMERA_OD1 : 152|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj19_Motion_Orientation_oA_CAME : 160|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj19_Rel_Vy_oA_CAMERA_OD19_OD20 : 168|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj19_Rel_VyStdDev_oA_CAMERA_OD1 : 179|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj20_Motion_Orientation_oA_CAME : 216|4@1+ (1,0) [0|15] "" ADAS
+ SG_ obj20_Rel_Vy_oA_CAMERA_OD19_OD20 : 224|11@1+ (0.05,-50) [-50|52.35] "m/s" ADAS
+ SG_ obj20_Rel_VyStdDev_oA_CAMERA_OD1 : 235|10@1+ (0.05,0) [0|51.15] "m/s" ADAS
+ SG_ obj20_ID_oA_CAMERA_OD19_OD20_oMR : 248|8@1+ (1,0) [0|255] "" ADAS
+ SG_ obj20_Motion_Status_oA_CAMERA_OD : 256|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj20_Lane_Assignment_oA_CAMERA_ : 259|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj20_BrakeLight_oA_CAMERA_OD19_ : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ obj20_Dx_oA_CAMERA_OD19_OD20_oMR : 263|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj20_Rel_Vx_oA_CAMERA_OD19_OD20 : 277|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
+ SG_ obj20_Type_oA_CAMERA_OD19_OD20_o : 290|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj20_DirIndicator_oA_CAMERA_OD1 : 293|3@1+ (1,0) [0|7] "" ADAS
+ SG_ obj20_Width_oA_CAMERA_OD19_OD20_ : 296|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
+ SG_ obj20_DxStdDev_oA_CAMERA_OD19_OD : 305|13@1+ (0.05,0) [0|409.55] "m" ADAS
+ SG_ obj20_Rel_VxStdDev_oA_CAMERA_OD1 : 318|11@1+ (0.05,0) [0|102.35] "m/s" ADAS
+ SG_ obj20_angle_rate_oA_CAMERA_OD19_ : 329|12@1+ (0.002,-2.234) [-2.234|5.956] "rad/s" ADAS
+ SG_ obj20_PhiLeft_oA_CAMERA_OD19_OD2 : 341|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj20_PhiRight_oA_CAMERA_OD19_OD : 355|14@1+ (0.0002,-1.571) [-1.571|1.7056] "rad" ADAS
+ SG_ obj20_ExistProb_oA_CAMERA_OD19_O : 369|7@1+ (0.01,0) [0|1.27] "" ADAS
+ SG_ obj20_Sync_Counter_oA_CAMERA_OD1 : 376|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1060 A_CAMERA_LD1_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_LD1_CRC_oA_CAMERA_LD1_o : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_LD1_ALIVE_oA_CAMERA_LD1 : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Line01_LineID_oA_CAMERA_LD1_oMRR : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Line01_DxEnd_oA_CAMERA_LD1_oMRR_ : 32|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Line01_Dy_oA_CAMERA_LD1_oMRR_SCA : 47|13@1+ (0.01,-30) [-30|51.91] "m" ADAS
+ SG_ Line01_Type_oA_CAMERA_LD1_oMRR_S : 60|4@1+ (1,0) [0|15] "" ADAS
+ SG_ Line01_CurvChange_oA_CAMERA_LD1_ : 64|20@1+ (5e-08,-0.024) [-0.024|0.02842875] "1/(m*m)" ADAS
+ SG_ Line01_ColorClass_oA_CAMERA_LD1_ : 84|3@1+ (1,0) [0|7] "" ADAS
+ SG_ Line01_Curv_oA_CAMERA_LD1_oMRR_S : 88|15@1+ (1.6e-05,-0.25) [-0.25|0.274272] "1/m" ADAS
+ SG_ Line01_HeadingAngle_oA_CAMERA_LD : 103|9@1+ (0.01,-2) [-2|3.11] "rad" ADAS
+ SG_ Line01_LineWidth_oA_CAMERA_LD1_o : 112|7@1+ (0.01,0) [0|1.27] "m" ADAS
+ SG_ Line01_DxStart_oA_CAMERA_LD1_oMR : 120|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Line01_ExistProb_oA_CAMERA_LD1_o : 136|6@1+ (0.02,0) [0|1.26] "" ADAS
+ SG_ Line02_LineID_oA_CAMERA_LD1_oMRR : 144|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Line02_DxEnd_oA_CAMERA_LD1_oMRR_ : 152|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Line02_Dy_oA_CAMERA_LD1_oMRR_SCA : 167|13@1+ (0.01,-30) [-30|51.91] "m" ADAS
+ SG_ Line02_Type_oA_CAMERA_LD1_oMRR_S : 180|4@1+ (1,0) [0|15] "" ADAS
+ SG_ Line02_CurvChange_oA_CAMERA_LD1_ : 184|20@1+ (5e-08,-0.024) [-0.024|0.02842875] "1/(m*m)" ADAS
+ SG_ Line02_ColorClass_oA_CAMERA_LD1_ : 204|3@1+ (1,0) [0|7] "" ADAS
+ SG_ Line02_Curv_oA_CAMERA_LD1_oMRR_S : 208|15@1+ (1.6e-05,-0.25) [-0.25|0.274272] "1/m" ADAS
+ SG_ Line02_HeadingAngle_oA_CAMERA_LD : 223|9@1+ (0.01,-2) [-2|3.11] "rad" ADAS
+ SG_ Line02_LineWidth_oA_CAMERA_LD1_o : 232|7@1+ (0.01,0) [0|1.27] "m" ADAS
+ SG_ Line02_DxStart_oA_CAMERA_LD1_oMR : 240|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Line02_ExistProb_oA_CAMERA_LD1_o : 256|6@1+ (0.02,0) [0|1.26] "" ADAS
+ SG_ Line_0102_Sync_Counter_oA_CAMERA : 264|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Line01_PredictSrc_oA_CAMERA_LD1_ : 272|6@1+ (1,0) [0|63] "" ADAS
+ SG_ Line01_PredictType_oA_CAMERA_LD1 : 278|2@1+ (1,0) [0|3] "" ADAS
+ SG_ Line02_PredictSrc_oA_CAMERA_LD1_ : 280|6@1+ (1,0) [0|63] "" ADAS
+ SG_ Line02_PredictType_oA_CAMERA_LD1 : 286|2@1+ (1,0) [0|3] "" ADAS
+
+BO_ 1061 A_CAMERA_LD2_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_LD2_CRC_oA_CAMERA_LD2_o : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_LD2_ALIVE_oA_CAMERA_LD2 : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Line03_LineID_oA_CAMERA_LD2_oMRR : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Line03_DxEnd_oA_CAMERA_LD2_oMRR_ : 32|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Line03_Dy_oA_CAMERA_LD2_oMRR_SCA : 47|13@1+ (0.01,-30) [-30|51.91] "m" ADAS
+ SG_ Line03_Type_oA_CAMERA_LD2_oMRR_S : 60|4@1+ (1,0) [0|15] "" ADAS
+ SG_ Line03_CurvChange_oA_CAMERA_LD2_ : 64|20@1+ (5e-08,-0.024) [-0.024|0.02842875] "1/(m*m)" ADAS
+ SG_ Line03_ColorClass_oA_CAMERA_LD2_ : 84|3@1+ (1,0) [0|7] "" ADAS
+ SG_ Line03_Curv_oA_CAMERA_LD2_oMRR_S : 88|15@1+ (1.6e-05,-0.25) [-0.25|0.274272] "1/m" ADAS
+ SG_ Line03_HeadingAngle_oA_CAMERA_LD : 103|9@1+ (0.01,-2) [-2|3.11] "rad" ADAS
+ SG_ Line03_LineWidth_oA_CAMERA_LD2_o : 112|7@1+ (0.01,0) [0|1.27] "m" ADAS
+ SG_ Line03_DxStart_oA_CAMERA_LD2_oMR : 120|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Line03_ExistProb_oA_CAMERA_LD2_o : 136|6@1+ (0.02,0) [0|1.26] "" ADAS
+ SG_ Line03_PredictSrc_oA_CAMERA_LD2_ : 142|1@1+ (1,0) [0|1] "" ADAS
+ SG_ Line03_PredictType_oA_CAMERA_LD2 : 143|1@1+ (1,0) [0|1] "" ADAS
+ SG_ Line04_LineID_oA_CAMERA_LD2_oMRR : 144|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Line04_DxEnd_oA_CAMERA_LD2_oMRR_ : 152|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Line04_Dy_oA_CAMERA_LD2_oMRR_SCA : 167|13@1+ (0.01,-30) [-30|51.91] "m" ADAS
+ SG_ Line04_Type_oA_CAMERA_LD2_oMRR_S : 180|4@1+ (1,0) [0|15] "" ADAS
+ SG_ Line04_CurvChange_oA_CAMERA_LD2_ : 184|20@1+ (5e-08,-0.024) [-0.024|0.02842875] "1/(m*m)" ADAS
+ SG_ Line04_ColorClass_oA_CAMERA_LD2_ : 204|3@1+ (1,0) [0|7] "" ADAS
+ SG_ Line04_Curv_oA_CAMERA_LD2_oMRR_S : 208|15@1+ (1.6e-05,-0.25) [-0.25|0.274272] "1/m" ADAS
+ SG_ Line04_HeadingAngle_oA_CAMERA_LD : 223|9@1+ (0.01,-2) [-2|3.11] "rad" ADAS
+ SG_ Line04_LineWidth_oA_CAMERA_LD2_o : 232|7@1+ (0.01,0) [0|1.27] "m" ADAS
+ SG_ Line04_DxStart_oA_CAMERA_LD2_oMR : 240|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Line04_ExistProb_oA_CAMERA_LD2_o : 256|6@1+ (0.02,0) [0|1.26] "" ADAS
+ SG_ Line04_PredictSrc_oA_CAMERA_LD2_ : 262|1@1+ (1,0) [0|1] "" ADAS
+ SG_ Line04_PredictType_oA_CAMERA_LD2 : 263|1@1+ (1,0) [0|1] "" ADAS
+ SG_ Line_0304_Sync_Counter_oA_CAMERA : 264|8@1+ (1,0) [0|255] "" ADAS
+
+BO_ 1150 A_CAMERA_RE_oMRR_SCAM: 48 Vector__XXX
+ SG_ A_CAMERA_RE_CRC_oA_CAMERA_RE_oMR : 0|16@1+ (1,0) [0|65535] "" ADAS
+ SG_ A_CAMERA_RE_ALIVE_oA_CAMERA_RE_o : 16|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Roadedge01_LineID_oA_CAMERA_RE_o : 24|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Roadedge01_DxEnd_oA_CAMERA_RE_oM : 32|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Roadedge01_Dy_oA_CAMERA_RE_oMRR_ : 47|13@1+ (0.01,-30) [-30|51.91] "m" ADAS
+ SG_ Roadedge01_Type_oA_CAMERA_RE_oMR : 60|4@1+ (1,0) [0|15] "/" ADAS
+ SG_ Roadedge01_CurvChange_oA_CAMERA_ : 64|20@1+ (5e-08,-0.024) [-0.024|0.02842875] "1/(m*m)" ADAS
+ SG_ Roadedge01_Curv_oA_CAMERA_RE_oMR : 84|15@1+ (1.6e-05,-0.25) [-0.25|0.274272] "1/m" ADAS
+ SG_ Roadedge01_HeadingAngle_oA_CAMER : 99|9@1+ (0.01,-2) [-2|3.11] "rad" ADAS
+ SG_ Roadedge01_DxStart_oA_CAMERA_RE_ : 108|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Roadedge01_PredictType_oA_CAMERA : 123|5@1+ (1,0) [0|31] "" ADAS
+ SG_ Roadedge01_ExistProb_oA_CAMERA_R : 128|6@1+ (0.02,0) [0|1.26] "" ADAS
+ SG_ Roadedge02_LineID_oA_CAMERA_RE_o : 136|8@1+ (1,0) [0|255] "" ADAS
+ SG_ Roadedge02_DxEnd_oA_CAMERA_RE_oM : 144|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Roadedge02_Dy_oA_CAMERA_RE_oMRR_ : 159|13@1+ (0.01,-30) [-30|51.91] "m" ADAS
+ SG_ Roadedge02_Type_oA_CAMERA_RE_oMR : 172|4@1+ (1,0) [0|15] "/" ADAS
+ SG_ Roadedge02_CurvChange_oA_CAMERA_ : 176|20@1+ (5e-08,-0.024) [-0.024|0.02842875] "1/(m*m)" ADAS
+ SG_ Roadedge02_Curv_oA_CAMERA_RE_oMR : 196|15@1+ (1.6e-05,-0.25) [-0.25|0.274272] "1/m" ADAS
+ SG_ Roadedge02_HeadingAngle_oA_CAMER : 211|9@1+ (0.01,-2) [-2|3.11] "rad" ADAS
+ SG_ Roadedge02_DxStart_oA_CAMERA_RE_ : 220|15@1+ (0.01,0) [0|327.67] "m" ADAS
+ SG_ Roadedge02_PredictType_oA_CAMERA : 235|5@1+ (1,0) [0|31] "" ADAS
+ SG_ Roadedge02_ExistProb_oA_CAMERA_R : 240|6@1+ (0.02,0) [0|1.26] "" ADAS
+ SG_ Roadedge0102_Sync_Counter_oA_CAM : 248|8@1+ (1,0) [0|255] "" ADAS
+
+CM_ SG_ 400 ACCObj_SnsrAv_oACCObj_Header_oMR "Radar Sensor Availability";
+CM_ SG_ 400 ACCObj_SnsrSts_oACCObj_Header_oM "Radar Sensor Status";
+CM_ SG_ 400 HstVehLaneChange_oACCObj_Header_ "Detected lane change state of ego";
+CM_ SG_ 400 EnvSpeed_oACCObj_Header_oMRR_SCA "Environment Speed (average speed of objects in the environment)";
+CM_ SG_ 401 IV_ObjPathCorrdALgtRel_oIV_IIV_I "Path-Corrected Relative Longitudinal Acceleration of the IV";
+CM_ SG_ 401 IIV_ObjPathCorrdALgtRel_oIV_IIV_ "Path-Corrected Relative Longitudinal Acceleration of the IIV";
+CM_ SG_ 402 SLNIV_ObjPathCorrdALgtRel_oSLNIV "Path-Corrected Relative Longitudinal Acceleration of the SLNIV";
+CM_ SG_ 402 SLNIIV_ObjPathCorrdALgtRel_oSLNI "Path-Corrected Relative Longitudinal Acceleration of the SLNIIV";
+CM_ SG_ 403 FLNIV_ObjPathCorrdALgtRel_oFLNIV "Path-Corrected Relative Longitudinal Acceleration of the FLNIV";
+CM_ SG_ 403 FLNIIV_ObjPathCorrdALgtRel_oFLNI "Path-Corrected Relative Longitudinal Acceleration of the FLNIIV";
+CM_ SG_ 407 RM_EgoLaneWidth_m_oRM_EGOLANE_IN "Lane width estimation of currently driven lane. Positive per definition.";
+CM_ SG_ 407 RM_EgoLaneC0_m_oRM_EGOLANE_INFO_ "Lane center topology estimation of currently driven lane - C0 coefficient of 3rd order polynomial, origin: center of rear axle of host vehicle. y(x) = C0 + C1 * x + C2 * x^2 + C3 * x^3. Negative to the left";
+CM_ SG_ 407 RM_EgoLaneC1_1_oRM_EGOLANE_INFO_ "Lane center topology estimation of currently driven lane - C1 coefficient of 3rd order polynomial, positive to the right. y(x) = C0 + C1 * x + C2 * x^2 + C3 * x^3. Negative to the left";
+CM_ SG_ 407 RM_EgoLaneC2_1pm_oRM_EGOLANE_INF "Lane center topology estimation of currently driven lane - C2 coefficient of 3rd order polynomial, sign according to C1. y(x) = C0 + C1 * x + C2 * x^2 + C3 * x^3. Negative to the left";
+CM_ SG_ 407 RM_EgoLaneC3_1pm2_oRM_EGOLANE_IN "Lane center topology estimation of currently driven lane - C3 coefficient of 3rd order polynomial, sign according to C2. y(x) = C0 + C1 * x + C2 * x^2 + C3 * x^3. Negative to the left";
+CM_ SG_ 407 RM_EgoLaneComposition_oRM_EGOLAN "Composition of topology estimation of currently driven lane. Bits are set, if the corresponding input is available, plausible and fused into topology estimation. Bit0: LF_PC_VIDEO_LEFT; Bit1: LF_PC_VIDEO_RIGHT; Bit2: LF_PC_OBJ_TRAJ_A; Bit3: RESERVED";
+CM_ SG_ 407 RM_EgoLaneWidthStd_m_oRM_EGOLANE "Standard deviation of lane width estimation of currently driven lane. Standard deviation reflects quality and availability of measurements. Positive per definition.";
+CM_ SG_ 407 RM_EgoLaneLateralStdC0_m_oRM_EGO "Lateral standard deviation of topology estimation of currently driven lane - C0 coefficient of 3rd order polynomial, positive per definition. Lat_std(x) = C0 + C1 * x + C2 * x^2 + C3 * x^3.";
+CM_ SG_ 407 RM_EgoLaneLateralStdC3_1pm2_oRM_ "Lateral standard deviation of topology estimation of currently driven lane - C3 coefficient of 3rd order polynomial. Lat_std(x) = C0 + C1 * x + C2 * x^2 + C3 * x^3.";
+CM_ SG_ 407 RM_EgoLaneLateralStdC2_1pm_oRM_E "Lateral standard deviation of topology estimation of currently driven lane - C2 coefficient of 3rd order polynomial. Lat_std(x) = C0 + C1 * x + C2 * x^2 + C3 * x^3.";
+CM_ SG_ 407 RM_EgoLaneLateralStdC1_1_oRM_EGO "Lateral standard deviation of topology estimation of currently driven lane - C1 coefficient of 3rd order polynomial. Lat_std(x) = C0 + C1 * x + C2 * x^2 + C3 * x^3.";
+CM_ SG_ 408 ICA_Status_oACC_LSS_State_oMRR_S "ICA status used for HMI logic";
+CM_ SG_ 408 LSS_HWA_State_oACC_LSS_State_oMR "LSS state in HWA mode";
+CM_ SG_ 408 Hands_off_oACC_LSS_State_oMRR_SC "Hands-off detected";
+CM_ SG_ 408 LSS_Enabled_oACC_LSS_State_oMRR_ "Request to activate the LSS function.";
+CM_ SG_ 408 Handsoff_shutdown_Time_oACC_LSS_ "Hands-off countdown time";
+CM_ SG_ 528 CPB_Path_Center_C0_oCPB_Path_Cen "Lane center topology estimation of currently driven lane - C0 coefficient of 3rd order polynomial, origin: center of rear axle of host vehicle";
+CM_ SG_ 528 CPB_Path_Center_C1_oCPB_Path_Cen "Lane center topology estimation of currently driven lane - C1 coefficient of 3rd order polynomial";
+CM_ SG_ 528 CPB_Path_Center_C2_oCPB_Path_Cen "Lane center topology estimation of currently driven lane - C2 coefficient of 3rd order polynomial";
+CM_ SG_ 528 CPB_Path_Center_C3_oCPB_Path_Cen "Lane center topology estimation of currently driven lane - C3 coefficient of 3rd order polynomial";
+CM_ SG_ 528 CPB_Path_Center_Quality_oCPB_Pat "0 (not reliable) to 3 (very reliable)";
+CM_ SG_ 528 CPB_SDE_Source_State_oCPB_Path_C "States Draft:
+invalid
+Main Path for LV Following
+Lane Change Path
+Lane Centering Path";
+CM_ SG_ 528 CPB_Path_Center_View_Range_oCPB_ "The view range is an indicator for the validity range of the path polynomial.";
+CM_ SG_ 528 CPB_STD_PC_View_Range_oCPB_Path_ "Variance to the view range of the assumed path.";
+CM_ SG_ 528 CPB_Path_Width_oCPB_Path_Center_ "The width of the assumed path.";
+CM_ SG_ 528 CPB_STD_PC_Path_Width_oCPB_Path_ "Standard deviation of the width of the assumed path.";
+CM_ SG_ 528 CPB_SDE_Blending_State_oCPB_Path "Blending state of the CPB Function of the SDE";
+CM_ SG_ 528 CPB_Error_oCPB_Path_Center_oMRR_ "True of an error prevents TJA activity";
+CM_ SG_ 528 CPB_Path_Center_is_Lane_Center_o "True if path center description is in-line with the road model lane center description";
+CM_ SG_ 528 CPB_STD_PC_C0_oCPB_Path_Center_o "standard deviation of topology estimation of currently driven lane - C0 coefficient of 3rd order polynomial. Standard deviation reflects quality and availability of measuremen";
+CM_ SG_ 528 CPB_STD_PC_C1_oCPB_Path_Center_o "Standard deviation of topology estimation of currently driven lane - C1 coefficient of 3rd order polynomial";
+CM_ SG_ 528 CPB_STD_PC_C2_oCPB_Path_Center_o "Standard deviation of topology estimation of currently driven lane - C2 coefficient of 3rd order polynomial";
+CM_ SG_ 528 CPB_STD_PC_C3_oCPB_Path_Center_o "Standard deviation of topology estimation of currently driven lane - C3 coefficient of 3rd order polynomial.";
+CM_ SG_ 1040 obj01_ID_oA_CAMERA_OD1_OD2_oMRR_ "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1040 obj01_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1040 obj01_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1040 obj01_BrakeLight_oA_CAMERA_OD1_O "Indication for brake lights";
+CM_ SG_ 1040 obj01_Dx_oA_CAMERA_OD1_OD2_oMRR_ "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1040 obj01_Type_oA_CAMERA_OD1_OD2_oMR "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1040 obj01_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1040 obj01_Width_oA_CAMERA_OD1_OD2_oM "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1040 obj01_DxStdDev_oA_CAMERA_OD1_OD2 "STD of the  longtitudinal distance.";
+CM_ SG_ 1040 obj01_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1040 obj01_angle_rate_oA_CAMERA_OD1_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1040 obj01_PhiLeft_oA_CAMERA_OD1_OD2_ "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1040 obj01_PhiRight_oA_CAMERA_OD1_OD2 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1040 obj01_ExistProb_oA_CAMERA_OD1_OD "The existence probability of the vehicle";
+CM_ SG_ 1040 obj01_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1040 OBJ_VRU_Count_oA_CAMERA_OD1_OD2_ "The number of recognized Vulnerable Road Users (pedestrians, bicycles) in the scene.";
+CM_ SG_ 1040 OBJ_VD_Count_oA_CAMERA_OD1_OD2_o "The number of recognized vehicles in the scene.";
+CM_ SG_ 1040 obj01_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1040 obj01_Rel_Vy_oA_CAMERA_OD1_OD2_o "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1040 obj01_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1040 obj02_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1040 obj02_Rel_Vy_oA_CAMERA_OD1_OD2_o "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1040 obj02_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1040 obj02_ID_oA_CAMERA_OD1_OD2_oMRR_ "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1040 obj02_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1040 obj02_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1040 obj02_BrakeLight_oA_CAMERA_OD1_O "Indication for brake lights";
+CM_ SG_ 1040 obj02_Dx_oA_CAMERA_OD1_OD2_oMRR_ "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1040 obj02_Rel_Vx_oA_CAMERA_OD1_OD2_o "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1040 obj02_Type_oA_CAMERA_OD1_OD2_oMR "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1040 obj02_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1040 obj02_Width_oA_CAMERA_OD1_OD2_oM "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1040 obj02_DxStdDev_oA_CAMERA_OD1_OD2 "STD of the  longtitudinal distance.";
+CM_ SG_ 1040 obj02_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1040 obj02_angle_rate_oA_CAMERA_OD1_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1040 obj02_PhiLeft_oA_CAMERA_OD1_OD2_ "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1040 obj02_PhiRight_oA_CAMERA_OD1_OD2 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1040 obj02_ExistProb_oA_CAMERA_OD1_OD "The existence probability of the vehicle";
+CM_ SG_ 1040 obj02_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1041 obj03_ID_oA_CAMERA_OD3_OD4_oMRR_ "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1041 obj03_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1041 obj03_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1041 obj03_BrakeLight_oA_CAMERA_OD3_O "Indication for brake lights";
+CM_ SG_ 1041 obj03_Dx_oA_CAMERA_OD3_OD4_oMRR_ "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1041 obj03_Rel_Vx_oA_CAMERA_OD3_OD4_o "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1041 obj03_Type_oA_CAMERA_OD3_OD4_oMR "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1041 obj03_DirIndicator_oA_CAMERA_OD3 "Indication for blinking left/right light";
+CM_ SG_ 1041 obj03_Width_oA_CAMERA_OD3_OD4_oM "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1041 obj03_DxStdDev_oA_CAMERA_OD3_OD4 "STD of the  longtitudinal distance.";
+CM_ SG_ 1041 obj03_Rel_VxStdDev_oA_CAMERA_OD3 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1041 obj03_angle_rate_oA_CAMERA_OD3_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1041 obj03_PhiLeft_oA_CAMERA_OD3_OD4_ "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1041 obj03_PhiRight_oA_CAMERA_OD3_OD4 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1041 obj03_ExistProb_oA_CAMERA_OD3_OD "The existence probability of the vehicle";
+CM_ SG_ 1041 obj03_Sync_Counter_oA_CAMERA_OD3 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1041 obj03_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1041 obj03_Rel_Vy_oA_CAMERA_OD3_OD4_o "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1041 obj03_Rel_VyStdDev_oA_CAMERA_OD3 "STD of the relative lateral speed.";
+CM_ SG_ 1041 obj04_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1041 obj04_Rel_Vy_oA_CAMERA_OD3_OD4_o "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1041 obj04_Rel_VyStdDev_oA_CAMERA_OD3 "STD of the relative lateral speed.";
+CM_ SG_ 1041 obj04_ID_oA_CAMERA_OD3_OD4_oMRR_ "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1041 obj04_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1041 obj04_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1041 obj04_BrakeLight_oA_CAMERA_OD3_O "Indication for brake lights";
+CM_ SG_ 1041 obj04_Dx_oA_CAMERA_OD3_OD4_oMRR_ "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1041 obj04_Rel_Vx_oA_CAMERA_OD3_OD4_o "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1041 obj04_Type_oA_CAMERA_OD3_OD4_oMR "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1041 obj04_DirIndicator_oA_CAMERA_OD3 "Indication for blinking left/right light";
+CM_ SG_ 1041 obj04_Width_oA_CAMERA_OD3_OD4_oM "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1041 obj04_DxStdDev_oA_CAMERA_OD3_OD4 "STD of the  longtitudinal distance.";
+CM_ SG_ 1041 obj04_Rel_VxStdDev_oA_CAMERA_OD3 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1041 obj04_angle_rate_oA_CAMERA_OD3_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1041 obj04_PhiLeft_oA_CAMERA_OD3_OD4_ "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1041 obj04_PhiRight_oA_CAMERA_OD3_OD4 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1041 obj04_ExistProb_oA_CAMERA_OD3_OD "The existence probability of the vehicle";
+CM_ SG_ 1041 obj04_Sync_Counter_oA_CAMERA_OD3 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1042 obj05_ID_oA_CAMERA_OD5_OD6_oMRR_ "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1042 obj05_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1042 obj05_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1042 obj05_BrakeLight_oA_CAMERA_OD5_O "Indication for brake lights";
+CM_ SG_ 1042 obj05_Dx_oA_CAMERA_OD5_OD6_oMRR_ "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1042 obj05_Rel_Vx_oA_CAMERA_OD5_OD6_o "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1042 obj05_Type_oA_CAMERA_OD5_OD6_oMR "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1042 obj05_DirIndicator_oA_CAMERA_OD5 "Indication for blinking left/right light";
+CM_ SG_ 1042 obj05_Width_oA_CAMERA_OD5_OD6_oM "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1042 obj05_DxStdDev_oA_CAMERA_OD5_OD6 "STD of the  longtitudinal distance.";
+CM_ SG_ 1042 obj05_Rel_VxStdDev_oA_CAMERA_OD5 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1042 obj05_angle_rate_oA_CAMERA_OD5_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1042 obj05_PhiLeft_oA_CAMERA_OD5_OD6_ "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1042 obj05_PhiRight_oA_CAMERA_OD5_OD6 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1042 obj05_ExistProb_oA_CAMERA_OD5_OD "The existence probability of the vehicle";
+CM_ SG_ 1042 obj05_Sync_Counter_oA_CAMERA_OD5 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1042 obj05_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1042 obj05_Rel_Vy_oA_CAMERA_OD5_OD6_o "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1042 obj05_Rel_VyStdDev_oA_CAMERA_OD5 "STD of the relative lateral speed.";
+CM_ SG_ 1042 obj06_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1042 obj06_Rel_Vy_oA_CAMERA_OD5_OD6_o "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1042 obj06_Rel_VyStdDev_oA_CAMERA_OD5 "STD of the relative lateral speed.";
+CM_ SG_ 1042 obj06_ID_oA_CAMERA_OD5_OD6_oMRR_ "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1042 obj06_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1042 obj06_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1042 obj06_BrakeLight_oA_CAMERA_OD5_O "Indication for brake lights";
+CM_ SG_ 1042 obj06_Dx_oA_CAMERA_OD5_OD6_oMRR_ "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1042 obj06_Rel_Vx_oA_CAMERA_OD5_OD6_o "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1042 obj06_Type_oA_CAMERA_OD5_OD6_oMR "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1042 obj06_DirIndicator_oA_CAMERA_OD5 "Indication for blinking left/right light";
+CM_ SG_ 1042 obj06_Width_oA_CAMERA_OD5_OD6_oM "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1042 obj06_DxStdDev_oA_CAMERA_OD5_OD6 "STD of the  longtitudinal distance.";
+CM_ SG_ 1042 obj06_Rel_VxStdDev_oA_CAMERA_OD5 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1042 obj06_angle_rate_oA_CAMERA_OD5_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1042 obj06_PhiLeft_oA_CAMERA_OD5_OD6_ "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1042 obj06_PhiRight_oA_CAMERA_OD5_OD6 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1042 obj06_ExistProb_oA_CAMERA_OD5_OD "The existence probability of the vehicle";
+CM_ SG_ 1042 obj06_Sync_Counter_oA_CAMERA_OD5 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1043 obj07_ID_oA_CAMERA_OD7_OD8_oMRR_ "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1043 obj07_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1043 obj07_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1043 obj07_BrakeLight_oA_CAMERA_OD7_O "Indication for brake lights";
+CM_ SG_ 1043 obj07_Dx_oA_CAMERA_OD7_OD8_oMRR_ "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1043 obj07_Rel_Vx_oA_CAMERA_OD7_OD8_o "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1043 obj07_Type_oA_CAMERA_OD7_OD8_oMR "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1043 obj07_DirIndicator_oA_CAMERA_OD7 "Indication for blinking left/right light";
+CM_ SG_ 1043 obj07_Width_oA_CAMERA_OD7_OD8_oM "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1043 obj07_DxStdDev_oA_CAMERA_OD7_OD8 "STD of the  longtitudinal distance.";
+CM_ SG_ 1043 obj07_Rel_VxStdDev_oA_CAMERA_OD7 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1043 obj07_angle_rate_oA_CAMERA_OD7_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1043 obj07_PhiLeft_oA_CAMERA_OD7_OD8_ "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1043 obj08_PhiRight_oA_CAMERA_OD7_OD8 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1043 obj07_ExistProb_oA_CAMERA_OD7_OD "The existence probability of the vehicle";
+CM_ SG_ 1043 obj07_Sync_Counter_oA_CAMERA_OD7 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1043 obj07_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1043 obj07_Rel_Vy_oA_CAMERA_OD7_OD8_o "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1043 obj07_Rel_VyStdDev_oA_CAMERA_OD7 "STD of the relative lateral speed.";
+CM_ SG_ 1043 obj08_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1043 obj08_Rel_Vy_oA_CAMERA_OD7_OD8_o "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1043 obj08_Rel_VyStdDev_oA_CAMERA_OD7 "STD of the relative lateral speed.";
+CM_ SG_ 1043 obj08_ID_oA_CAMERA_OD7_OD8_oMRR_ "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1043 obj08_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1043 obj08_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1043 obj08_BrakeLight_oA_CAMERA_OD7_O "Indication for brake lights";
+CM_ SG_ 1043 obj08_Dx_oA_CAMERA_OD7_OD8_oMRR_ "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1043 obj08_Rel_Vx_oA_CAMERA_OD7_OD8_o "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1043 obj08_Type_oA_CAMERA_OD7_OD8_oMR "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1043 obj08_DirIndicator_oA_CAMERA_OD7 "Indication for blinking left/right light";
+CM_ SG_ 1043 obj08_Width_oA_CAMERA_OD7_OD8_oM "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1043 obj08_DxStdDev_oA_CAMERA_OD7_OD8 "STD of the  longtitudinal distance.";
+CM_ SG_ 1043 obj08_Rel_VxStdDev_oA_CAMERA_OD7 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1043 obj08_angle_rate_oA_CAMERA_OD7_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1043 obj08_PhiLeft_oA_CAMERA_OD7_OD8_ "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1043 obj07_PhiRight_oA_CAMERA_OD7_OD8 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1043 obj08_ExistProb_oA_CAMERA_OD7_OD "The existence probability of the vehicle";
+CM_ SG_ 1043 obj08_Sync_Counter_oA_CAMERA_OD7 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1044 obj09_ID_oA_CAMERA_OD9_OD10_oMRR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1044 obj09_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1044 obj09_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1044 obj09_BrakeLight_oA_CAMERA_OD9_O "Indication for brake lights";
+CM_ SG_ 1044 obj09_Dx_oA_CAMERA_OD9_OD10_oMRR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1044 obj09_Rel_Vx_oA_CAMERA_OD9_OD10_ "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1044 obj09_Type_oA_CAMERA_OD9_OD10_oM "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1044 obj09_DirIndicator_oA_CAMERA_OD9 "Indication for blinking left/right light";
+CM_ SG_ 1044 obj09_Width_oA_CAMERA_OD9_OD10_o "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1044 obj09_DxStdDev_oA_CAMERA_OD9_OD1 "STD of the  longtitudinal distance.";
+CM_ SG_ 1044 obj09_Rel_VxStdDev_oA_CAMERA_OD9 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1044 obj09_angle_rate_oA_CAMERA_OD9_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1044 obj09_PhiLeft_oA_CAMERA_OD9_OD10 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1044 obj09_PhiRight_oA_CAMERA_OD9_OD1 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1044 obj09_ExistProb_oA_CAMERA_OD9_OD "The existence probability of the vehicle";
+CM_ SG_ 1044 obj09_Sync_Counter_oA_CAMERA_OD9 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1044 obj09_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1044 obj09_Rel_Vy_oA_CAMERA_OD9_OD10_ "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1044 obj09_Rel_VyStdDev_oA_CAMERA_OD9 "STD of the relative lateral speed.";
+CM_ SG_ 1044 obj10_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1044 obj10_Rel_Vy_oA_CAMERA_OD9_OD10_ "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1044 obj10_Rel_VyStdDev_oA_CAMERA_OD9 "STD of the relative lateral speed.";
+CM_ SG_ 1044 obj10_ID_oA_CAMERA_OD9_OD10_oMRR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1044 obj10_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1044 obj10_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1044 obj10_BrakeLight_oA_CAMERA_OD9_O "Indication for brake lights";
+CM_ SG_ 1044 obj10_Dx_oA_CAMERA_OD9_OD10_oMRR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1044 obj10_Rel_Vx_oA_CAMERA_OD9_OD10_ "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1044 obj10_Type_oA_CAMERA_OD9_OD10_oM "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1044 obj10_DirIndicator_oA_CAMERA_OD9 "Indication for blinking left/right light";
+CM_ SG_ 1044 obj10_Width_oA_CAMERA_OD9_OD10_o "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1044 obj10_DxStdDev_oA_CAMERA_OD9_OD1 "STD of the  longtitudinal distance.";
+CM_ SG_ 1044 obj10_Rel_VxStdDev_oA_CAMERA_OD9 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1044 obj10_angle_rate_oA_CAMERA_OD9_O "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1044 obj10_PhiLeft_oA_CAMERA_OD9_OD10 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1044 obj10_PhiRight_oA_CAMERA_OD9_OD1 "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1044 obj10_ExistProb_oA_CAMERA_OD9_OD "The existence probability of the vehicle";
+CM_ SG_ 1044 obj10_Sync_Counter_oA_CAMERA_OD9 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1045 obj11_ID_oA_CAMERA_OD11_OD12_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1045 obj11_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1045 obj11_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1045 obj11_BrakeLight_oA_CAMERA_OD11_ "Indication for brake lights";
+CM_ SG_ 1045 obj11_Dx_oA_CAMERA_OD11_OD12_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1045 obj11_Rel_Vx_oA_CAMERA_OD11_OD12 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1045 obj11_Type_oA_CAMERA_OD11_OD12_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1045 obj11_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1045 obj11_Width_oA_CAMERA_OD11_OD12_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1045 obj11_DxStdDev_oA_CAMERA_OD11_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1045 obj11_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1045 obj11_angle_rate_oA_CAMERA_OD11_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1045 obj11_PhiLeft_oA_CAMERA_OD11_OD1 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1045 obj11_PhiRight_oA_CAMERA_OD11_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1045 obj11_ExistProb_oA_CAMERA_OD11_O "The existence probability of the vehicle";
+CM_ SG_ 1045 obj11_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1045 obj11_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1045 obj11_Rel_Vy_oA_CAMERA_OD11_OD12 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1045 obj11_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1045 obj12_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1045 obj12_Rel_Vy_oA_CAMERA_OD11_OD12 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1045 obj12_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1045 obj12_ID_oA_CAMERA_OD11_OD12_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1045 obj12_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1045 obj12_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1045 obj12_BrakeLight_oA_CAMERA_OD11_ "Indication for brake lights";
+CM_ SG_ 1045 obj12_Dx_oA_CAMERA_OD11_OD12_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1045 obj12_Rel_Vx_oA_CAMERA_OD11_OD12 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1045 obj12_Type_oA_CAMERA_OD11_OD12_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1045 obj12_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1045 obj12_Width_oA_CAMERA_OD11_OD12_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1045 obj12_DxStdDev_oA_CAMERA_OD11_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1045 obj12_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1045 obj12_angle_rate_oA_CAMERA_OD11_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1045 obj12_PhiLeft_oA_CAMERA_OD11_OD1 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1045 obj12_PhiRight_oA_CAMERA_OD11_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1045 obj12_ExistProb_oA_CAMERA_OD11_O "The existence probability of the vehicle";
+CM_ SG_ 1045 obj12_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1046 obj13_ID_oA_CAMERA_OD13_OD14_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1046 obj13_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1046 obj13_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1046 obj13_BrakeLight_oA_CAMERA_OD13_ "Indication for brake lights";
+CM_ SG_ 1046 obj13_Dx_oA_CAMERA_OD13_OD14_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1046 obj13_Rel_Vx_oA_CAMERA_OD13_OD14 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1046 obj13_Type_oA_CAMERA_OD13_OD14_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1046 obj13_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1046 obj13_Width_oA_CAMERA_OD13_OD14_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1046 obj13_DxStdDev_oA_CAMERA_OD13_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1046 obj13_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1046 obj13_angle_rate_oA_CAMERA_OD13_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1046 obj13_PhiLeft_oA_CAMERA_OD13_OD1 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1046 obj13_PhiRight_oA_CAMERA_OD13_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1046 obj13_ExistProb_oA_CAMERA_OD13_O "The existence probability of the vehicle";
+CM_ SG_ 1046 obj13_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1046 obj13_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1046 obj13_Rel_Vy_oA_CAMERA_OD13_OD14 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1046 obj13_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1046 obj14_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1046 obj14_Rel_Vy_oA_CAMERA_OD13_OD14 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1046 obj14_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1046 obj14_ID_oA_CAMERA_OD13_OD14_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1046 obj14_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1046 obj14_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1046 obj14_BrakeLight_oA_CAMERA_OD13_ "Indication for brake lights";
+CM_ SG_ 1046 obj14_Dx_oA_CAMERA_OD13_OD14_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1046 obj14_Rel_Vx_oA_CAMERA_OD13_OD14 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1046 obj14_Type_oA_CAMERA_OD13_OD14_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1046 obj14_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1046 obj14_Width_oA_CAMERA_OD13_OD14_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1046 obj14_DxStdDev_oA_CAMERA_OD13_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1046 obj14_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1046 obj14_angle_rate_oA_CAMERA_OD13_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1046 obj14_PhiLeft_oA_CAMERA_OD13_OD1 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1046 obj14_PhiRight_oA_CAMERA_OD13_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1046 obj14_ExistProb_oA_CAMERA_OD13_O "The existence probability of the vehicle";
+CM_ SG_ 1046 obj14_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1047 obj15_ID_oA_CAMERA_OD15_OD16_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1047 obj15_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1047 obj15_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1047 obj15_BrakeLight_oA_CAMERA_OD15_ "Indication for brake lights";
+CM_ SG_ 1047 obj15_Dx_oA_CAMERA_OD15_OD16_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1047 obj15_Rel_Vx_oA_CAMERA_OD15_OD16 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1047 obj15_Type_oA_CAMERA_OD15_OD16_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1047 obj15_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1047 obj15_Width_oA_CAMERA_OD15_OD16_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1047 obj15_DxStdDev_oA_CAMERA_OD15_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1047 obj15_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1047 obj15_angle_rate_oA_CAMERA_OD15_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1047 obj15_PhiLeft_oA_CAMERA_OD15_OD1 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1047 obj15_PhiRight_oA_CAMERA_OD15_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1047 obj15_ExistProb_oA_CAMERA_OD15_O "The existence probability of the vehicle";
+CM_ SG_ 1047 obj15_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1047 obj15_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1047 obj15_Rel_Vy_oA_CAMERA_OD15_OD16 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1047 obj15_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1047 obj16_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1047 obj16_Rel_Vy_oA_CAMERA_OD15_OD16 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1047 obj16_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1047 obj16_ID_oA_CAMERA_OD15_OD16_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1047 obj16_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1047 obj16_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1047 obj16_BrakeLight_oA_CAMERA_OD15_ "Indication for brake lights";
+CM_ SG_ 1047 obj16_Dx_oA_CAMERA_OD15_OD16_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1047 obj16_Rel_Vx_oA_CAMERA_OD15_OD16 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1047 obj16_Type_oA_CAMERA_OD15_OD16_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1047 obj16_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1047 obj16_Width_oA_CAMERA_OD15_OD16_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1047 obj16_DxStdDev_oA_CAMERA_OD15_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1047 obj16_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1047 obj16_angle_rate_oA_CAMERA_OD15_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1047 obj16_PhiLeft_oA_CAMERA_OD15_OD1 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1047 obj16_PhiRight_oA_CAMERA_OD15_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1047 obj16_ExistProb_oA_CAMERA_OD15_O "The existence probability of the vehicle";
+CM_ SG_ 1047 obj16_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1048 obj17_ID_oA_CAMERA_OD17_OD18_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1048 obj17_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1048 obj17_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1048 obj17_BrakeLight_oA_CAMERA_OD17_ "Indication for brake lights";
+CM_ SG_ 1048 obj17_Dx_oA_CAMERA_OD17_OD18_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1048 obj17_Rel_Vx_oA_CAMERA_OD17_OD18 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1048 obj17_Type_oA_CAMERA_OD17_OD18_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1048 obj17_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1048 obj17_Width_oA_CAMERA_OD17_OD18_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1048 obj17_DxStdDev_oA_CAMERA_OD17_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1048 obj17_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1048 obj17_angle_rate_oA_CAMERA_OD17_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1048 obj17_PhiLeft_oA_CAMERA_OD17_OD1 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1048 obj17_PhiRight_oA_CAMERA_OD17_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1048 obj17_ExistProb_oA_CAMERA_OD17_O "The existence probability of the vehicle";
+CM_ SG_ 1048 obj17_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1048 obj17_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1048 obj17_Rel_Vy_oA_CAMERA_OD17_OD18 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1048 obj17_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1048 obj18_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1048 obj18_Rel_Vy_oA_CAMERA_OD17_OD18 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1048 obj18_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1048 obj18_ID_oA_CAMERA_OD17_OD18_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1048 obj18_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1048 obj18_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1048 obj18_BrakeLight_oA_CAMERA_OD17_ "Indication for brake lights";
+CM_ SG_ 1048 obj18_Dx_oA_CAMERA_OD17_OD18_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1048 obj18_Rel_Vx_oA_CAMERA_OD17_OD18 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1048 obj18_Type_oA_CAMERA_OD17_OD18_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1048 obj18_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1048 obj18_Width_oA_CAMERA_OD17_OD18_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1048 obj18_DxStdDev_oA_CAMERA_OD17_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1048 obj18_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1048 obj18_angle_rate_oA_CAMERA_OD17_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1048 obj18_PhiLeft_oA_CAMERA_OD17_OD1 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1048 obj18_PhiRight_oA_CAMERA_OD17_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1048 obj18_ExistProb_oA_CAMERA_OD17_O "The existence probability of the vehicle";
+CM_ SG_ 1048 obj18_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1049 obj19_ID_oA_CAMERA_OD19_OD20_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1049 obj19_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1049 obj19_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1049 obj19_BrakeLight_oA_CAMERA_OD19_ "Indication for brake lights";
+CM_ SG_ 1049 obj19_Dx_oA_CAMERA_OD19_OD20_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1049 obj19_Rel_Vx_oA_CAMERA_OD19_OD20 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1049 obj19_Type_oA_CAMERA_OD19_OD20_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1049 obj19_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1049 obj19_Width_oA_CAMERA_OD19_OD20_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1049 obj19_DxStdDev_oA_CAMERA_OD19_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1049 obj19_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1049 obj19_angle_rate_oA_CAMERA_OD19_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1049 obj19_PhiLeft_oA_CAMERA_OD19_OD2 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1049 obj19_PhiRight_oA_CAMERA_OD19_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1049 obj19_ExistProb_oA_CAMERA_OD19_O "The existence probability of the vehicle";
+CM_ SG_ 1049 obj19_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1049 obj19_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1049 obj19_Rel_Vy_oA_CAMERA_OD19_OD20 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1049 obj19_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1049 obj20_Motion_Orientation_oA_CAME "The direction of the target��s heading compared to the host.";
+CM_ SG_ 1049 obj20_Rel_Vy_oA_CAMERA_OD19_OD20 "The relative lateral speed between the target and ego vehicle.";
+CM_ SG_ 1049 obj20_Rel_VyStdDev_oA_CAMERA_OD1 "STD of the relative lateral speed.";
+CM_ SG_ 1049 obj20_ID_oA_CAMERA_OD19_OD20_oMR "The detected object ID. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1049 obj20_Motion_Status_oA_CAMERA_OD "MOVING - the object is moving
+STATIONARY - the object was never seen moving
+STOPPED -  the object was moving and has stopped
+MOVING_SLOWLY - the object is moving very slowly";
+CM_ SG_ 1049 obj20_Lane_Assignment_oA_CAMERA_ "The object's lane relative to the host lane.";
+CM_ SG_ 1049 obj20_BrakeLight_oA_CAMERA_OD19_ "Indication for brake lights";
+CM_ SG_ 1049 obj20_Dx_oA_CAMERA_OD19_OD20_oMR "The longtitudinal distance from the object to the middle of the Rear-Left and Rear-Right corners of the host vehicle.";
+CM_ SG_ 1049 obj20_Rel_Vx_oA_CAMERA_OD19_OD20 "The relative longtitudinal speed between the target and ego vehicle.";
+CM_ SG_ 1049 obj20_Type_oA_CAMERA_OD19_OD20_o "Indicates the object type. Uncertain is outputted in case the probability that a vehicle is a truck is very similar to the probability that it is a car.";
+CM_ SG_ 1049 obj20_DirIndicator_oA_CAMERA_OD1 "Indication for blinking left/right light";
+CM_ SG_ 1049 obj20_Width_oA_CAMERA_OD19_OD20_ "The width of the target vehicle in the world (not to be mistaken with the width of the visible part of the vehicle).";
+CM_ SG_ 1049 obj20_DxStdDev_oA_CAMERA_OD19_OD "STD of the  longtitudinal distance.";
+CM_ SG_ 1049 obj20_Rel_VxStdDev_oA_CAMERA_OD1 "STD of the relative longtitudinal speed.";
+CM_ SG_ 1049 obj20_angle_rate_oA_CAMERA_OD19_ "The momentary angular speed of the object. (radians)";
+CM_ SG_ 1049 obj20_PhiLeft_oA_CAMERA_OD19_OD2 "The angle between the host longitudinal axis and the left side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1049 obj20_PhiRight_oA_CAMERA_OD19_OD "The angle between the host longitudinal axis and the right side of the front / rear of the target (the visible one). The positive side is to the host's right.";
+CM_ SG_ 1049 obj20_ExistProb_oA_CAMERA_OD19_O "The existence probability of the vehicle";
+CM_ SG_ 1049 obj20_Sync_Counter_oA_CAMERA_OD1 "The ID of the Sync message, used to synchronize between signals in the system. Every new frame promotes the sync ID by one.";
+CM_ SG_ 1060 Line01_LineID_oA_CAMERA_LD1_oMRR "ID to be used for comparing frames";
+CM_ SG_ 1060 Line01_DxEnd_oA_CAMERA_LD1_oMRR_ "End of longitudinal view range of lane mark";
+CM_ SG_ 1060 Line01_Dy_oA_CAMERA_LD1_oMRR_SCA "C0 of the line module polynomial";
+CM_ SG_ 1060 Line01_Type_oA_CAMERA_LD1_oMRR_S "Lane Mark Type Classification (first segment only). 
+In case the lane mark is a double lane mark, the types of the different lane marks. The order is inner-lane-mark-type_outer-lane-mark-type (relative to the host vehicle)";
+CM_ SG_ 1060 Line01_CurvChange_oA_CAMERA_LD1_ "C3, this signal is derived by multiplying the 3rd order coefficient of the line model by 6";
+CM_ SG_ 1060 Line01_ColorClass_oA_CAMERA_LD1_ "lane mark color (first segment only)";
+CM_ SG_ 1060 Line01_Curv_oA_CAMERA_LD1_oMRR_S "C2, this signal is derived by multiplying the 2nd order coefficient of the line model by 2";
+CM_ SG_ 1060 Line01_HeadingAngle_oA_CAMERA_LD "C1 of the line module polynomial";
+CM_ SG_ 1060 Line01_LineWidth_oA_CAMERA_LD1_o "Width of lane mark in Meters (first segment only)";
+CM_ SG_ 1060 Line01_DxStart_oA_CAMERA_LD1_oMR "Start of longitudinal view range of lane mark";
+CM_ SG_ 1060 Line01_ExistProb_oA_CAMERA_LD1_o "Existence probability of lane mark";
+CM_ SG_ 1060 Line02_LineID_oA_CAMERA_LD1_oMRR "ID to be used for comparing frames";
+CM_ SG_ 1060 Line02_DxEnd_oA_CAMERA_LD1_oMRR_ "End of longitudinal view range of lane mark";
+CM_ SG_ 1060 Line02_Dy_oA_CAMERA_LD1_oMRR_SCA "C0 of the line module polynomial";
+CM_ SG_ 1060 Line02_Type_oA_CAMERA_LD1_oMRR_S "Lane Mark Type Classification (first segment only). 
+In case the lane mark is a double lane mark, the types of the different lane marks. The order is inner-lane-mark-type_outer-lane-mark-type (relative to the host vehicle)";
+CM_ SG_ 1060 Line02_CurvChange_oA_CAMERA_LD1_ "C3, this signal is derived by multiplying the 3rd order coefficient of the line model by 6";
+CM_ SG_ 1060 Line02_ColorClass_oA_CAMERA_LD1_ "lane mark color (first segment only)";
+CM_ SG_ 1060 Line02_Curv_oA_CAMERA_LD1_oMRR_S "C2, this signal is derived by multiplying the 2nd order coefficient of the line model by 2";
+CM_ SG_ 1060 Line02_HeadingAngle_oA_CAMERA_LD "C1 of the line module polynomial";
+CM_ SG_ 1060 Line02_LineWidth_oA_CAMERA_LD1_o "Width of lane mark in Meters (first segment only)";
+CM_ SG_ 1060 Line02_DxStart_oA_CAMERA_LD1_oMR "Start of longitudinal view range of lane mark";
+CM_ SG_ 1060 Line02_ExistProb_oA_CAMERA_LD1_o "Existence probability of lane mark";
+CM_ SG_ 1060 Line_0102_Sync_Counter_oA_CAMERA "Sync ID to be used to sync between signals in system";
+CM_ SG_ 1060 Line01_PredictSrc_oA_CAMERA_LD1_ "The reason for applying prediction on the lane mark (first segment only)";
+CM_ SG_ 1060 Line01_PredictType_oA_CAMERA_LD1 "The different predictions currently set on the left/right host lane, if any(first segment only)";
+CM_ SG_ 1060 Line02_PredictSrc_oA_CAMERA_LD1_ "The reason for applying prediction on the lane mark (first segment only)";
+CM_ SG_ 1060 Line02_PredictType_oA_CAMERA_LD1 "The different predictions currently set on the left/right host lane, if any(first segment only)";
+CM_ SG_ 1061 Line03_LineID_oA_CAMERA_LD2_oMRR "ID to be used for comparing frames";
+CM_ SG_ 1061 Line03_DxEnd_oA_CAMERA_LD2_oMRR_ "End of longitudinal view range of lane mark";
+CM_ SG_ 1061 Line03_Dy_oA_CAMERA_LD2_oMRR_SCA "C0 of the line module polynomial";
+CM_ SG_ 1061 Line03_Type_oA_CAMERA_LD2_oMRR_S "Lane Mark Type Classification (first segment only). 
+In case the lane mark is a double lane mark, the types of the different lane marks. The order is inner-lane-mark-type_outer-lane-mark-type (relative to the host vehicle)";
+CM_ SG_ 1061 Line03_CurvChange_oA_CAMERA_LD2_ "C3, this signal is derived by multiplying the 3rd order coefficient of the line model by 6";
+CM_ SG_ 1061 Line03_ColorClass_oA_CAMERA_LD2_ "lane mark color (first segment only)";
+CM_ SG_ 1061 Line03_Curv_oA_CAMERA_LD2_oMRR_S "C2, this signal is derived by multiplying the 2nd order coefficient of the line model by 2";
+CM_ SG_ 1061 Line03_HeadingAngle_oA_CAMERA_LD "C1 of the line module polynomial";
+CM_ SG_ 1061 Line03_LineWidth_oA_CAMERA_LD2_o "Width of lane mark in Meters (first segment only)";
+CM_ SG_ 1061 Line03_DxStart_oA_CAMERA_LD2_oMR "Start of longitudinal view range of lane mark";
+CM_ SG_ 1061 Line03_ExistProb_oA_CAMERA_LD2_o "Existence probability of lane mark";
+CM_ SG_ 1061 Line03_PredictSrc_oA_CAMERA_LD2_ "system type if Lane mark is predicted
+Detection loss (a source for other side prediction for the ego lane marks and the source for full extrapolation for the adjacent lanes lane marks)";
+CM_ SG_ 1061 Line03_PredictType_oA_CAMERA_LD2 "Full if Lane mark is predicted";
+CM_ SG_ 1061 Line04_LineID_oA_CAMERA_LD2_oMRR "ID to be used for comparing frames";
+CM_ SG_ 1061 Line04_DxEnd_oA_CAMERA_LD2_oMRR_ "End of longitudinal view range of lane mark";
+CM_ SG_ 1061 Line04_Dy_oA_CAMERA_LD2_oMRR_SCA "C0 of the line module polynomial";
+CM_ SG_ 1061 Line04_Type_oA_CAMERA_LD2_oMRR_S "Lane Mark Type Classification (first segment only). 
+In case the lane mark is a double lane mark, the types of the different lane marks. The order is inner-lane-mark-type_outer-lane-mark-type (relative to the host vehicle)";
+CM_ SG_ 1061 Line04_CurvChange_oA_CAMERA_LD2_ "C3, this signal is derived by multiplying the 3rd order coefficient of the line model by 6";
+CM_ SG_ 1061 Line04_ColorClass_oA_CAMERA_LD2_ "lane mark color (first segment only)";
+CM_ SG_ 1061 Line04_Curv_oA_CAMERA_LD2_oMRR_S "C2, this signal is derived by multiplying the 2nd order coefficient of the line model by 2";
+CM_ SG_ 1061 Line04_HeadingAngle_oA_CAMERA_LD "C1 of the line module polynomial";
+CM_ SG_ 1061 Line04_LineWidth_oA_CAMERA_LD2_o "Width of lane mark in Meters (first segment only)";
+CM_ SG_ 1061 Line04_DxStart_oA_CAMERA_LD2_oMR "Start of longitudinal view range of lane mark";
+CM_ SG_ 1061 Line04_ExistProb_oA_CAMERA_LD2_o "Existence probability of lane mark";
+CM_ SG_ 1061 Line04_PredictSrc_oA_CAMERA_LD2_ "system type if Lane mark is predicted
+Detection loss (a source for other side prediction for the ego lane marks and the source for full extrapolation for the adjacent lanes lane marks)";
+CM_ SG_ 1061 Line04_PredictType_oA_CAMERA_LD2 "Full if Lane mark is predicted";
+CM_ SG_ 1061 Line_0304_Sync_Counter_oA_CAMERA "Sync ID to be used to sync between signals in system";
+CM_ SG_ 1150 Roadedge01_LineID_oA_CAMERA_RE_o "ID to be used for comparing frames. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1150 Roadedge01_DxEnd_oA_CAMERA_RE_oM "End of longitudinal view range of lane mark";
+CM_ SG_ 1150 Roadedge01_Dy_oA_CAMERA_RE_oMRR_ "C0 is coefficient corresponding to variable with power of 'i' in the road edge polynomial.";
+CM_ SG_ 1150 Roadedge01_Type_oA_CAMERA_RE_oMR "Classification of road edge type.";
+CM_ SG_ 1150 Roadedge01_CurvChange_oA_CAMERA_ "C3 is coefficient corresponding to variable with power of 'i' in the road edge polynomial.";
+CM_ SG_ 1150 Roadedge01_Curv_oA_CAMERA_RE_oMR "C2 is coefficient corresponding to variable with power of 'i' in the road edge polynomial.";
+CM_ SG_ 1150 Roadedge01_HeadingAngle_oA_CAMER "C1 is coefficient corresponding to variable with power of 'i' in the road edge polynomial.";
+CM_ SG_ 1150 Roadedge01_DxStart_oA_CAMERA_RE_ "Start of longitudinal view range of lane mark";
+CM_ SG_ 1150 Roadedge01_PredictType_oA_CAMERA "The type of the prediction";
+CM_ SG_ 1150 Roadedge01_ExistProb_oA_CAMERA_R "The existence probability of the road edge.";
+CM_ SG_ 1150 Roadedge02_LineID_oA_CAMERA_RE_o "ID to be used for comparing frames. Range is 1-255, while 0 indicates that the field in unfilled.";
+CM_ SG_ 1150 Roadedge02_DxEnd_oA_CAMERA_RE_oM "End of longitudinal view range of lane mark";
+CM_ SG_ 1150 Roadedge02_Dy_oA_CAMERA_RE_oMRR_ "C0 is coefficient corresponding to variable with power of 'i' in the road edge polynomial.";
+CM_ SG_ 1150 Roadedge02_Type_oA_CAMERA_RE_oMR "Classification of road edge type.";
+CM_ SG_ 1150 Roadedge02_CurvChange_oA_CAMERA_ "C3 is coefficient corresponding to variable with power of 'i' in the road edge polynomial.";
+CM_ SG_ 1150 Roadedge02_Curv_oA_CAMERA_RE_oMR "C2 is coefficient corresponding to variable with power of 'i' in the road edge polynomial.";
+CM_ SG_ 1150 Roadedge02_HeadingAngle_oA_CAMER "C1 is coefficient corresponding to variable with power of 'i' in the road edge polynomial.";
+CM_ SG_ 1150 Roadedge02_DxStart_oA_CAMERA_RE_ "Start of longitudinal view range of lane mark";
+CM_ SG_ 1150 Roadedge02_PredictType_oA_CAMERA "The type of the prediction";
+CM_ SG_ 1150 Roadedge02_ExistProb_oA_CAMERA_R "The existence probability of the road edge.";
+VAL_ 400 ACCObj_SnsrAv_oACCObj_Header_oMR 0 "Unknown" 1 "Available" 2 "Unavailable";
+VAL_ 400 ACCObj_SnsrSts_oACCObj_Header_oM 0 "Unknown" 1 "Sensor error" 2 "Initializing" 3 "Sensor blocked" 4 "Sensor partially blocked" 5 "Fully operational" 6 "Reserved" 7 "Reserved";
+VAL_ 400 FastLanePrsnt_oACCObj_Header_oMR 0 "Not Present" 1 "Present";
+VAL_ 400 SlowLanePrsnt_oACCObj_Header_oMR 0 "Not Present" 1 "Present";
+VAL_ 400 HstVehLaneChange_oACCObj_Header_ 0 "No Lane Change" 1 "Lane Change Left" 2 "Lane Change Right";
+VAL_ 400 TrffcDir_oACCObj_Header_oMRR_SCA 0 "Unknown" 1 "Right hand traffic" 2 "Left hand traffic";
+VAL_ 400 RoadTyp_oACCObj_Header_oMRR_SCAM 0 "Unknown" 1 "City" 2 "Country road" 3 "Highway";
+VAL_ 401 IV_ObjClass_oIV_IIV_Info_oMRR_SC 0 "unknown" 1 "car" 2 "truck" 3 "motorbike" 4 "bicycle" 5 "pedestrian" 6 "truck or car" 7 "reserved";
+VAL_ 401 IV_ObjSnsrDetn_oIV_IIV_Info_oMRR 0 "No confirmation" 1 "Confirmed by front radar" 2 "Confirmed by front camera" 3 "Confirmed by left corner radar" 4 "Confirmed by right corner radar" 5 "Reserved" 6 "Reserved" 7 "Reserved";
+VAL_ 401 IV_ObjPrsnt_oIV_IIV_Info_oMRR_SC 0 "Not present" 1 "present";
+VAL_ 401 IV_ObjMtnDir_oIV_IIV_Info_oMRR_S 0 "Unknown" 1 "Same direction" 2 "Opposite direction";
+VAL_ 401 IV_ObjMtnSts_oIV_IIV_Info_oMRR_S 0 "Unknown" 1 "Stationary" 2 "Stopped" 3 "Moving";
+VAL_ 401 IV_ObjNewTar_oIV_IIV_Info_oMRR_S 0 "No object change" 1 "Object change";
+VAL_ 401 IIV_ObjClass_oIV_IIV_Info_oMRR_S 0 "unknown" 1 "car" 2 "truck" 3 "motorbike" 4 "bicycle" 5 "pedestrian" 6 "truck or car" 7 "reserved";
+VAL_ 401 IIV_ObjSnsrDetn_oIV_IIV_Info_oMR 0 "No confirmation" 1 "Confirmed by front radar" 2 "Confirmed by front camera" 3 "Confirmed by left corner radar" 4 "Confirmed by right corner radar" 5 "Reserved" 6 "Reserved" 7 "Reserved";
+VAL_ 401 IIV_ObjPrsnt_oIV_IIV_Info_oMRR_S 0 "Not present" 1 "present";
+VAL_ 401 IIV_ObjMtnDir_oIV_IIV_Info_oMRR_ 0 "Unknown" 1 "Same direction" 2 "Opposite direction";
+VAL_ 401 IIV_ObjMtnSts_oIV_IIV_Info_oMRR_ 0 "Unknown" 1 "Stationary" 2 "Stopped" 3 "Moving";
+VAL_ 401 IIV_ObjNewTar_oIV_IIV_Info_oMRR_ 0 "No object change" 1 "Object change";
+VAL_ 402 SLNIV_ObjClass_oSLNIV_SLNIIV_Inf 0 "unknown" 1 "car" 2 "truck" 3 "motorbike" 4 "bicycle" 5 "pedestrian" 6 "truck or car" 7 "reserved";
+VAL_ 402 SLNIV_ObjSnsrDetn_oSLNIV_SLNIIV_ 0 "No confirmation" 1 "Confirmed by front radar" 2 "Confirmed by front camera" 3 "Confirmed by left corner radar" 4 "Confirmed by right corner radar" 5 "Reserved" 6 "Reserved" 7 "Reserved";
+VAL_ 402 SLNIV_ObjPrsnt_oSLNIV_SLNIIV_Inf 0 "Not present" 1 "present";
+VAL_ 402 SLNIV_ObjMtnDir_oSLNIV_SLNIIV_In 0 "Unknown" 1 "Same direction" 2 "Opposite direction";
+VAL_ 402 SLNIV_ObjMtnSts_oSLNIV_SLNIIV_In 0 "Unknown" 1 "Stationary" 2 "Stopped" 3 "Moving";
+VAL_ 402 SLNIV_ObjNewTar_oSLNIV_SLNIIV_In 0 "No object change" 1 "Object change";
+VAL_ 402 SLNIIV_ObjClass_oSLNIV_SLNIIV_In 0 "unknown" 1 "car" 2 "truck" 3 "motorbike" 4 "bicycle" 5 "pedestrian" 6 "truck or car" 7 "reserved";
+VAL_ 402 SLNIIV_ObjSnsrDetn_oSLNIV_SLNIIV 0 "No confirmation" 1 "Confirmed by front radar" 2 "Confirmed by front camera" 3 "Confirmed by left corner radar" 4 "Confirmed by right corner radar" 5 "Reserved" 6 "Reserved" 7 "Reserved";
+VAL_ 402 SLNIIV_ObjPrsnt_oSLNIV_SLNIIV_In 0 "Not present" 1 "present";
+VAL_ 402 SLNIIV_ObjMtnDir_oSLNIV_SLNIIV_I 0 "Unknown" 1 "Same direction" 2 "Opposite direction";
+VAL_ 402 SLNIIV_ObjMtnSts_oSLNIV_SLNIIV_I 0 "Unknown" 1 "Stationary" 2 "Stopped" 3 "Moving";
+VAL_ 402 SLNIIV_ObjNewTar_oSLNIV_SLNIIV_I 0 "No object change" 1 "Object change";
+VAL_ 403 FLNIV_ObjClass_oFLNIV_FLNIIV_Inf 0 "unknown" 1 "car" 2 "truck" 3 "motorbike" 4 "bicycle" 5 "pedestrian" 6 "truck or car" 7 "reserved";
+VAL_ 403 FLNIV_ObjSnsrDetn_oFLNIV_FLNIIV_ 0 "No confirmation" 1 "Confirmed by front radar" 2 "Confirmed by front camera" 3 "Confirmed by left corner radar" 4 "Confirmed by right corner radar" 5 "Reserved" 6 "Reserved" 7 "Reserved";
+VAL_ 403 FLNIV_ObjPrsnt_oFLNIV_FLNIIV_Inf 0 "Not present" 1 "present";
+VAL_ 403 FLNIV_ObjMtnDir_oFLNIV_FLNIIV_In 0 "Unknown" 1 "Same direction" 2 "Opposite direction";
+VAL_ 403 FLNIV_ObjMtnSts_oFLNIV_FLNIIV_In 0 "Unknown" 1 "Stationary" 2 "Stopped" 3 "Moving";
+VAL_ 403 FLNIV_ObjNewTar_oFLNIV_FLNIIV_In 0 "No object change" 1 "Object change";
+VAL_ 403 FLNIIV_ObjClass_oFLNIV_FLNIIV_In 0 "unknown" 1 "car" 2 "truck" 3 "motorbike" 4 "bicycle" 5 "pedestrian" 6 "truck or car" 7 "reserved";
+VAL_ 403 FLNIIV_ObjSnsrDetn_oFLNIV_FLNIIV 0 "No confirmation" 1 "Confirmed by front radar" 2 "Confirmed by front camera" 3 "Confirmed by left corner radar" 4 "Confirmed by right corner radar" 5 "Reserved" 6 "Reserved" 7 "Reserved";
+VAL_ 403 FLNIIV_ObjPrsnt_oFLNIV_FLNIIV_In 0 "Not present" 1 "present";
+VAL_ 403 FLNIIV_ObjMtnDir_oFLNIV_FLNIIV_I 0 "Unknown" 1 "Same direction" 2 "Opposite direction";
+VAL_ 403 FLNIIV_ObjMtnSts_oFLNIV_FLNIIV_I 0 "Unknown" 1 "Stationary" 2 "Stopped" 3 "Moving";
+VAL_ 403 FLNIIV_ObjNewTar_oFLNIV_FLNIIV_I 0 "No object change" 1 "Object change";
+VAL_ 408 ICA_Status_oACC_LSS_State_oMRR_S 0 "ICA_OFF" 1 "ICA_Inhibited" 2 "ICA_Active" 3 "ICA_Degraded" 4 "ICA_Fault" 5 "Override" 6 "Reserved" 7 "Reserved";
+VAL_ 408 LSS_HWA_State_oACC_LSS_State_oMR 0 "Unvailable" 1 "Available" 2 "Active" 3 "Override" 4 "Fault";
+VAL_ 408 Hands_off_oACC_LSS_State_oMRR_SC 0 "Not detected" 1 "Detected";
+VAL_ 408 LSS_Enabled_oACC_LSS_State_oMRR_ 0 "inactive" 1 "active";
+VAL_ 528 CPB_Path_Center_Quality_oCPB_Pat 0 "Invalid" 1 "Low" 2 "Medium" 3 "High";
+VAL_ 528 CPB_SDE_Source_State_oCPB_Path_C 0 "invalid" 1 "Main Path for LV Following" 2 "Lane Centering Path" 3 "Lane Change Path";
+VAL_ 528 CPB_SDE_Blending_State_oCPB_Path 0 "False (Blending Not Ongoing)" 1 "True (Blending Ongoing)";
+VAL_ 528 CPB_Error_oCPB_Path_Center_oMRR_ 0 "no fault detected" 1 "fault detected";
+VAL_ 528 CPB_Path_Center_is_Lane_Center_o 0 "significant difference" 1 "reasonable agreement";
+VAL_ 530 SDE_State_oSDE_State_ELK_Flag_oM 0 "HWA_Unavailable" 1 "HWA_ML" 2 "HWA_SL" 4 "HWA_SL_SRR_Fail" 8 "HWA_ERROR";
+VAL_ 530 LaneChange_Status_oSDE_State_ELK 0 "LC_Unknown" 1 "LC_Inhibited" 2 "LC_Available" 3 "LC_Proposed_Left" 4 "LC_Proposed_Right" 5 "LC_InProgress" 6 "LC_Completed" 7 "LC_Abort" 8 "LC_Waiting_Inhibited_Left" 9 "LC_Waiting_Inhibited_Right" 10 "Reserved" 11 "Reserved" 12 "Reserved" 13 "Reserved" 14 "Reserved" 15 "Reserved";
+VAL_ 530 IsLeftLaneOccupied_oSDE_State_EL 0 "lane is not occuped" 1 "lane is occuped";
+VAL_ 530 IsLeftLaneOccupiedStatus_oSDE_St 0 "invalid" 1 "valid";
+VAL_ 530 IsRightLaneOccupied_oSDE_State_E 0 "lane is not occuped" 1 "lane is occuped";
+VAL_ 530 IsRightLaneOccupiedStatus_oSDE_S 0 "invalid" 1 "valid";
+VAL_ 1040 obj01_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1040 obj01_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1040 obj01_BrakeLight_oA_CAMERA_OD1_O 0 "false" 1 "true";
+VAL_ 1040 obj01_Type_oA_CAMERA_OD1_OD2_oMR 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1040 obj01_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1040 obj01_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1040 obj02_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1040 obj02_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1040 obj02_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1040 obj02_BrakeLight_oA_CAMERA_OD1_O 0 "false" 1 "true";
+VAL_ 1040 obj02_Type_oA_CAMERA_OD1_OD2_oMR 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1040 obj02_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1041 obj03_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1041 obj03_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1041 obj03_BrakeLight_oA_CAMERA_OD3_O 0 "false" 1 "true";
+VAL_ 1041 obj03_Type_oA_CAMERA_OD3_OD4_oMR 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1041 obj03_DirIndicator_oA_CAMERA_OD3 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1041 obj03_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1041 obj04_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1041 obj04_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1041 obj04_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1041 obj04_BrakeLight_oA_CAMERA_OD3_O 0 "false" 1 "true";
+VAL_ 1041 obj04_Type_oA_CAMERA_OD3_OD4_oMR 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1041 obj04_DirIndicator_oA_CAMERA_OD3 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1042 obj05_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1042 obj05_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1042 obj05_BrakeLight_oA_CAMERA_OD5_O 0 "false" 1 "true";
+VAL_ 1042 obj05_Type_oA_CAMERA_OD5_OD6_oMR 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1042 obj05_DirIndicator_oA_CAMERA_OD5 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1042 obj05_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1042 obj06_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1042 obj06_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1042 obj06_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1042 obj06_BrakeLight_oA_CAMERA_OD5_O 0 "false" 1 "true";
+VAL_ 1042 obj06_Type_oA_CAMERA_OD5_OD6_oMR 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1042 obj06_DirIndicator_oA_CAMERA_OD5 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1043 obj07_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1043 obj07_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1043 obj07_BrakeLight_oA_CAMERA_OD7_O 0 "false" 1 "true";
+VAL_ 1043 obj07_Type_oA_CAMERA_OD7_OD8_oMR 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1043 obj07_DirIndicator_oA_CAMERA_OD7 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1043 obj07_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1043 obj08_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1043 obj08_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1043 obj08_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1043 obj08_BrakeLight_oA_CAMERA_OD7_O 0 "false" 1 "true";
+VAL_ 1043 obj08_Type_oA_CAMERA_OD7_OD8_oMR 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1043 obj08_DirIndicator_oA_CAMERA_OD7 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1044 obj09_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1044 obj09_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1044 obj09_BrakeLight_oA_CAMERA_OD9_O 0 "false" 1 "true";
+VAL_ 1044 obj09_Type_oA_CAMERA_OD9_OD10_oM 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1044 obj09_DirIndicator_oA_CAMERA_OD9 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1044 obj09_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1044 obj10_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1044 obj10_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1044 obj10_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1044 obj10_BrakeLight_oA_CAMERA_OD9_O 0 "false" 1 "true";
+VAL_ 1044 obj10_Type_oA_CAMERA_OD9_OD10_oM 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1044 obj10_DirIndicator_oA_CAMERA_OD9 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1045 obj11_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1045 obj11_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1045 obj11_BrakeLight_oA_CAMERA_OD11_ 0 "false" 1 "true";
+VAL_ 1045 obj11_Type_oA_CAMERA_OD11_OD12_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1045 obj11_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1045 obj11_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1045 obj12_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1045 obj12_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1045 obj12_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1045 obj12_BrakeLight_oA_CAMERA_OD11_ 0 "false" 1 "true";
+VAL_ 1045 obj12_Type_oA_CAMERA_OD11_OD12_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1045 obj12_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1046 obj13_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1046 obj13_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1046 obj13_BrakeLight_oA_CAMERA_OD13_ 0 "false" 1 "true";
+VAL_ 1046 obj13_Type_oA_CAMERA_OD13_OD14_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1046 obj13_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1046 obj13_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1046 obj14_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1046 obj14_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1046 obj14_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1046 obj14_BrakeLight_oA_CAMERA_OD13_ 0 "false" 1 "true";
+VAL_ 1046 obj14_Type_oA_CAMERA_OD13_OD14_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1046 obj14_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1047 obj15_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1047 obj15_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1047 obj15_BrakeLight_oA_CAMERA_OD15_ 0 "false" 1 "true";
+VAL_ 1047 obj15_Type_oA_CAMERA_OD15_OD16_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1047 obj15_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1047 obj15_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1047 obj16_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1047 obj16_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1047 obj16_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1047 obj16_BrakeLight_oA_CAMERA_OD15_ 0 "false" 1 "true";
+VAL_ 1047 obj16_Type_oA_CAMERA_OD15_OD16_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1047 obj16_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1048 obj17_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1048 obj17_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1048 obj17_BrakeLight_oA_CAMERA_OD17_ 0 "false" 1 "true";
+VAL_ 1048 obj17_Type_oA_CAMERA_OD17_OD18_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1048 obj17_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1048 obj17_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1048 obj18_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1048 obj18_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1048 obj18_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1048 obj18_BrakeLight_oA_CAMERA_OD17_ 0 "false" 1 "true";
+VAL_ 1048 obj18_Type_oA_CAMERA_OD17_OD18_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1048 obj18_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1049 obj19_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1049 obj19_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1049 obj19_BrakeLight_oA_CAMERA_OD19_ 0 "false" 1 "true";
+VAL_ 1049 obj19_Type_oA_CAMERA_OD19_OD20_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1049 obj19_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1049 obj19_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1049 obj20_Motion_Orientation_oA_CAME 0 "INVALID" 1 "DRIFTING_RIGHT" 2 "RESERVED" 3 "CROSSING_RIGHT" 4 "RESERVED" 5 "OC_DRIFTING_RIGHT" 6 "ONCOMING" 7 "OC_DRIFTING_LEFT" 8 "RESERVED" 9 "CROSSING_LEFT" 10 "RESERVED" 11 "DRIFTING_LEFT" 12 "PRECEEDING" 13 "UNKNOWN" 14 "RESERVED" 15 "RESERVED";
+VAL_ 1049 obj20_Motion_Status_oA_CAMERA_OD 0 "INVALID" 1 "UNKNOW" 2 "MOVING" 3 "STATIONARY" 4 "STOPPED" 5 "MOVING_SLOWLY" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1049 obj20_Lane_Assignment_oA_CAMERA_ 0 "UNKNOWN" 1 "LEFT_LEFT" 2 "LEFT" 3 "HOST" 4 "RIGHT" 5 "RIGHT_RIGHT" 6 "RESERVED" 7 "RESERVED";
+VAL_ 1049 obj20_BrakeLight_oA_CAMERA_OD19_ 0 "false" 1 "true";
+VAL_ 1049 obj20_Type_oA_CAMERA_OD19_OD20_o 0 "No type" 1 "Car" 2 "Truck" 3 "Motorcycle" 4 "Pedestrian" 5 "Cyclist" 6 "reserved" 7 "reserved";
+VAL_ 1049 obj20_DirIndicator_oA_CAMERA_OD1 0 "No direction indicator" 1 "Left indicator" 2 "Right indicator" 3 "Warning Lights" 4 "Unknown" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1060 Line01_Type_oA_CAMERA_LD1_oMRR_S 0 "undecided" 1 "solid" 2 "dashed" 3 "double solid dashed" 4 "double dashed solid" 5 "double solid solid" 6 "double dashed dashed" 7 "botts" 8 "reserved" 9 "hov_lane";
+VAL_ 1060 Line01_ColorClass_oA_CAMERA_LD1_ 0 "COLOR_WHITE" 1 "COLOR_YELLOW" 2 "COLOR_BLUE" 3 "COLOR_UNKNOWN" 4 "reserved" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1060 Line02_Type_oA_CAMERA_LD1_oMRR_S 0 "undecided" 1 "solid" 2 "dashed" 3 "double solid dashed" 4 "double dashed solid" 5 "double solid solid" 6 "double dashed dashed" 7 "botts" 8 "reserved" 9 "hov_lane";
+VAL_ 1060 Line02_ColorClass_oA_CAMERA_LD1_ 0 "COLOR_WHITE" 1 "COLOR_YELLOW" 2 "COLOR_BLUE" 3 "COLOR_UNKNOWN" 4 "reserved" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1061 Line03_Type_oA_CAMERA_LD2_oMRR_S 0 "undecided" 1 "solid" 2 "dashed" 3 "double solid dashed" 4 "double dashed solid" 5 "double solid solid" 6 "double dashed dashed" 7 "botts" 8 "reserved" 9 "hov_lane";
+VAL_ 1061 Line03_ColorClass_oA_CAMERA_LD2_ 0 "COLOR_WHITE" 1 "COLOR_YELLOW" 2 "COLOR_BLUE" 3 "COLOR_UNKNOWN" 4 "reserved" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1061 Line03_PredictSrc_oA_CAMERA_LD2_ 0 "NONE" 1 "LOSS";
+VAL_ 1061 Line03_PredictType_oA_CAMERA_LD2 0 "NONE" 1 "FULL";
+VAL_ 1061 Line04_Type_oA_CAMERA_LD2_oMRR_S 0 "undecided" 1 "solid" 2 "dashed" 3 "double solid dashed" 4 "double dashed solid" 5 "double solid solid" 6 "double dashed dashed" 7 "botts" 8 "reserved" 9 "hov_lane";
+VAL_ 1061 Line04_ColorClass_oA_CAMERA_LD2_ 0 "COLOR_WHITE" 1 "COLOR_YELLOW" 2 "COLOR_BLUE" 3 "COLOR_UNKNOWN" 4 "reserved" 5 "reserved" 6 "reserved" 7 "reserved";
+VAL_ 1061 Line04_PredictSrc_oA_CAMERA_LD2_ 0 "NONE" 1 "LOSS";
+VAL_ 1061 Line04_PredictType_oA_CAMERA_LD2 0 "NONE" 1 "FULL";
+VAL_ 1150 Roadedge01_Type_oA_CAMERA_RE_oMR 0 "undecided" 1 "reserved" 2 "reserved" 3 "reserved" 4 "reserved" 5 "reserved" 6 "reserved" 7 "reserved" 8 "reserved" 9 "reserved" 10 "road edge" 11 "elevated_structure" 12 "curb" 13 "cones_poles";
+VAL_ 1150 Roadedge02_Type_oA_CAMERA_RE_oMR 0 "undecided" 1 "reserved" 2 "reserved" 3 "reserved" 4 "reserved" 5 "reserved" 6 "reserved" 7 "reserved" 8 "reserved" 9 "reserved" 10 "road edge" 11 "elevated_structure" 12 "curb" 13 "cones_poles";

@@ -4182,5 +4182,16 @@
       "2023"
     ],
     "package": "Adaptive Cruise Control (ACC) & Lane Assist"
+  },
+  "VinFast VF8 2023-24": {
+    "platform": "VINFAST_VF8",
+    "make": "VinFast",
+    "brand": "vinfast",
+    "model": "VF8",
+    "year": [
+      "2023",
+      "2024"
+    ],
+    "package": "All"
   }
 }

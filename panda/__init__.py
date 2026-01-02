@@ -7,4 +7,4 @@ from .python import (Panda, PandaDFU, # noqa: F401
                      DLC_TO_LEN, LEN_TO_DLC, CANPACKET_HEAD_SIZE)
 
 # panda jungle
-#from .board.jungle import PandaJungle, PandaJungleDFU # noqa: F401
+from .board.jungle import PandaJungle, PandaJungleDFU # noqa: F401

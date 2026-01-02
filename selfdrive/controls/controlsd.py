@@ -189,8 +189,10 @@ class Controls(ControlsExt, ModelStateBase):
     if self.sm['selfdriveState'].active:
       CO = self.sm['carOutput']
       if self.CP.steerControlType == car.CarParams.SteerControlType.angle:
+        # Use brand-specific saturation threshold (20.0 for VinFast, 2.5 for others)
+        saturation_threshold = 20.0 if self.CP.brand == "vinfast" else STEER_ANGLE_SATURATION_THRESHOLD
         self.steer_limited_by_safety = abs(CC.actuators.steeringAngleDeg - CO.actuatorsOutput.steeringAngleDeg) > \
-                                              STEER_ANGLE_SATURATION_THRESHOLD
+                                              saturation_threshold
       else:
         self.steer_limited_by_safety = abs(CC.actuators.torque - CO.actuatorsOutput.torque) > 1e-2
 
