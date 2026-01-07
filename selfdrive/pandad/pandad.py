@@ -73,7 +73,7 @@ def check_panda_support(panda) -> bool:
   if hw_type in Panda.DEPRECATED_DEVICES:
     return False
 
-  return True
+    return True
 
 
 def main() -> None:

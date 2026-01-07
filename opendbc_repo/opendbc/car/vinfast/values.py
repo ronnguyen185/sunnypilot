@@ -54,6 +54,7 @@ class VinFastPlatformConfig(PlatformConfig):
     Bus.chassis: "vinfast_vf8_chassis_can",
     Bus.cam: "vinfast_vf8_chassis_can",  # Camera bus uses same DBC (SCAM messages)
     Bus.radar: "vinfast_vf8_mrr_scam",  # Radar bus (CAN-FD) - MRR with SCAM integration
+    Bus.body: "vinfast_vf8_info_can",  # Info CAN bus (turn signals, blind spot monitor, etc.)
   })
 
 
@@ -66,12 +67,16 @@ class CAR(Platforms):
 
 class CANBUS:
   # Note: Due to wiring, bus assignments are reversed:
-  # - Bus 2 = Chassis bus (physical chassis CAN)
-  # - Bus 0 = SCAM bus (camera/SCAM CAN)
-  # - Bus 1 = Radar bus (CAN-FD)
-  chassis = 2  # Bus 2 is chassis bus (due to wiring)
-  cam = 0      # Bus 0 is SCAM/camera bus (due to wiring)
-  radar = 1    # Bus 1 is radar bus (CAN-FD)
+  # - Bus 2 = Chassis bus (physical chassis CAN) on first panda
+  # - Bus 0 = SCAM bus (camera/SCAM CAN) on first panda
+  # - Bus 1 = Radar bus (CAN-FD) on first panda
+  # - Info CAN bus: Second panda connected via USB, physical bus 2
+  #   If pandad applies bus_offset=4 to second panda, messages appear on bus 6 (2+4)
+  #   Adjust this value based on actual bus number in aggregated CAN stream
+  chassis = 2  # Bus 2 is chassis bus (due to wiring) on first panda
+  cam = 0      # Bus 0 is SCAM/camera bus (due to wiring) on first panda
+  radar = 1    # Bus 1 is radar bus (CAN-FD) on first panda
+  info = 6     # Info CAN bus: bus 2 on second panda (USB) -> bus 6 if bus_offset=4 is applied by pandad
 
 FW_QUERY_CONFIG = FwQueryConfig(
   requests=[

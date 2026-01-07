@@ -59,14 +59,19 @@ class CarInterface(CarInterfaceBase):
     # Car specific configuration
     ret.dashcamOnly = False  # TODO: set to True if not fully tested
 
+    # Enable blind spot monitoring - VinFast VF8 has BSM via ADAS_BSD message on info CAN bus
+    # This allows the UI to enable AutoLaneChangeBsmDelay option
+    ret.enableBsm = True
+
     return ret
 
   @staticmethod
   def _get_params_sp(stock_cp: structs.CarParams, ret: structs.CarParamsSP, candidate, fingerprint: dict[int, dict[int, int]],
                      car_fw: list[structs.CarParams.CarFw], alpha_long: bool, is_release_sp: bool, docs: bool) -> structs.CarParamsSP:
     """Sunnypilot-specific parameters for VinFast."""
-    # For now, use default sunnypilot parameters
-    # Add VinFast-specific sunnypilot flags or parameters here if needed in the future
+    # Enable pcmCruiseSpeed so that openpilot longitudinal uses the car's set speed from ADAS_CMP_ACC
+    # This allows openpilot to react to speed changes made via the car's cruise control buttons
+    ret.pcmCruiseSpeed = True
     return ret
 
   @staticmethod
@@ -76,15 +81,74 @@ class CarInterface(CarInterfaceBase):
     Configures CAN-FD for bus 1 (radar) after a 10 second delay.
     This is called after pandad sets safety mode, so we wait 10 seconds
     then try once to configure CAN-FD, then stop.
+    Also sets default parameters for VinFast.
     """
+    from openpilot.common.params import Params
     import time
     import threading
 
+    # Set default parameters for VinFast if not already set
+    params = Params()
+    # Enable AutoLaneChangeBsmDelay by default for VinFast (has blind spot monitoring)
+    if params.get("AutoLaneChangeBsmDelay") is None:
+      params.put_bool("AutoLaneChangeBsmDelay", True)
+
     def configure_bus1():
-      """Configure bus 1 for CAN-FD. Returns True if successful."""
+      """Configure bus 1 for CAN-FD on the SPI panda. Returns True if successful."""
       try:
         from panda import Panda
-        panda = Panda()
+
+        # Find and connect to the SPI panda specifically
+        # CAN-FD must be configured on the panda with SPI interface
+        panda = None
+        spi_serial = None
+
+        # Try to get SPI panda serial
+        try:
+          spi_list = Panda.spi_list()
+          if spi_list:
+            spi_serial = spi_list[0]
+        except Exception:
+          pass
+
+        # Try to connect to SPI panda
+        if spi_serial:
+          try:
+            # Connect to specific SPI panda by serial
+            panda = Panda(serial=spi_serial)
+            # Verify it's actually connected via SPI
+            if not panda.spi:
+              # Not SPI, try to find SPI panda from list
+              panda.close()
+              panda = None
+          except Exception:
+            panda = None
+
+        # If we couldn't connect to SPI panda by serial, try connecting without serial
+        # (Panda() tries USB first, then SPI, so this should find SPI if available)
+        if panda is None:
+          try:
+            panda = Panda()
+            # If it connected via USB, we need to find the SPI one
+            if not panda.spi:
+              panda.close()
+              # List all pandas and try to find SPI one
+              all_pandas = Panda.list()
+              for serial in all_pandas:
+                try:
+                  test_panda = Panda(serial=serial)
+                  if test_panda.spi:
+                    panda = test_panda
+                    break
+                  test_panda.close()
+                except Exception:
+                  continue
+          except Exception:
+            pass
+
+        if panda is None or not panda.spi:
+          # Could not find SPI panda
+          return False
 
         # Enable bus 1 for radar (required for CAN-FD to work)
         panda.set_can_enable(CANBUS.radar, True)
@@ -96,7 +160,7 @@ class CarInterface(CarInterfaceBase):
         # Disable auto-detection to use explicit speeds
         panda.set_canfd_auto(CANBUS.radar, False)
 
-        del panda
+        panda.close()
         return True
       except Exception:
         return False

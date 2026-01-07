@@ -138,10 +138,11 @@ class RadarInterface(RadarInterfaceBase):
             radar_addrs_seen = sorted([a for a in bus1_addrs if a in RADAR_OD_MSGS])
             cloudlog.info(f"VinFast Radar: Bus {CANBUS.radar} - {msg_rate} msgs/sec, total={self.bus1_msg_count_total}, radar addresses (0x410-0x419): {radar_addrs_seen if radar_addrs_seen else 'NONE'}")
 
-            if self.rcp is not None and hasattr(self.rcp, 'addresses') and self.rcp.addresses:
-                missing_addrs = [a for a in RADAR_OD_MSGS if a not in bus1_addrs]
-                if missing_addrs:
-                    cloudlog.warning(f"VinFast Radar: Missing expected addresses on bus {CANBUS.radar}: {missing_addrs}")
+            # Removed debug warning about missing expected addresses
+            # if self.rcp is not None and hasattr(self.rcp, 'addresses') and self.rcp.addresses:
+            #     missing_addrs = [a for a in RADAR_OD_MSGS if a not in bus1_addrs]
+            #     if missing_addrs:
+            #         cloudlog.warning(f"VinFast Radar: Missing expected addresses on bus {CANBUS.radar}: {missing_addrs}")
 
         # Check again that rcp is not None before using it
         if self.rcp is None:
