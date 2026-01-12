@@ -69,15 +69,30 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
     raise NotImplementedError("Longitudinal personality not supported")
 
 
-def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
+def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard, CP=None, lead_distance_bars=None):
+  # Base T_FOLLOW values by personality
   if personality==log.LongitudinalPersonality.relaxed:
-    return 1.75
+    t_follow = 1.75
   elif personality==log.LongitudinalPersonality.standard:
-    return 1.45
+    t_follow = 1.45
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 1.25
+    t_follow = 1.25
   else:
     raise NotImplementedError("Longitudinal personality not supported")
+
+  # VinFast-specific gap adjustments using ADAS_ACC_TimeGapSet
+  # Time gap levels: 1 = closest, 2 = close, 3 = medium, 4 = farthest
+  if CP is not None and CP.brand == "vinfast":
+    if lead_distance_bars is not None and 1 <= lead_distance_bars <= 4:
+      # Map time gap levels to T_FOLLOW multipliers
+      # Level 1 (closest) = 0.7x, Level 2 = 0.85x, Level 3 = 1.0x, Level 4 (farthest) = 1.15x
+      gap_multipliers = {1: 0.7, 2: 0.85, 3: 1.0, 4: 1.15}
+      t_follow = t_follow * gap_multipliers[int(lead_distance_bars)]
+    else:
+      # Default: 20% reduction if no valid time gap setting
+      t_follow = t_follow * 0.8
+
+  return t_follow
 
 def get_stopped_equivalence_factor(v_lead):
   return (v_lead**2) / (2 * COMFORT_BRAKE)
@@ -184,7 +199,7 @@ def gen_long_ocp():
 
   x0 = np.zeros(X_DIM)
   ocp.constraints.x0 = x0
-  ocp.parameter_values = np.array([-1.2, 1.2, 0.0, 0.0, get_T_FOLLOW(), LEAD_DANGER_FACTOR])
+  ocp.parameter_values = np.array([-1.2, 1.2, 0.0, 0.0, get_T_FOLLOW(log.LongitudinalPersonality.standard, None), LEAD_DANGER_FACTOR])
 
 
   # We put all constraint cost weights to 0 and only set them at runtime
@@ -222,9 +237,10 @@ def gen_long_ocp():
 
 
 class LongitudinalMpc:
-  def __init__(self, mode='acc', dt=DT_MDL):
+  def __init__(self, mode='acc', dt=DT_MDL, CP=None):
     self.mode = mode
     self.dt = dt
+    self.CP = CP  # Store CarParams for brand-specific adjustments
     self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
     self.reset()
     self.source = SOURCES[2]
@@ -327,8 +343,8 @@ class LongitudinalMpc:
     lead_xv = self.extrapolate_lead(x_lead, v_lead, a_lead, a_lead_tau)
     return lead_xv
 
-  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
-    t_follow = get_T_FOLLOW(personality)
+  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, lead_distance_bars=None):
+    t_follow = get_T_FOLLOW(personality, self.CP, lead_distance_bars)
     v_ego = self.x0[1]
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 

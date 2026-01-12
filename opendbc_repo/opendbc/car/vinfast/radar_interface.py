@@ -56,6 +56,12 @@ class RadarInterface(RadarInterfaceBase):
         self.consecutive_empty_updates = 0
         self.last_object_log = 0
 
+        # Track persistence: require tracks to appear multiple times before accepting
+        self.track_ages = {}  # track_id -> age (number of consecutive appearances)
+        self.track_history = {}  # track_id -> list of recent measurements for consistency check
+        self.min_track_age = 2  # Require track to appear at least 2 times before accepting
+        self.max_track_history = 5  # Keep last 5 measurements for consistency
+
         if self.rcp is None:
             cloudlog.warning("VinFast Radar: Interface disabled (radarUnavailable=True)")
         else:
@@ -223,6 +229,13 @@ class RadarInterface(RadarInterfaceBase):
                     vy_rel = _first_match(msg, pref, "Rel_Vy", default=None)
                     vy_std = _first_match(msg, pref, "Rel_VyStdDev", default=None)
 
+                    # Check for additional quality/confidence fields if available
+                    quality = _first_match(msg, pref, "Quality", default=None)
+                    confidence = _first_match(msg, pref, "Confidence", default=None)
+                    classification = _first_match(msg, pref, "Classification", default=None)
+                    age = _first_match(msg, pref, "Age", default=None)
+                    azimuth_conf = _first_match(msg, pref, "AzimuthConf", default=None)
+
                     # Basic quality filters to avoid ghost / too-close artifacts
                     if dx is None or dx > 300:
                         continue
@@ -248,26 +261,47 @@ class RadarInterface(RadarInterfaceBase):
                         if abs(vrel) > 1.0:
                             continue  # Close objects shouldn't have high relative velocity
 
-                    if exist_prob is not None and exist_prob < 0.5:
+                    # Stricter existence probability - require higher confidence
+                    if exist_prob is not None and exist_prob < 0.65:  # Increased from 0.5
                         continue
                     if motion_status is not None and motion_status == 0:
                         continue  # static/invalid object
-                    if dx_std is not None and dx_std > 30:
+
+                    # Stricter uncertainty checks - reduce thresholds for better reliability
+                    if dx_std is not None and dx_std > 20:  # Reduced from 30
                         continue
-                    if vx_std is not None and vx_std > 15:
+                    if vx_std is not None and vx_std > 10:  # Reduced from 15
                         continue
-                    if vy_std is not None and vy_std > 10:
+                    if vy_std is not None and vy_std > 5.0:  # Reduced from 10
                         continue  # Reject objects with high lateral velocity uncertainty
+
+                    # Check azimuth confidence if available
+                    if azimuth_conf is not None and azimuth_conf < 2:  # Low confidence azimuth
+                        continue
+
+                    # Check quality/confidence fields if available
+                    if quality is not None and quality < 0.5:
+                        continue
+                    if confidence is not None and confidence < 0.5:
+                        continue
 
                     # Calculate lateral distance from azimuth angle
                     # Use average of PhiLeft and PhiRight if both available, otherwise use one
                     azimuth = None
                     if phi_left is not None and phi_right is not None:
+                        # Require reasonable consistency between left and right azimuth
+                        azimuth_diff = abs(phi_left - phi_right)
+                        if azimuth_diff > math.radians(10):  # More than 10 degrees difference
+                            continue  # Inconsistent azimuth measurements - likely unreliable
                         azimuth = (phi_left + phi_right) / 2.0
                     elif phi_left is not None:
                         azimuth = phi_left
                     elif phi_right is not None:
                         azimuth = phi_right
+                    else:
+                        # No azimuth info - require very high existence probability
+                        if exist_prob is None or exist_prob < 0.85:
+                            continue
 
                     # Calculate lateral distance from azimuth and longitudinal distance
                     yrel = 0.0
@@ -319,9 +353,10 @@ class RadarInterface(RadarInterfaceBase):
 
                     # Reject tracks with suspiciously high velocities that are likely ghosts
                     # Many radar tracks show vRel=5+ m/s when vision sees stationary objects
-                    # Filter out tracks with |vRel| > 3 m/s unless they're far away (>20m)
-                    # This helps reduce false positives that prevent vision matching
-                    if abs(vrel) > 3.0 and dx < 20.0:
+                    # For VinFast: Relaxed filtering to allow more tracks for vision matching
+                    # Only filter very high velocities (>5 m/s) when close, to preserve valid tracks
+                    # The vision matching algorithm will handle filtering false positives
+                    if abs(vrel) > 5.0 and dx < 10.0:
                         continue
 
                     # Additional lateral velocity check - reject objects with excessive lateral movement
@@ -339,6 +374,43 @@ class RadarInterface(RadarInterfaceBase):
                         # Use object ID but make it unique per address to avoid collisions
                         track_id = (addr << 8) | (int(obj_id) & 0xFF)
 
+                    # Track persistence: only accept tracks that have appeared multiple times
+                    if track_id not in self.track_ages:
+                        self.track_ages[track_id] = 0
+                        self.track_history[track_id] = []
+
+                    self.track_ages[track_id] += 1
+
+                    # Store measurement for consistency check
+                    self.track_history[track_id].append({
+                        'dRel': dx,
+                        'vRel': vrel,
+                        'yRel': yrel,
+                        'exist_prob': exist_prob
+                    })
+                    if len(self.track_history[track_id]) > self.max_track_history:
+                        self.track_history[track_id].pop(0)
+
+                    # Only accept track if it has appeared enough times
+                    if self.track_ages[track_id] < self.min_track_age:
+                        continue  # Track too new, wait for confirmation
+
+                    # Consistency check: reject tracks with large jumps in position/velocity
+                    if len(self.track_history[track_id]) >= 2:
+                        prev = self.track_history[track_id][-2]
+                        curr = self.track_history[track_id][-1]
+
+                        # Check for sudden jumps (likely flickering/ghost)
+                        dRel_jump = abs(curr['dRel'] - prev['dRel'])
+                        vRel_jump = abs(curr['vRel'] - prev['vRel'])
+
+                        # Reject if distance jumps more than 3m or velocity jumps more than 5 m/s
+                        if dRel_jump > 3.0 or vRel_jump > 5.0:
+                            # Reset track age - treat as new track
+                            self.track_ages[track_id] = 0
+                            self.track_history[track_id] = [curr]
+                            continue
+
                     if track_id not in self.pts:
                         self.pts[track_id] = structs.RadarData.RadarPoint()
                         self.pts[track_id].trackId = track_id
@@ -354,6 +426,14 @@ class RadarInterface(RadarInterfaceBase):
         if self.pts and (len(self.pts) % 50 == 0):
             closest = min(self.pts.values(), key=lambda p: p.dRel)
             cloudlog.debug(f"VinFast Radar: Closest object dRel={closest.dRel:.1f} vRel={closest.vRel:.2f}")
+
+        # Clean up old tracks that are no longer present
+        current_track_ids = set(self.pts.keys())
+        for track_id in list(self.track_ages.keys()):
+            if track_id not in current_track_ids:
+                # Track disappeared - reset age for next appearance
+                self.track_ages[track_id] = 0
+                self.track_history[track_id] = []
 
         # Clean up old points that are no longer present
         # Keep points for a few cycles in case of temporary message loss

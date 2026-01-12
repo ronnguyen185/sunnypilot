@@ -53,7 +53,7 @@ def limit_accel_in_turns(v_ego, angle_steers, a_target, CP):
 class LongitudinalPlanner(LongitudinalPlannerSP):
   def __init__(self, CP, CP_SP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
-    self.mpc = LongitudinalMpc(dt=dt)
+    self.mpc = LongitudinalMpc(dt=dt, CP=CP)
     # TODO remove mpc modes when TR released
     self.mpc.mode = 'acc'
     LongitudinalPlannerSP.__init__(self, self.CP, CP_SP, self.mpc)
@@ -154,7 +154,14 @@ class LongitudinalPlanner(LongitudinalPlannerSP):
 
     self.mpc.set_weights(prev_accel_constraint, personality=sm['selfdriveState'].personality)
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
-    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, personality=sm['selfdriveState'].personality)
+    # Get leadDistanceBars from carStateSP for VinFast time gap adjustment
+    # Only use if valid and non-zero (1-4 are valid time gap levels)
+    lead_distance_bars = None
+    if sm.valid['carStateSP']:
+      bars = sm['carStateSP'].leadDistanceBars
+      if 1 <= bars <= 4:
+        lead_distance_bars = bars
+    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, personality=sm['selfdriveState'].personality, lead_distance_bars=lead_distance_bars)
 
     self.v_desired_trajectory = np.interp(CONTROL_N_T_IDX, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory = np.interp(CONTROL_N_T_IDX, T_IDXS_MPC, self.mpc.a_solution)

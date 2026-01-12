@@ -141,6 +141,7 @@ class SelfdriveD(CruiseHelper):
     self.recalibrating_seen = False
     self.state_machine = StateMachine()
     self.rk = Ratekeeper(100, print_delay_threshold=None)
+    self.start_time = time.monotonic()  # Track start time for grace period
 
     self.ignored_processes = {'mapd', }
 
@@ -363,23 +364,61 @@ class SelfdriveD(CruiseHelper):
     # generic catch-all. ideally, a more specific event should be added above instead
     has_disable_events = self.events.contains(ET.NO_ENTRY) and (self.events.contains(ET.SOFT_DISABLE) or self.events.contains(ET.IMMEDIATE_DISABLE))
     no_system_errors = (not has_disable_events) or (len(self.events) == num_events)
-    if not self.sm.all_checks() and no_system_errors:
-      if not self.sm.all_alive():
-        self.events.add(EventName.commIssue)
-      elif not self.sm.all_freq_ok():
-        self.events.add(EventName.commIssueAvgFreq)
-      else:
-        self.events.add(EventName.commIssue)
 
-      logs = {
-        'invalid': [s for s, valid in self.sm.valid.items() if not valid],
-        'not_alive': [s for s, alive in self.sm.alive.items() if not alive],
-        'not_freq_ok': [s for s, freq_ok in self.sm.freq_ok.items() if not freq_ok],
-      }
-      if logs != self.logged_comm_issue:
-        cloudlog.event("commIssue", error=True, **logs)
-        self.logged_comm_issue = logs
+    # Make commIssue warnings less intrusive:
+    # - Ignore non-critical services with transient frequency issues
+    # - Add grace period during startup (first 15 seconds)
+    # - Only show warnings for persistent issues (require 2+ seconds of failure)
+    startup_grace_period = 15.0  # seconds
+    persistent_issue_duration = 2.0  # seconds
+    time_since_start = time.monotonic() - self.start_time if hasattr(self, 'start_time') else 0
+
+    if not self.sm.all_checks() and no_system_errors:
+      # Filter out non-critical services that commonly have transient frequency issues
+      critical_services = ['carState', 'controlsState', 'selfdriveState', 'modelV2', 'radarState']
+      invalid_critical = [s for s in self.sm.valid.keys() if not self.sm.valid[s] and s in critical_services]
+      not_alive_critical = [s for s in self.sm.alive.keys() if not self.sm.alive[s] and s in critical_services]
+
+      # Only trigger warnings for critical services or if many services are failing
+      has_critical_issue = len(invalid_critical) > 0 or len(not_alive_critical) > 0
+      total_failures = sum([not self.sm.valid.get(s, True) for s in self.sm.valid.keys()]) + \
+                      sum([not self.sm.alive.get(s, True) for s in self.sm.alive.keys()])
+
+      # Skip warnings during startup grace period unless critical services are down
+      if time_since_start < startup_grace_period and not has_critical_issue:
+        pass  # Ignore transient issues during startup
+      elif has_critical_issue or total_failures >= 3:
+        # Track persistent issues
+        if not hasattr(self, 'comm_issue_start_time'):
+          self.comm_issue_start_time = time.monotonic()
+
+        issue_duration = time.monotonic() - self.comm_issue_start_time
+
+        # Only show warning if issue persists for required duration
+        if issue_duration >= persistent_issue_duration:
+          if not self.sm.all_alive():
+            self.events.add(EventName.commIssue)
+          elif not self.sm.all_freq_ok():
+            self.events.add(EventName.commIssueAvgFreq)
+          else:
+            self.events.add(EventName.commIssue)
+
+          logs = {
+            'invalid': [s for s, valid in self.sm.valid.items() if not valid],
+            'not_alive': [s for s, alive in self.sm.alive.items() if not alive],
+            'not_freq_ok': [s for s, freq_ok in self.sm.freq_ok.items() if not freq_ok],
+          }
+          if logs != self.logged_comm_issue:
+            cloudlog.event("commIssue", error=True, **logs)
+            self.logged_comm_issue = logs
+      else:
+        # Reset timer if issues are minor/non-critical
+        if hasattr(self, 'comm_issue_start_time'):
+          delattr(self, 'comm_issue_start_time')
     else:
+      # Reset timer when all checks pass
+      if hasattr(self, 'comm_issue_start_time'):
+        delattr(self, 'comm_issue_start_time')
       self.logged_comm_issue = None
 
     if not self.CP.notCar:

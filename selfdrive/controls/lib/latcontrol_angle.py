@@ -10,7 +10,7 @@ STEER_ANGLE_SATURATION_THRESHOLD = 2.5  # Degrees
 # PI gains for VinFast angle control feedback (no derivative term to reduce oscillation)
 # These correct for the gap between desired and actual steering angle
 # Tuned to minimize steering error while reducing oscillation around center (±5 deg)
-VINFAST_ANGLE_KP = 1.5  # Proportional gain - strong feedback
+VINFAST_ANGLE_KP = 0.8 # Proportional gain - strong feedback
 VINFAST_ANGLE_KI = 0.05  # Integral gain - eliminates steady-state error
 VINFAST_ANGLE_KD = 0.0   # Derivative gain - set to 0 for PI controller (reduces oscillation)
 

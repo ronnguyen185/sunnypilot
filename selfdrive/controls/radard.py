@@ -119,13 +119,24 @@ def laplacian_pdf(x: float, mu: float, b: float):
   return math.exp(-abs(x-mu)/b)
 
 
-def match_vision_to_track(v_ego: float, lead: capnp._DynamicStructReader, tracks: dict[int, Track]):
+def match_vision_to_track(v_ego: float, lead: capnp._DynamicStructReader, tracks: dict[int, Track], CP: structs.CarParams = None):
   offset_vision_dist = lead.x[0] - RADAR_TO_CAMERA
 
+  # VinFast-specific: Use more lenient matching thresholds due to radar noise characteristics
+  is_vinfast = CP is not None and CP.brand == "vinfast"
+
   def prob(c):
-    prob_d = laplacian_pdf(c.dRel, offset_vision_dist, lead.xStd[0])
-    prob_y = laplacian_pdf(c.yRel, -lead.y[0], lead.yStd[0])
-    prob_v = laplacian_pdf(c.vRel + v_ego, lead.v[0], lead.vStd[0])
+    # For VinFast: Weight radar measurements more by using larger std dev in probability calculation
+    # This makes the matching more lenient and favors radar when there's discrepancy
+    if is_vinfast:
+      # Increase std dev by 1.5x to make matching more lenient (trust radar more)
+      prob_d = laplacian_pdf(c.dRel, offset_vision_dist, lead.xStd[0] * 1.5)
+      prob_y = laplacian_pdf(c.yRel, -lead.y[0], lead.yStd[0] * 1.5)
+      prob_v = laplacian_pdf(c.vRel + v_ego, lead.v[0], lead.vStd[0] * 1.5)
+    else:
+      prob_d = laplacian_pdf(c.dRel, offset_vision_dist, lead.xStd[0])
+      prob_y = laplacian_pdf(c.yRel, -lead.y[0], lead.yStd[0])
+      prob_v = laplacian_pdf(c.vRel + v_ego, lead.v[0], lead.vStd[0])
 
     # This isn't exactly right, but it's a good heuristic
     return prob_d * prob_y * prob_v
@@ -134,8 +145,15 @@ def match_vision_to_track(v_ego: float, lead: capnp._DynamicStructReader, tracks
 
   # if no 'sane' match is found return -1
   # stationary radar points can be false positives
-  dist_sane = abs(track.dRel - offset_vision_dist) < max([(offset_vision_dist)*.25, 5.0])
-  vel_sane = (abs(track.vRel + v_ego - lead.v[0]) < 10) or (v_ego + track.vRel > 3)
+  # VinFast: Use more lenient thresholds (50% distance tolerance, 20 m/s velocity tolerance)
+  # Increased thresholds to trust radar more
+  if is_vinfast:
+    dist_sane = abs(track.dRel - offset_vision_dist) < max([(offset_vision_dist)*.50, 10.0])  # Increased from 35% and 7.0m
+    vel_sane = (abs(track.vRel + v_ego - lead.v[0]) < 20) or (v_ego + track.vRel > 1.5)  # Increased from 15 m/s and 2.0
+  else:
+    dist_sane = abs(track.dRel - offset_vision_dist) < max([(offset_vision_dist)*.25, 5.0])
+    vel_sane = (abs(track.vRel + v_ego - lead.v[0]) < 10) or (v_ego + track.vRel > 3)
+
   if dist_sane and vel_sane:
     return track
   else:
@@ -163,8 +181,13 @@ def get_RadarState_from_vision(lead_msg: capnp._DynamicStructReader, v_ego: floa
 def get_lead(v_ego: float, ready: bool, tracks: dict[int, Track], lead_msg: capnp._DynamicStructReader,
              model_v_ego: float, CP: structs.CarParams, CP_SP: structs.CarParamsSP, low_speed_override: bool = True) -> dict[str, Any]:
   # Determine leads, this is where the essential logic happens
-  if len(tracks) > 0 and ready and lead_msg.prob > .5:
-    track = match_vision_to_track(v_ego, lead_msg, tracks)
+  is_vinfast = CP is not None and CP.brand == "vinfast"
+
+  # VinFast: Lower vision probability threshold to trust radar more (0.3 instead of 0.5)
+  vision_prob_threshold = 0.3 if is_vinfast else 0.5
+
+  if len(tracks) > 0 and ready and lead_msg.prob > vision_prob_threshold:
+    track = match_vision_to_track(v_ego, lead_msg, tracks, CP)
   else:
     track = None
 
@@ -172,8 +195,18 @@ def get_lead(v_ego: float, ready: bool, tracks: dict[int, Track], lead_msg: capn
   if track is not None:
     lead_dict = track.get_RadarState(lead_msg.prob)
     lead_dict = get_custom_yrel(CP, CP_SP, lead_dict, lead_msg)
-  elif (track is None) and ready and (lead_msg.prob > .5):
+  elif (track is None) and ready and (lead_msg.prob > vision_prob_threshold):
     lead_dict = get_RadarState_from_vision(lead_msg, v_ego, model_v_ego)
+
+  # VinFast: Fallback to closest radar track if vision matching failed but we have radar tracks
+  # This prioritizes radar over vision when there's a discrepancy
+  if is_vinfast and not lead_dict['status'] and len(tracks) > 0:
+    # Find closest radar track in front (positive dRel, small lateral offset)
+    front_tracks = [c for c in tracks.values() if c.dRel > 0 and abs(c.yRel) < 2.0]
+    if len(front_tracks) > 0:
+      closest_track = min(front_tracks, key=lambda c: c.dRel)
+      lead_dict = closest_track.get_RadarState()
+      lead_dict['modelProb'] = 0.0  # Mark as radar-only
 
   if low_speed_override:
     low_speed_tracks = [c for c in tracks.values() if c.potential_low_speed_lead(v_ego)]

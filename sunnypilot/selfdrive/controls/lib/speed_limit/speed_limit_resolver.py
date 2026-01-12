@@ -80,6 +80,11 @@ class SpeedLimitResolver:
     if self.speed_limit > 0.:
       self.speed_limit_last = self.speed_limit
       self.speed_limit_final_last = self.speed_limit_final
+    else:
+      # Clear cached values when current speed limit is 0
+      # This prevents stale speed limits from being displayed when TSR/car state indicates no speed limit
+      self.speed_limit_last = 0.
+      self.speed_limit_final_last = 0.
 
   @property
   def speed_limit_valid(self) -> bool:

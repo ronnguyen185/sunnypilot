@@ -133,11 +133,25 @@ class Controls(ControlsExt, ModelStateBase):
 
     # accel PID loop
     pid_accel_limits = self.CI.get_pid_accel_limits(self.CP, self.CP_SP, CS.vEgo, CS.vCruise * CV.KPH_TO_MS)
-    actuators.accel = float(self.LoC.update(CC.longActive, CS, long_plan.aTarget, long_plan.shouldStop, pid_accel_limits))
+    accel_cmd = float(self.LoC.update(CC.longActive, CS, long_plan.aTarget, long_plan.shouldStop, pid_accel_limits))
+    # Increase deaccel command by 10% (multiply negative accel by 1.1)
+    if accel_cmd < 0:
+      accel_cmd = accel_cmd * 1.25
+    # Increase accel command by 10% (multiply positive accel by 1.1)
+    elif accel_cmd > 0:
+      accel_cmd = accel_cmd * 1.1
+    actuators.accel = accel_cmd
 
     # Steering PID loop and lateral MPC
     # Reset desired curvature to current to avoid violating the limits on engage
     new_desired_curvature = model_v2.action.desiredCurvature if CC.latActive else self.curvature
+
+    # Apply lateral offset adjustment for VinFast to shift path left
+    # Negative curvature = turn left (shift path left), Positive = turn right (shift path right)
+    if self.CP.brand == "vinfast" and CC.latActive:
+      lateral_offset_curvature = -0.00025  # Small leftward shift (adjust as needed: -0.0001 to -0.0005)
+      new_desired_curvature = new_desired_curvature + lateral_offset_curvature
+
     self.desired_curvature, curvature_limited = clip_curvature(CS.vEgo, self.desired_curvature, new_desired_curvature, lp.roll)
 
     actuators.curvature = self.desired_curvature

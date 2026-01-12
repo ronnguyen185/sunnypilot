@@ -14,7 +14,7 @@ V_CRUISE_MIN = 8
 V_CRUISE_MAX = 145
 V_CRUISE_UNSET = 255
 V_CRUISE_INITIAL = 40
-V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 105  # Default, can be adjusted via buttons
+V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 80  # Default, can be adjusted via buttons
 IMPERIAL_INCREMENT = round(CV.MPH_TO_KPH, 1)  # round here to avoid rounding errors incrementing set speed
 
 ButtonEvent = car.CarState.ButtonEvent
@@ -280,6 +280,10 @@ class VCruiseHelper(VCruiseHelperSP):
     if any(b.type in (ButtonType.accelCruise, ButtonType.resumeCruise) for b in CS.buttonEvents) and self.v_cruise_initialized:
       self.v_cruise_kph = self.v_cruise_kph_last
     else:
-      self.v_cruise_kph = int(round(np.clip(CS.vEgo * CV.MS_TO_KPH, initial, V_CRUISE_MAX)))
+      # Prefer last cruise speed if valid, otherwise use initial value
+      if self.v_cruise_kph_last > 0 and V_CRUISE_MIN <= self.v_cruise_kph_last <= V_CRUISE_MAX:
+        self.v_cruise_kph = int(round(self.v_cruise_kph_last))
+      else:
+        self.v_cruise_kph = int(round(np.clip(CS.vEgo * CV.MS_TO_KPH, initial, V_CRUISE_MAX)))
 
     self.v_cruise_cluster_kph = self.v_cruise_kph

@@ -15,7 +15,7 @@ class CarControllerParams:
   ACCEL_MIN = -3.5  # m/s
   ACCEL_MAX = 2.0   # m/s
 
-  STEER_MAX = 470
+  STEER_MAX = 180
   STEER_DELTA_UP = 3
   STEER_DELTA_DOWN = 7
   STEER_DRIVER_ALLOWANCE = 50
@@ -28,7 +28,7 @@ class CarControllerParams:
   # Speed breakpoints: 0, 20, 40 m/s
   # Rate limits: up [7, 5, 3] deg/step, down [7, 5, 3] deg/step
   ANGLE_LIMITS: AngleSteeringLimits = AngleSteeringLimits(
-    470.0,  # STEER_ANGLE_MAX (degrees)
+    180.0,  # STEER_ANGLE_MAX (degrees) - set to ±180 degrees
     ([0., 20., 40.], [7., 5., 3.]),   # ANGLE_RATE_LIMIT_UP (speed breakpoints, rate limits)
     ([0., 20., 40.], [7., 5., 3.]),  # ANGLE_RATE_LIMIT_DOWN (speed breakpoints, rate limits)
   )
@@ -62,6 +62,10 @@ class CAR(Platforms):
   VINFAST_VF8 = VinFastPlatformConfig(
     [VinFastCarDocs("VinFast VF8 2023-24", "All", car_parts=CarParts.common([CarHarness.custom]))],
     CarSpecs(mass=2600, wheelbase=2.95, steerRatio=15.3, tireStiffnessFactor=0.82),  # Reduced from 17.0 to match Santa Fe's steerRatio (16.55) for better curvature response
+  )
+  VINFAST_VF9 = VinFastPlatformConfig(
+    [VinFastCarDocs("VinFast VF9 2023-24", "All", car_parts=CarParts.common([CarHarness.custom]))],
+    CarSpecs(mass=2928, wheelbase=3.15, steerRatio=15.0, tireStiffnessFactor=0.85),
   )
 
 

@@ -17,6 +17,10 @@ class CarState(CarStateBase):
     self.prev_speed_button_lower = 0
     # Track last valid cruise speed to preserve it when tag speed is invalid
     self.last_valid_cruise_speed = 0.0
+    # Track last valid speed limit
+    self.last_valid_speed_limit = 0.0
+    # Track last valid time gap setting (1-4) for fallback when info CAN is unavailable
+    self.last_valid_time_gap = 3  # Default to level 3 (medium distance)
 
   def get_can_parsers(self, CP, CP_SP):
     ret = {}
@@ -47,12 +51,15 @@ class CarState(CarStateBase):
 
     # Info CAN bus (turn signals, blind spot monitor, etc.)
     # Accessible via second panda or if info CAN is available
+
     if Bus.body in DBC[CP.carFingerprint]:
       messages_info = [
         ("BCM_LIGHT", 10),      # Turn indicator status (BCM_TurnIndicatorSts)
         ("BCM_SwitchSts", 10),  # Turn indicator switch (BCM_TurnIndicator)
         ("ADAS_BSD", 10),       # Blind spot detection (ADAS_BSD)
         ("ADAS_CMP_ACC", 20),   # ADAS ACC status (ADAS_ACC_TagSpeed, ADAS_ACC_TimeGapSet)
+        ("ADAS_TSR_STATUS", 10), # Traffic Sign Recognition status (ADAS_TSR_Typ1, ADAS_TSR_Typ1_value for speed limits)
+        ("ADAS_Speed_Display", 10), # ISA speed limit display (ADAS_ISA_SpeedLimitCnt_Spd_Feed)
       ]
       ret[Bus.body] = CANParser(DBC[CP.carFingerprint][Bus.body], messages_info, CANBUS.info)
 
@@ -184,15 +191,18 @@ class CarState(CarStateBase):
 
       # Get time gap setting and map to distance bars
       # ADAS_ACC_TimeGapSet: 0 = no gap, 1-4 = distance levels 1-4
-      # leadDistanceBars: 1 = closest, 3 = farthest (some ports use 2-4)
+      # leadDistanceBars: 1 = closest, 4 = farthest
       time_gap = adas_acc.get("ADAS_ACC_TimeGapSet", 0)
       if time_gap >= 1 and time_gap <= 4:
         # Map time gap levels 1-4 to distance bars 1-4
         # Level 1 = closest (1 bar), Level 4 = farthest (4 bars)
         ret_sp.leadDistanceBars = time_gap
+        self.last_valid_time_gap = time_gap  # Store for fallback
       else:
-        # No gap or invalid, don't set leadDistanceBars (keep default)
-        pass
+        # No gap or invalid, use last valid time gap if available
+        if self.last_valid_time_gap >= 1 and self.last_valid_time_gap <= 4:
+          ret_sp.leadDistanceBars = self.last_valid_time_gap
+        # Otherwise, don't set leadDistanceBars (keep default)
 
       # Parse speed set buttons from car
       # ADAS_ACC_SpdSet_upper_Feed: 0 = not pressed, 1 = pressed (speed increase)
@@ -216,6 +226,10 @@ class CarState(CarStateBase):
       # Store current state for next iteration
       self.prev_speed_button_upper = speed_button_upper
       self.prev_speed_button_lower = speed_button_lower
+    else:
+      # Info CAN bus not available - use last valid time gap if available
+      if self.last_valid_time_gap >= 1 and self.last_valid_time_gap <= 4:
+        ret_sp.leadDistanceBars = self.last_valid_time_gap
 
     # Set button events (empty list if no buttons pressed or info CAN not available)
     ret.buttonEvents = button_events
@@ -285,6 +299,38 @@ class CarState(CarStateBase):
       ret.rightBlinker = False
       ret.leftBlindspot = False
       ret.rightBlindspot = False
+
+    # Speed limit from TSR (Traffic Sign Recognition)
+    # ADAS_TSR_Typ1: 1 = "Maximum Speed Limit", 2 = "End of speed limit sign"
+    # ADAS_TSR_Typ1_value: 0 = "No value", 1-31 = speeds 5-155 km/h (incrementing by 5)
+    # Speed calculation: speed_kmh = value * 5 (for value 1-31)
+    if cp_info is not None and "ADAS_TSR_STATUS" in cp_info.vl:
+      tsr_status = cp_info.vl["ADAS_TSR_STATUS"]
+      tsr_typ1 = tsr_status.get("ADAS_TSR_Typ1", 0)
+      tsr_typ1_value = tsr_status.get("ADAS_TSR_Typ1_value", 0)
+
+      # Check if we have a valid speed limit sign (Typ1 = 1 = Maximum Speed Limit)
+      # and a valid speed value (1-31)
+      if tsr_typ1 == 1 and 1 <= tsr_typ1_value <= 31:
+        # Convert value to km/h: 1 = 5 km/h, 2 = 10 km/h, ..., 31 = 155 km/h
+        speed_limit_kmh = tsr_typ1_value * 5
+        speed_limit_ms = speed_limit_kmh * CV.KPH_TO_MS
+        ret_sp.speedLimit = speed_limit_ms
+        self.last_valid_speed_limit = speed_limit_ms
+      elif tsr_typ1 == 2:
+        # End of speed limit sign - clear speed limit
+        ret_sp.speedLimit = 0.0
+        self.last_valid_speed_limit = 0.0
+      else:
+        # No valid speed limit detected - clear speed limit to allow updates
+        # Don't use last valid speed limit to prevent it from staying forever
+        ret_sp.speedLimit = 0.0
+        self.last_valid_speed_limit = 0.0
+    else:
+      # TSR message not available - clear speed limit to allow updates
+      # Don't use last valid speed limit to prevent it from staying forever
+      ret_sp.speedLimit = 0.0
+      self.last_valid_speed_limit = 0.0
 
     # TODO: Add more signals as needed (brake, gas, seatbelt, etc.)
 
