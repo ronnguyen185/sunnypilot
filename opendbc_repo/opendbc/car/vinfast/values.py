@@ -15,7 +15,6 @@ class CarControllerParams:
   ACCEL_MIN = -3.5  # m/s
   ACCEL_MAX = 2.0   # m/s
 
-  STEER_MAX = 180
   STEER_DELTA_UP = 3
   STEER_DELTA_DOWN = 7
   STEER_DRIVER_ALLOWANCE = 50
@@ -24,17 +23,39 @@ class CarControllerParams:
   STEER_THRESHOLD = 150
   STEER_STEP = 1  # 100 Hz
 
+  def __init__(self, CP):
+    # Set steering limits based on car model
+    # VF8: EPS steering max = 470 degrees
+    # VF9: max steering angle = ±90 degrees
+    if CP.carFingerprint == CAR.VINFAST_VF8.name:
+      self.STEER_MAX = 470
   # Angle rate limits matching vinfast.h safety code (speed-dependent)
   # Speed breakpoints: 0, 20, 40 m/s
   # Rate limits: up [7, 5, 3] deg/step, down [7, 5, 3] deg/step
-  ANGLE_LIMITS: AngleSteeringLimits = AngleSteeringLimits(
-    180.0,  # STEER_ANGLE_MAX (degrees) - set to ±180 degrees
+      self.ANGLE_LIMITS = AngleSteeringLimits(
+        470.0,  # STEER_ANGLE_MAX (degrees) - VF8 EPS accepts up to ~470 degrees
+        ([0., 20., 40.], [7., 5., 3.]),   # ANGLE_RATE_LIMIT_UP (speed breakpoints, rate limits)
+        ([0., 20., 40.], [7., 5., 3.]),  # ANGLE_RATE_LIMIT_DOWN (speed breakpoints, rate limits)
+      )
+    elif CP.carFingerprint == CAR.VINFAST_VF9.name:
+      self.STEER_MAX = 90
+      # VF9 steering angle limit is ±90 degrees
+      # Angle rate limits (speed-dependent)
+      # Speed breakpoints: 0, 20, 40 m/s
+      # Rate limits: up [7, 5, 3] deg/step, down [7, 5, 3] deg/step
+      self.ANGLE_LIMITS = AngleSteeringLimits(
+        90.0,  # STEER_ANGLE_MAX (degrees) - VF9 max steering angle = ±90 degrees
     ([0., 20., 40.], [7., 5., 3.]),   # ANGLE_RATE_LIMIT_UP (speed breakpoints, rate limits)
     ([0., 20., 40.], [7., 5., 3.]),  # ANGLE_RATE_LIMIT_DOWN (speed breakpoints, rate limits)
   )
-
-  def __init__(self, CP):
-    pass
+    else:
+      # Default to VF8 values for unknown models
+      self.STEER_MAX = 470
+      self.ANGLE_LIMITS = AngleSteeringLimits(
+        470.0,
+        ([0., 20., 40.], [7., 5., 3.]),
+        ([0., 20., 40.], [7., 5., 3.]),
+      )
 
 
 class VinFastFlags(IntFlag):
@@ -61,7 +82,7 @@ class VinFastPlatformConfig(PlatformConfig):
 class CAR(Platforms):
   VINFAST_VF8 = VinFastPlatformConfig(
     [VinFastCarDocs("VinFast VF8 2023-24", "All", car_parts=CarParts.common([CarHarness.custom]))],
-    CarSpecs(mass=2600, wheelbase=2.95, steerRatio=15.3, tireStiffnessFactor=0.82),  # Reduced from 17.0 to match Santa Fe's steerRatio (16.55) for better curvature response
+    CarSpecs(mass=2600, wheelbase=2.95, steerRatio=13.3, tireStiffnessFactor=0.82), 
   )
   VINFAST_VF9 = VinFastPlatformConfig(
     [VinFastCarDocs("VinFast VF9 2023-24", "All", car_parts=CarParts.common([CarHarness.custom]))],

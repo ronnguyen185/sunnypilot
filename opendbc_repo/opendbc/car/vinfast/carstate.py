@@ -21,6 +21,8 @@ class CarState(CarStateBase):
     self.last_valid_speed_limit = 0.0
     # Track last valid time gap setting (1-4) for fallback when info CAN is unavailable
     self.last_valid_time_gap = 3  # Default to level 3 (medium distance)
+    # ACC popup feed from ADAS_CMP_ACC message
+    self.acc_popup_feed = 0
 
   def get_can_parsers(self, CP, CP_SP):
     ret = {}
@@ -36,6 +38,7 @@ class CarState(CarStateBase):
       ("EPS_SteeringHoldState", 50),
       ("EPS_Advanced", 50),  # EPS_Advanced for EPSAngRespSts (steering fault detection)
       ("YSS_YawRate", 50),  # Yaw rate sensor from YSS (Yaw Stability System)
+      ("VCU_AVAS_GearPosition_ECU", 50),  # Gear position from VCU
     ]
 
     # Camera/SCAM bus (bus 0) - ADAS_ACC_Status is sent by car when longActive is False
@@ -111,12 +114,32 @@ class CarState(CarStateBase):
       ret.steeringTorque = 0.0
       ret.steeringTorqueEps = 0.0
 
-    ret.steeringPressed = abs(ret.steeringTorque) > 50  # TODO: calibrate threshold
+    # Driver torque threshold: 2 Nm to detect driver input (driver torque is around 1 Nm)
+    # Use debounced detection (5 frames) to prevent chattering when torque fluctuates around threshold
+    # This matches how other angle control cars (Tesla, PSA, Rivian, Hyundai, Ford) handle steering detection
+    ret.steeringPressed = self.update_steering_pressed(abs(ret.steeringTorque) > 1.2, 5)
 
-    # Gear - not accessible on comma3x (Body CAN not connected)
-    # TODO: Implement proper gear detection from CAN messages
-    # For now, fake gear position as always Drive (D)
-    ret.gearShifter = structs.CarState.GearShifter.drive
+    # Gear position from VCU_AVAS_GearPosition_ECU message on chassis bus
+    # ActualGearShiftPosition: 0-7 (3 bits)
+    # Typical mapping: 0=Park, 1=Reverse, 2=Neutral, 3=Drive, 4=Sport, etc.
+    if "VCU_AVAS_GearPosition_ECU" in cp_chassis.vl:
+      gear_value = cp_chassis.vl["VCU_AVAS_GearPosition_ECU"].get("ActualGearShiftPosition", 3)
+      # Map gear values to GearShifter enum
+      # 0 = Park, 1 = Reverse, 2 = Neutral, 3 = Drive, 4+ = Sport/other modes
+      gear_map = {
+        0: structs.CarState.GearShifter.park,
+        1: structs.CarState.GearShifter.reverse,
+        2: structs.CarState.GearShifter.neutral,
+        3: structs.CarState.GearShifter.drive,
+        4: structs.CarState.GearShifter.sport,  # Sport mode
+        5: structs.CarState.GearShifter.sport,  # Additional sport modes
+        6: structs.CarState.GearShifter.low,     # Low gear
+        7: structs.CarState.GearShifter.drive,   # Fallback to drive
+      }
+      ret.gearShifter = gear_map.get(gear_value, structs.CarState.GearShifter.unknown)
+    else:
+      # Fallback to drive if message not available
+      ret.gearShifter = structs.CarState.GearShifter.drive
 
     # Doors - not accessible on comma3x (Body CAN not connected)
     # Set to False as fallback
@@ -147,7 +170,7 @@ class CarState(CarStateBase):
       ret.cruiseState.enabled = False
     ret.cruiseState.standstill = ret.standstill
 
-    # Set speed and distance gap from ADAS_CMP_ACC on info CAN bus (bus 6)
+    # Set speed and distance gap from ADAS_CMP_ACC on InfoCAN bus (bus 6)
     # Always read these values regardless of openpilotLongitudinalControl status
     # ADAS_ACC_TagSpeed: Set speed in km/h (0-255, 0xFF = invalid)
     # ADAS_ACC_TimeGapSet: Time gap setting (0 = no gap, 1-4 = distance levels 1-4)
@@ -189,6 +212,10 @@ class CarState(CarStateBase):
           ret.cruiseState.speedCluster = self.last_valid_cruise_speed
         # If no last valid speed, don't update (preserves previous value or defaults to 0)
 
+      # ACC popup feed from ADAS_CMP_ACC message
+      # ADAS_ACC_PopUp_Feed: 3 = "Press gas pedal to re-engage the function"
+      self.acc_popup_feed = adas_acc.get("ADAS_ACC_PopUp_Feed", 0)
+      
       # Get time gap setting and map to distance bars
       # ADAS_ACC_TimeGapSet: 0 = no gap, 1-4 = distance levels 1-4
       # leadDistanceBars: 1 = closest, 4 = farthest
@@ -227,7 +254,9 @@ class CarState(CarStateBase):
       self.prev_speed_button_upper = speed_button_upper
       self.prev_speed_button_lower = speed_button_lower
     else:
-      # Info CAN bus not available - use last valid time gap if available
+      # ADAS_CMP_ACC not available - set acc_popup_feed to 0
+      self.acc_popup_feed = 0
+      # InfoCAN bus not available - use last valid time gap if available
       if self.last_valid_time_gap >= 1 and self.last_valid_time_gap <= 4:
         ret_sp.leadDistanceBars = self.last_valid_time_gap
 

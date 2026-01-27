@@ -10,8 +10,9 @@ STEER_ANGLE_SATURATION_THRESHOLD = 2.5  # Degrees
 # PI gains for VinFast angle control feedback (no derivative term to reduce oscillation)
 # These correct for the gap between desired and actual steering angle
 # Tuned to minimize steering error while reducing oscillation around center (±5 deg)
-VINFAST_ANGLE_KP = 0.8 # Proportional gain - strong feedback
-VINFAST_ANGLE_KI = 0.05  # Integral gain - eliminates steady-state error
+VINFAST_ANGLE_KP_VF8 = 1.2  # Proportional gain - VF8
+VINFAST_ANGLE_KP_VF9 = 0.8  # Proportional gain - VF9
+VINFAST_ANGLE_KI = 0.05 # Integral gain - eliminates steady-state error
 VINFAST_ANGLE_KD = 0.0   # Derivative gain - set to 0 for PI controller (reduces oscillation)
 
 
@@ -25,11 +26,30 @@ class LatControlAngle(LatControl):
 
       # Add PI controller for VinFast to close the gap between desired and actual steering
     if CP.brand == "vinfast":
+      # Store car fingerprint for speed-dependent KP adjustment
+      self.vinfast_car_fingerprint = getattr(CP, "carFingerprint", "")
+      
+      # Model-specific tuning with speed-dependent KP for VF8
+      if self.vinfast_car_fingerprint == "VINFAST_VF8":
+        # VF8: Speed-dependent KP with multiple breakpoints
+        # Speed breakpoints in m/s: [0, 20, 30, 40, 200] km/h = [0, 5.56, 8.33, 11.11, 55.56] m/s
+        # KP values: [0.8, 1.2, 1.5, 2.0, 2.0]
+        # < 20 km/h: KP = 0.8
+        # 20-30 km/h: KP = 1.2
+        # 30-40 km/h: KP = 1.5
+        # >= 40 km/h: KP = 2.0
+        vinfast_kp = ([0.0, 5.56, 8.33, 11.11, 55.56], [0.6, 1.2, 1.5, 2.0, 2.0])
+      else:
+        # VF9: Speed-dependent KP with multiple breakpoints
+        # Speed breakpoints in m/s: [0, 20, 30, 40, 200] km/h = [0, 5.56, 8.33, 11.11, 55.56] m/s
+        # KP values: [0.4, 0.6, 0.8, 1.0, 1.0]
+        vinfast_kp = ([0.0, 5.56, 8.33, 11.11, 55.56], [0.4, 0.6, 0.8, 1.0, 1.0])
+
       # PI outputs angle correction in degrees
       # Limit to prevent overcorrection while allowing strong feedback
-      max_angle_correction = 8.0  # Reduced limit to reduce oscillation around center
+      max_angle_correction = 15.0  # Reduced limit to reduce oscillation around center
       self.pid = PIDController(
-        k_p=VINFAST_ANGLE_KP,
+        k_p=vinfast_kp,
         k_i=VINFAST_ANGLE_KI,
         k_d=VINFAST_ANGLE_KD,  # Set to 0 for PI controller
         k_f=0.0,  # No feedforward in PID - handled separately
@@ -42,6 +62,7 @@ class LatControlAngle(LatControl):
     else:
       self.pid = None
       self.prev_angle_error = 0.0
+      self.vinfast_car_fingerprint = None
 
   def reset(self):
     """Reset the PI controller when control is disabled"""

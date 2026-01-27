@@ -69,7 +69,7 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
     raise NotImplementedError("Longitudinal personality not supported")
 
 
-def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard, CP=None, lead_distance_bars=None):
+def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard, CP=None, lead_distance_bars=None, v_ego=None):
   # Base T_FOLLOW values by personality
   if personality==log.LongitudinalPersonality.relaxed:
     t_follow = 1.75
@@ -91,6 +91,15 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard, CP=None, lead
     else:
       # Default: 20% reduction if no valid time gap setting
       t_follow = t_follow * 0.8
+    
+    # VF9 needs more following distance at high speeds (>100 km/h)
+    if CP.carFingerprint == "VINFAST_VF9" and v_ego is not None:
+      v_ego_kph = v_ego * 3.6  # Convert m/s to km/h
+      if v_ego_kph > 100.0:
+        # Increase T_FOLLOW by 20-30% at high speeds for VF9
+        # Linear interpolation: 100 km/h = 1.0x, 120+ km/h = 1.3x
+        speed_factor = 1.0 + 0.3 * min(1.0, (v_ego_kph - 100.0) / 20.0)
+        t_follow = t_follow * speed_factor
 
   return t_follow
 
@@ -344,8 +353,8 @@ class LongitudinalMpc:
     return lead_xv
 
   def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, lead_distance_bars=None):
-    t_follow = get_T_FOLLOW(personality, self.CP, lead_distance_bars)
     v_ego = self.x0[1]
+    t_follow = get_T_FOLLOW(personality, self.CP, lead_distance_bars, v_ego)
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)

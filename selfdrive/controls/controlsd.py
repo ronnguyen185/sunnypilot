@@ -149,7 +149,38 @@ class Controls(ControlsExt, ModelStateBase):
     # Apply lateral offset adjustment for VinFast to shift path left
     # Negative curvature = turn left (shift path left), Positive = turn right (shift path right)
     if self.CP.brand == "vinfast" and CC.latActive:
-      lateral_offset_curvature = -0.00025  # Small leftward shift (adjust as needed: -0.0001 to -0.0005)
+      v_ego = max(float(CS.vEgo), 0.0)
+      v_ego_kph = v_ego * CV.MS_TO_KPH  # Convert to km/h for threshold checks
+      
+      # VF9 needs bigger gap to parked cars, so use larger offset
+      is_vf9 = self.CP.carFingerprint == "VINFAST_VF9"
+      
+      # Only apply offset when v_ego < 60 km/h
+      if v_ego_kph < 60.0:
+        # Different max offsets for different speed ranges
+        # VF9 uses larger offsets for bigger gap to parked cars
+        if v_ego_kph < 20.0:
+          offset_max = -0.0007 if is_vf9 else -0.0005  # Stronger offset for VF9 below 20 km/h
+        elif v_ego_kph < 40.0:
+          offset_max = -0.0006 if is_vf9 else -0.0004  # Larger offset for VF9 between 20-40 km/h
+        else:
+          # Exponential decay from offset_max to zero between 40-60 km/h
+          v_scale_kph = 10.0  # km/h, controls decay rate (smaller = faster decay)
+          v_normalized = (v_ego_kph - 40.0) / (60.0 - 40.0)  # 0 at 40 km/h, 1 at 60 km/h
+          base_offset_max = -0.0006 if is_vf9 else -0.0004
+          offset_max = base_offset_max * math.exp(-v_normalized * (40.0 / v_scale_kph))
+        
+        # Apply constant offset below 40 km/h, exponential fade above 40 km/h
+        if v_ego_kph < 40.0:
+          base_offset = offset_max  # Constant offset below 40 km/h
+        else:
+          base_offset = offset_max  # Already calculated exponential decay above
+        
+        # Fade out the offset when already turning (avoid adding bias in tighter curves)
+        curv_scale = 0.002
+        fade = math.exp(-abs(float(new_desired_curvature)) / curv_scale)
+        lateral_offset_curvature = base_offset * fade
+        
       new_desired_curvature = new_desired_curvature + lateral_offset_curvature
 
     self.desired_curvature, curvature_limited = clip_curvature(CS.vEgo, self.desired_curvature, new_desired_curvature, lp.roll)

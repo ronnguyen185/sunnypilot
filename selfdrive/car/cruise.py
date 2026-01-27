@@ -140,9 +140,7 @@ class VCruiseHelper(VCruiseHelperSP):
   def _update_v_cruise_non_pcm(self, CS, enabled, is_metric):
     # handle button presses. TODO: this should be in state_control, but a decelCruise press
     # would have the effect of both enabling and changing speed is checked after the state transition
-    if not enabled:
-      return
-
+    # Allow setting v max even when not engaged
     long_press = False
     button_type = None
 
@@ -164,13 +162,19 @@ class VCruiseHelper(VCruiseHelperSP):
     if button_type is None:
       return
 
-    # Don't adjust speed when pressing resume to exit standstill
-    cruise_standstill = self.button_change_states[button_type]["standstill"] or CS.cruiseState.standstill
+    # Only allow speed changes when gear is in Drive (D)
+    if CS.gearShifter != car.CarState.GearShifter.drive:
+      return
+
+    # Don't adjust speed when pressing resume to exit standstill (only when enabled)
+    if enabled:
+      cruise_standstill = self.button_change_states[button_type]["standstill"] or CS.cruiseState.standstill
     if button_type == ButtonType.accelCruise and cruise_standstill:
       return
 
-    # Don't adjust speed if we've enabled since the button was depressed (some ports enable on rising edge)
-    if not self.button_change_states[button_type]["enabled"]:
+    # Allow setting v max even when not enabled - remove the enabled check
+    # When enabled, still check button state to prevent issues with rising edge enables
+    if enabled and not self.button_change_states[button_type]["enabled"]:
       return
 
     # Speed Limit Assist for Non PCM long cars.

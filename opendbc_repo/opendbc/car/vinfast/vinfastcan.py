@@ -54,27 +54,48 @@ def _apply_checksum(packer: CANPacker, msg_name: str, bus: int,
     return packer.make_can_msg(msg_name, bus, values)
 
 
-def create_steering_control(packer, CP, frame, apply_angle, lat_active):
+def create_steering_control(packer, CP, frame, apply_angle, lat_active, angle_limit):
     """
     Create steering control message (ADAS_EPS_LATE_CON)
     Message ID: 0x37A (890 decimal)
     VF8 uses angle-based steering control
     """
     alive = frame % 15
+    
+    # When angle exceeds angle limit, don't apply torque factor
+    abs_angle = abs(apply_angle) if lat_active else 0.0
+    if abs_angle >= angle_limit:
+        # Angle at or exceeds limit: don't apply torque factor
+        torque_factor = 0.0
+    else:
+        # Adaptive torque factor based on angle request
+        # Min: 0.35 for small angles, Max: 0.5 for large angles
+        # Scale linearly from 0.35 to 0.5 based on absolute angle
+        # Use 90 degrees as the reference for maximum torque
+        max_angle_for_full_torque = 90.0  # degrees - angle at which we reach max torque factor
+        min_torque_factor = 0.35
+        max_torque_factor = 0.5
+        
+        if abs_angle >= max_angle_for_full_torque:
+            torque_factor = max_torque_factor
+        else:
+            # Linear interpolation: 0 degrees -> 0.35, max_angle_for_full_torque degrees -> 0.5
+            torque_factor = min_torque_factor + (max_torque_factor - min_torque_factor) * (abs_angle / max_angle_for_full_torque)
+    
     values = {
         "CHKSM_ADAS_EPS_LATE_CON": 0,  # Will be calculated
         "ALV_ADAS_EPS_LATE_CON": alive,
         "ADAS_EPS_StrWhe_TOLAct": 0,
         "ADAS_EPS_StrWhe_AOLAct": 1 if lat_active else 0,
         "ADAS_EPS_AOLReq": apply_angle if lat_active else 0.0,
-        "ADAS_EPS_Torq_Fact_Req": 0.5,
+        "ADAS_EPS_Torq_Fact_Req": torque_factor,
         "SECCAN_ADAS_EPS_LATE_CON": 0,  # TODO: Implement SECCAN if needed
     }
 
     return _apply_checksum(packer, "ADAS_EPS_LATE_CON", CANBUS.chassis, "CHKSM_ADAS_EPS_LATE_CON", values)
 
 
-def create_acc_control(packer, CP, frame, accel, long_active, standstill):
+def create_acc_control(packer, CP, frame, accel, long_active, standstill, acc_popup_feed=0):
     """
     Create ACC control message (ADAS_ACC_Status)
     Message ID: 0x32D (813 decimal)
@@ -84,21 +105,28 @@ def create_acc_control(packer, CP, frame, accel, long_active, standstill):
     # Clip acceleration within allowed range (-6 to 6 m/s^2 based on DBC)
     accel_cmd = max(-6.0, min(6.0, accel)) if long_active else 0.0
 
+    # Standstill request: set when at standstill and long active
+    # When acc_popup_feed == 3 (re-engage request), unset stop require to allow re-engagement
+    # acc_popup_feed == 3 means "Press gas pedal to re-engage the function"
+    if acc_popup_feed == 3 and long_active:
+      standstill_req = 0  # Unset stop require when re-engaging
+    else:
+      standstill_req = 1 if (standstill and long_active) else 0
+
     values = {
         "CRC_ACC_STATUS": 0,  # will be calculated
         "Alive_ACC_STATUS": alive,
         "ADAS_ACC_Information": 0,
         "ADAS_ACC_Main_Mode": 1 if long_active else 0,
         "ADAS_ACC_AccelDecel_Cmd": accel_cmd,
-        "ADAS_ACC_StandstillReq": 1 if (standstill and long_active) else 0,
+        "ADAS_ACC_StandstillReq": standstill_req,
         "ADAS_ACC_Mode": 4 if long_active else 2,
         "ADAS_ACC_IDB_DecCmdAct": 1 if accel_cmd < 0 else 0,
     }
 
     # Send on chassis bus (bus 2) for longitudinal control
-    # When openpilot controls longitudinal, the message needs to be on chassis bus
-    # to be visible on bus 130 (receipt of bus 2)
-    # When using stock longitudinal, send on camera bus (bus 0) to match car's behavior
+    # When openpilot controls longitudinal, the message needs to be on chassis bus (bus 2)
+    # When using stock longitudinal, send on SCAM bus (bus 0) to match car's behavior
     bus = CANBUS.chassis if CP.openpilotLongitudinalControl else CANBUS.cam
     return _apply_checksum(packer, "ADAS_ACC_Status", bus, "CRC_ACC_STATUS", values)
 
