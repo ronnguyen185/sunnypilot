@@ -76,22 +76,22 @@ class CarController(CarControllerBase):
         # Get acc_popup_feed for standstill request logic
         acc_popup_feed = getattr(CS, 'acc_popup_feed', 0)
         
-        # When re-engaging (acc_popup_feed == 3), check distance to closest lead vehicle ourselves
-        # Don't accept negative accel_cmd from model - we decide based on our own distance check
+        # When re-engaging (acc_popup_feed == 3), enforce our own acceleration logic
+        # Only follow our acceleration until closest lead distance < 2m, then brake
         if acc_popup_feed == 3 and CC.longActive:
-          # Get distance to closest lead vehicle
-          lead_distance = CC_SP.leadOne.dRel if CC_SP.leadOne.status else float('inf')
+          # Get distance to closest lead vehicle (check both leadOne and leadTwo)
+          lead_one_distance = CC_SP.leadOne.dRel if CC_SP.leadOne.status else float('inf')
+          lead_two_distance = CC_SP.leadTwo.dRel if CC_SP.leadTwo.status else float('inf')
+          # Find the closest lead vehicle
+          lead_distance = min(lead_one_distance, lead_two_distance)
           
           if lead_distance < 2.0:
             # Lead vehicle too close: brake to maintain safe distance
             accel_cmd = -2.0
           else:
-            # Re-engaging: use positive acceleration from model if available, otherwise use minimum 0.2 m/s²
-            # Don't accept negative accel_cmd from model - ignore it and use our own decision
-            if accel_cmd < 0.0:
-              accel_cmd = 0.2  # Ignore negative model command, use minimum positive acceleration
-            else:
-              accel_cmd = max(0.2, accel_cmd)  # Use model's positive command or minimum 0.2 m/s²
+            # Re-engaging: enforce our own positive acceleration (ignore model completely)
+            # Use minimum 0.2 m/s² to ensure car can move forward
+            accel_cmd = 0.2
         # When starting from standstill (normal case), ensure accel is at least 0 to allow acceleration
         # Negative accel (like -2) prevents the car from accelerating from stop
         # BUT: Don't boost if model predicts stopping (longControlState == stopping) or if accel is negative

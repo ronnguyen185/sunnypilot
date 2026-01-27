@@ -45,6 +45,8 @@ class VCruiseHelper(VCruiseHelperSP):
     self.vmax_init_adjust_timer = 0
     # Store adjustable initial experimental mode speed (defaults to 105)
     self.v_initial_experimental_mode = V_CRUISE_INITIAL_EXPERIMENTAL_MODE
+    # Track last tag speed to sync with experimental mode max speed
+    self.last_tag_speed_kph = 0
 
   @property
   def v_cruise_initialized(self):
@@ -52,6 +54,21 @@ class VCruiseHelper(VCruiseHelperSP):
 
   def update_v_cruise(self, CS, enabled, is_metric):
     self.v_cruise_kph_last = self.v_cruise_kph
+
+    # Sync tag speed cluster with v_initial_experimental_mode (when available)
+    # Tag speed cluster comes from ADAS_ACC_TagSpeed in VinFast cars
+    # Only sync when tag speed changes to avoid constant updates
+    if CS.cruiseState.speedCluster > 0:
+      tag_speed_kph = CS.cruiseState.speedCluster * CV.MS_TO_KPH
+      # Only sync if tag speed is valid, within range, and has changed
+      if (V_CRUISE_MIN <= tag_speed_kph <= V_CRUISE_MAX and 
+          abs(tag_speed_kph - self.last_tag_speed_kph) > 0.5):  # Only sync if changed by >0.5 km/h
+        # Update experimental mode max speed to match tag speed cluster
+        self.v_initial_experimental_mode = int(round(tag_speed_kph))
+        self.last_tag_speed_kph = tag_speed_kph
+      elif self.last_tag_speed_kph == 0:
+        # Initialize on first valid tag speed
+        self.last_tag_speed_kph = tag_speed_kph
 
     # Allow adjusting VMaxInitialExperimentalMode when cruise is not initialized
     self.update_vmax_init_experimental(CS, enabled, is_metric)
@@ -140,7 +157,7 @@ class VCruiseHelper(VCruiseHelperSP):
   def _update_v_cruise_non_pcm(self, CS, enabled, is_metric):
     # handle button presses. TODO: this should be in state_control, but a decelCruise press
     # would have the effect of both enabling and changing speed is checked after the state transition
-    # Allow setting v max even when not engaged
+    # Only allow speed changes when cruise control is engaged (up/down buttons also resume)
     long_press = False
     button_type = None
 
@@ -166,15 +183,18 @@ class VCruiseHelper(VCruiseHelperSP):
     if CS.gearShifter != car.CarState.GearShifter.drive:
       return
 
-    # Don't adjust speed when pressing resume to exit standstill (only when enabled)
-    if enabled:
-      cruise_standstill = self.button_change_states[button_type]["standstill"] or CS.cruiseState.standstill
+    # Only allow speed changes when cruise control is engaged
+    # Up/down buttons also resume cruise, so don't change speed when not engaged
+    if not enabled:
+      return
+
+    # Don't adjust speed when pressing resume to exit standstill
+    cruise_standstill = self.button_change_states[button_type]["standstill"] or CS.cruiseState.standstill
     if button_type == ButtonType.accelCruise and cruise_standstill:
       return
 
-    # Allow setting v max even when not enabled - remove the enabled check
-    # When enabled, still check button state to prevent issues with rising edge enables
-    if enabled and not self.button_change_states[button_type]["enabled"]:
+    # Check button state to prevent issues with rising edge enables
+    if not self.button_change_states[button_type]["enabled"]:
       return
 
     # Speed Limit Assist for Non PCM long cars.

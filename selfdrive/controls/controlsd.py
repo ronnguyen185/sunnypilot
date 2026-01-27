@@ -148,6 +148,7 @@ class Controls(ControlsExt, ModelStateBase):
 
     # Apply lateral offset adjustment for VinFast to shift path left
     # Negative curvature = turn left (shift path left), Positive = turn right (shift path right)
+    lateral_offset_curvature = 0.0  # Initialize to zero
     if self.CP.brand == "vinfast" and CC.latActive:
       v_ego = max(float(CS.vEgo), 0.0)
       v_ego_kph = v_ego * CV.MS_TO_KPH  # Convert to km/h for threshold checks
@@ -181,7 +182,7 @@ class Controls(ControlsExt, ModelStateBase):
         fade = math.exp(-abs(float(new_desired_curvature)) / curv_scale)
         lateral_offset_curvature = base_offset * fade
         
-      new_desired_curvature = new_desired_curvature + lateral_offset_curvature
+    new_desired_curvature = new_desired_curvature + lateral_offset_curvature
 
     self.desired_curvature, curvature_limited = clip_curvature(CS.vEgo, self.desired_curvature, new_desired_curvature, lp.roll)
 
