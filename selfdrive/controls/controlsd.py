@@ -136,10 +136,10 @@ class Controls(ControlsExt, ModelStateBase):
     accel_cmd = float(self.LoC.update(CC.longActive, CS, long_plan.aTarget, long_plan.shouldStop, pid_accel_limits))
     # Increase deaccel command by 10% (multiply negative accel by 1.1)
     if accel_cmd < 0:
-      accel_cmd = accel_cmd * 1.25
+      accel_cmd = accel_cmd * 1.1
     # Increase accel command by 10% (multiply positive accel by 1.1)
     elif accel_cmd > 0:
-      accel_cmd = accel_cmd * 1.1
+      accel_cmd = accel_cmd * 1.05
     actuators.accel = accel_cmd
 
     # Steering PID loop and lateral MPC

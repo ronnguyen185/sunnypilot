@@ -28,19 +28,16 @@ RADAR_FREQ_HZ = 18  # typical radar frame rate
 FOCUS_TYPES = {1, 2, 3, 4, 5}  # Car, Truck, Motorcycle, Pedestrian, Cyclist
 
 # ── Filtering thresholds (tune per radar hardware) ────────────────────────────
-MIN_DX = 1.5             # [m]  minimum reportable distance (DBC offset noise guard)
+MIN_DX = 2.0             # [m]  minimum reportable distance (DBC offset noise guard)
 MAX_DX = 300.0           # [m]  maximum reportable distance
-MIN_EXIST_PROB_FOCUS = 0.7  # lower for known real targets to reduce false negatives
-MIN_EXIST_PROB_OTHER = 0.8  # stricter for non-focus / unknown to limit false positives
-MIN_VALID_CNT_FOCUS = 2      # faster admission for known focus types
-MIN_VALID_CNT_OTHER = 5      # persistence frames for non-focus / unidentified types
-MAX_DX_STD = 15.0        # [m]  reject non-focus if DxStdDev exceeds this
-MAX_VX_STD = 8.0         # [m/s]  reject non-focus if Rel_VxStdDev exceeds this
-MAX_VY_STD = 4.0          # [m/s]  reject non-focus if Rel_VyStdDev exceeds this
-MAX_AZIMUTH_DEG = 50.0    # [°]  reject non-focus if azimuth exceeds this
-# Coarse sanity gates for all tracks (focus + non-focus)
-MAX_DX_STD_ANY = 25.0     # [m]
-MAX_VX_STD_ANY = 12.0     # [m/s]
+MIN_EXIST_PROB_FOCUS = 0.5   # ExistProb threshold for focus types
+MIN_EXIST_PROB_OTHER = 0.65  # ExistProb threshold for non-focus types
+MIN_VALID_CNT_FOCUS = 1      # persistence frames for focus types
+MIN_VALID_CNT_OTHER = 3      # persistence frames for non-focus types
+MAX_DX_STD = 20.0        # [m]  reject non-focus if DxStdDev exceeds this
+MAX_VX_STD = 10.0        # [m/s]  reject non-focus if Rel_VxStdDev exceeds this
+MAX_VY_STD = 5.0          # [m/s]  reject non-focus if Rel_VyStdDev exceeds this
+MAX_AZIMUTH_DEG = 60.0    # [°]  reject non-focus if azimuth exceeds this
 MAX_VREL = 100.0          # [m/s]  clip estimated vRel to this (≈ 360 km/h)
 MAX_AREL = 10.0           # [m/s²]  clip aRel estimate
 VREL_DEADBAND = 0.5       # [m/s]  small vRel treated as static
@@ -87,8 +84,7 @@ MSTATUS_MOVING_SLOWLY = 5
 # Two-wheeler types (Motorcycle, Cyclist) — high false-positive rate for braking
 # when overtaking from behind
 TWO_WHEELER_TYPES = {3, 5}  # Motorcycle, Cyclist
-PEDESTRIAN_TYPE = 4
-PEDESTRIAN_SIDE_AZIMUTH_DEG = 8.0  # [deg] side-offset ped reject threshold
+
 
 def _extract_signals(msg, prefix):
     """Extract all DBC signals for a given object prefix into a clean dict.
@@ -254,11 +250,6 @@ class RadarInterface(RadarInterfaceBase):
                 obj_type_int = int(obj_type) if obj_type is not None else 0
                 is_focus_type = obj_type_int in FOCUS_TYPES
 
-                # Unknown type (Type=0): keep only plausible center/closing targets.
-                # This allows unstable bike/motorbike classifications while still
-                # rejecting most phantom side clutter.
-                is_unknown_type = (obj_type_int == 0)
-
                 # ── Lateral position from azimuth ─────────────────────────
                 # openpilot: yRel positive = RIGHT;  ISO azimuth: positive = LEFT
                 yrel = 0.0
@@ -273,50 +264,18 @@ class RadarInterface(RadarInterfaceBase):
                 if azimuth is not None:
                     yrel = -(dx * math.sin(azimuth))
 
-                motion_status_int = int(motion_status) if motion_status is not None else MSTATUS_INVALID
-                motion_orient_int = int(motion_orient) if motion_orient is not None else ORIENT_INVALID
-                lane_assign_int = int(lane_assign) if lane_assign is not None else LANE_UNKNOWN
-
                 # ── Noise filtering (ExistProb / Motion_Status / distance) ─
                 is_valid = True
 
-                # Dynamic easing for likely real targets: close + moving focus
-                # objects should pass slightly faster than static/unknown clutter.
-                is_moving_obj = motion_status_int in (MSTATUS_MOVING, MSTATUS_MOVING_SLOWLY)
-                is_close_obj = dx < 35.0
-                can_vrel = float(vrel) if vrel is not None else 0.0
-                unknown_centered = abs(yrel) < max(0.7, 0.03 * dx)
-                unknown_closing = can_vrel < -0.2
-
-                if is_unknown_type:
-                    # Keep unknown tracks only if they look lead-like.
-                    # Tight enough to avoid ghost side objects.
-                    if not (is_moving_obj and unknown_centered and unknown_closing and dx < 45.0):
-                        is_valid = False
-
                 if exist_prob is not None:
                     min_prob = MIN_EXIST_PROB_FOCUS if is_focus_type else MIN_EXIST_PROB_OTHER
-                    if is_unknown_type:
-                        min_prob = max(min_prob, 0.85)
-                    # Keep easing mild so phantom tracks don't pass too easily.
-                    if (is_focus_type and is_moving_obj and is_close_obj and
-                            abs(yrel) < 1.8 and (vx_std is None or vx_std <= 6.0)):
-                        min_prob = max(0.55, min_prob - 0.03)
                     if exist_prob < min_prob:
                         is_valid = False
 
                 if motion_status is not None and motion_status == 0:
                     is_valid = False
 
-                # Global coarse sanity checks (all object types)
-                if dx_std is not None and dx_std > MAX_DX_STD_ANY:
-                    is_valid = False
-                if vx_std is not None and vx_std > MAX_VX_STD_ANY:
-                    is_valid = False
-
-                # Unidentified objects are common phantom sources; require motion
-                # evidence if laterally offset, otherwise drop early.
-                if obj_type_int == 0 and abs(yrel) > 0.6 and not is_moving_obj:
+                if dx < MIN_DX:
                     is_valid = False
 
                 # ── Persistence counter (Toyota / Ford style) ─────────────
@@ -329,25 +288,6 @@ class RadarInterface(RadarInterfaceBase):
                     self.valid_cnt[obj_id] = max(self.valid_cnt[obj_id] - 1, 0)
 
                 min_valid = MIN_VALID_CNT_FOCUS if is_focus_type else MIN_VALID_CNT_OTHER
-                if is_unknown_type:
-                    min_valid = max(min_valid, 6)
-                if (is_focus_type and is_moving_obj and is_close_obj and
-                        (exist_prob is None or exist_prob >= 0.70)):
-                    min_valid = max(1, min_valid - 1)
-
-                # Require stronger persistence for moving preceding pedestrians.
-                # This suppresses short-lived phantom lead snaps.
-                motion_orient_int_p = motion_orient_int
-                lane_assign_int_p = lane_assign_int
-                ped_preceding = (obj_type_int == PEDESTRIAN_TYPE and
-                                 motion_orient_int_p == ORIENT_PRECEEDING and
-                                 motion_status_int in (MSTATUS_MOVING, MSTATUS_MOVING_SLOWLY))
-                if ped_preceding:
-                    ped_side_like = (lane_assign_int_p in ADJACENT_LANES or
-                                     abs(yrel) > max(0.3, 0.045 * dx) or
-                                     (vrel is not None and float(vrel) < -0.3))
-                    min_valid = max(min_valid, 8 if ped_side_like else 6)
-
                 if self.valid_cnt[obj_id] < min_valid:
                     continue
 
@@ -384,6 +324,10 @@ class RadarInterface(RadarInterfaceBase):
                 #
                 # If DBC signals are INVALID/UNKNOWN, radard.py Criterion 9
                 # (vRel + yRel physics check) acts as a fallback.
+                motion_orient_int = int(motion_orient) if motion_orient is not None else ORIENT_INVALID
+                lane_assign_int = int(lane_assign) if lane_assign is not None else LANE_UNKNOWN
+                motion_status_int = int(motion_status) if motion_status is not None else MSTATUS_INVALID
+
                 is_two_wheeler = obj_type_int in TWO_WHEELER_TYPES
                 is_same_dir = motion_orient_int in SAME_DIR_ORIENTATIONS
                 is_actively_moving = motion_status_int in (MSTATUS_MOVING, MSTATUS_MOVING_SLOWLY)
@@ -396,29 +340,17 @@ class RadarInterface(RadarInterfaceBase):
                         continue
 
                     # Case B: HOST lane — bike squeezing past on narrow street
-                    # In Vietnam traffic, motorbikes overtake within the same
-                    # lane constantly.  The radar may classify them as either
-                    # DRIFTING or PRECEDING — both happen for a passing bike.
-                    #
-                    # Filter when laterally offset AND not closing on us:
-                    #   Drifting:  |yRel| > 0.8 m, vRel > -0.5 (lenient)
-                    #   Preceding: |yRel| > 1.0 m, vRel > -1.0 (slightly stricter
-                    #              to protect genuine in-lane leads that wobble)
+                    # Require lateral offset (not dead centre) AND not closing
+                    # so we don't filter a slow moto directly ahead.
+                    # vrel > -0.5: at most closing at 0.5 m/s (~1.8 km/h) = noise margin
                     can_vrel = float(vrel) if vrel is not None else None
-                    is_drifting = motion_orient_int in (ORIENT_DRIFTING_LEFT, ORIENT_DRIFTING_RIGHT)
-                    is_preceding = motion_orient_int == ORIENT_PRECEEDING
-
-                    if lane_assign_int == LANE_HOST and can_vrel is not None:
-                        if is_drifting and abs(yrel) > 1.2 and can_vrel > -0.1 and dx < 20.0:
-                            log.debug("Filtered drifting two-wheeler (HOST lane): "
-                                      "obj_id=%s type=%d orient=%d yrel=%.1f vrel=%.1f dx=%.1f",
-                                      obj_id, obj_type_int, motion_orient_int, yrel, can_vrel, dx)
-                            continue
-                        if is_preceding and abs(yrel) > 1.5 and can_vrel > -0.2 and dx < 20.0:
-                            log.debug("Filtered preceding two-wheeler (HOST lane, offset): "
-                                      "obj_id=%s type=%d orient=%d yrel=%.1f vrel=%.1f dx=%.1f",
-                                      obj_id, obj_type_int, motion_orient_int, yrel, can_vrel, dx)
-                            continue
+                    if (lane_assign_int == LANE_HOST and
+                            abs(yrel) > 0.8 and
+                            can_vrel is not None and can_vrel > -0.5):
+                        log.debug("Filtered overtaking two-wheeler (HOST lane, narrow street): "
+                                  "obj_id=%s type=%d orient=%d yrel=%.1f vrel=%.1f dx=%.1f",
+                                  obj_id, obj_type_int, motion_orient_int, yrel, can_vrel, dx)
+                        continue
 
                 # ── Crossing traffic filter (DBC-based) ───────────────────
                 # Objects with CROSSING orientation that are laterally offset
@@ -427,86 +359,10 @@ class RadarInterface(RadarInterfaceBase):
                 # our lane (yrel > 1.0m).  Keeps objects near centre that
                 # might be crossing INTO our lane.
                 if (motion_orient_int in CROSSING_ORIENTATIONS and
-                        abs(yrel) > 1.3 and
-                        lane_assign_int in ADJACENT_LANES and
-                        dx > 18.0 and
-                        (vrel is None or float(vrel) > -1.0)):
+                        abs(yrel) > 1.0 and
+                        lane_assign_int in ADJACENT_LANES):
                     log.debug("Filtered crossing traffic: obj_id=%s orient=%d lane=%d dx=%.1f yrel=%.1f",
                               obj_id, motion_orient_int, lane_assign_int, dx, yrel)
-                    continue
-
-                # ── Slow preceding pedestrian side-offset filter ─────────────
-                # Similar to parked-side filtering: keep only path-centre peds as
-                # braking leads. If ped is slower than ego (vRel < 0), apply a
-                # tighter lateral gate because these are commonly side passers.
-                ped_vrel = float(vrel) if vrel is not None else None
-                ped_slower_than_ego = ped_vrel is not None and ped_vrel < -0.3
-                ped_side_by_azimuth = (azimuth is not None and
-                                       abs(azimuth) > math.radians(PEDESTRIAN_SIDE_AZIMUTH_DEG))
-                ped_side_y_thresh = max(0.3, 0.045 * dx) if ped_slower_than_ego else max(0.5, 0.07 * dx)
-
-                if (obj_type_int == PEDESTRIAN_TYPE and
-                        motion_orient_int == ORIENT_PRECEEDING and
-                        motion_status_int in (MSTATUS_MOVING_SLOWLY, MSTATUS_MOVING)):
-                    # Adjacent lane + preceding ped -> always side object
-                    if lane_assign_int in ADJACENT_LANES:
-                        log.debug("Filtered preceding pedestrian in adjacent lane: "
-                                  "obj_id=%s lane=%d dx=%.1f yrel=%.1f vrel=%.1f",
-                                  obj_id, lane_assign_int, dx, yrel, ped_vrel if ped_vrel is not None else 0.0)
-                        continue
-                    # Host/unknown lane but side-offset and azimuth/lower-speed evidence
-                    if abs(yrel) > ped_side_y_thresh and (ped_side_by_azimuth or ped_slower_than_ego):
-                        log.debug("Filtered slow preceding pedestrian offset: "
-                                  "obj_id=%s status=%d orient=%d lane=%d dx=%.1f yrel=%.1f az=%.2f vrel=%.1f",
-                                  obj_id, motion_status_int, motion_orient_int, lane_assign_int, dx, yrel,
-                                  float(azimuth) if azimuth is not None else 0.0,
-                                  ped_vrel if ped_vrel is not None else 0.0)
-                        continue
-
-                # ── Stationary / stopped roadside obstacle filter (DBC) ───────
-                # Objects classified STATIONARY or STOPPED by radar hardware
-                # that are laterally offset are parked cars, guardrails, signs,
-                # road furniture, etc.  The lateral planner can navigate around
-                # them — don't emit as radar points to avoid phantom braking.
-                #
-                # Keep dead-centre objects (|yRel| ≤ threshold) — those are
-                # genuine obstacles in our lane (stopped car ahead, barrier).
-                #
-                # Also use Lane_Assignment: objects that radar places in an
-                # adjacent lane AND are stationary are definitely not our concern.
-                if motion_status_int in (MSTATUS_STATIONARY, MSTATUS_STOPPED):
-                    # Adjacent lane + stationary → always filter (high confidence)
-                    if lane_assign_int in ADJACENT_LANES:
-                        log.debug("Filtered stationary obj in adjacent lane: "
-                                  "obj_id=%s type=%d status=%d lane=%d dx=%.1f yrel=%.1f",
-                                  obj_id, obj_type_int, motion_status_int, lane_assign_int, dx, yrel)
-                        continue
-
-                    # Host/unknown lane + stationary + laterally offset → parked roadside
-                    # Threshold tuned for Vietnam: cars pass within ~1.0 m of parked objects
-                    stationary_lat_threshold = 0.8   # [m] keep objects within 0.8 m of centre
-                    if abs(yrel) > stationary_lat_threshold:
-                        log.debug("Filtered stationary roadside object: "
-                                  "obj_id=%s type=%d status=%d dx=%.1f yrel=%.1f",
-                                  obj_id, obj_type_int, motion_status_int, dx, yrel)
-                        continue
-
-                # ── Unknown motion status in adjacent lane → likely parked/roadside
-                # Radar may classify parked cars as UNKNOWN instead of STATIONARY.
-                # If the object is also in an adjacent lane and offset, it's roadside.
-                if motion_status_int == MSTATUS_UNKNOWN and lane_assign_int in ADJACENT_LANES:
-                    if abs(yrel) > 1.2:
-                        log.debug("Filtered unknown-status obj in adjacent lane: "
-                                  "obj_id=%s type=%d lane=%d dx=%.1f yrel=%.1f",
-                                  obj_id, obj_type_int, lane_assign_int, dx, yrel)
-                        continue
-
-                # ── Far lateral object filter ──────────────────────────────────
-                # Objects > 2.5 m from lane centre are definitely not in our lane
-                # regardless of type/status — parked cars, guardrails, road signs.
-                if abs(yrel) > 2.5:
-                    log.debug("Filtered far lateral object: obj_id=%s type=%d dx=%.1f yrel=%.1f",
-                              obj_id, obj_type_int, dx, yrel)
                     continue
 
                 # Create or update track
@@ -578,14 +434,8 @@ class RadarInterface(RadarInterfaceBase):
                 pt.yRel = float(yrel)
                 pt.vRel = float(vrel) if math.isfinite(vrel) else 0.0
                 pt.aRel = float(aRel) if math.isfinite(aRel) else 0.0
-                # Negate vy_rel: DBC Rel_Vy uses ISO convention (positive=LEFT),
-                # openpilot uses positive=RIGHT (same as yRel negation on line 265).
-                pt.yvRel = float(-vy_rel) if (vy_rel is not None and math.isfinite(vy_rel)) else 0.0
+                pt.yvRel = float(vy_rel) if (vy_rel is not None and math.isfinite(vy_rel)) else 0.0
                 pt.measured = True
-
-                pt.motionStatus = int(motion_status) if motion_status is not None else MSTATUS_INVALID
-                pt.motionOrientation = int(motion_orient) if motion_orient is not None else ORIENT_INVALID
-                pt.laneAssignment = int(lane_assign) if lane_assign is not None else LANE_UNKNOWN
 
                 seen_obj_ids.add(obj_id)
 

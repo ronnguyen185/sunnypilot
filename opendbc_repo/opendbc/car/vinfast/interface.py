@@ -92,6 +92,10 @@ class CarInterface(CarInterfaceBase):
     # Enable AutoLaneChangeBsmDelay by default for VinFast (has blind spot monitoring)
     if params.get("AutoLaneChangeBsmDelay") is None:
       params.put_bool("AutoLaneChangeBsmDelay", True)
+    # Default VinFast auto lane change to 2-second delayed nudgeless mode.
+    # AutoLaneChangeTimer enum: TWO_SECONDS = 4.
+    if params.get("AutoLaneChangeTimer") is None:
+      params.put("AutoLaneChangeTimer", "4")
 
     def configure_bus1():
       """Configure bus 1 for CAN-FD on the SPI panda. Returns True if successful."""

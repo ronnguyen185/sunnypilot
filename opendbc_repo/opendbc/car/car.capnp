@@ -324,6 +324,11 @@ struct RadarData @0x888ad6581cf0aacb {
 
     # some radars flag measurements VS estimates
     measured @6 :Bool;
+
+    # radar-hardware motion classification (0 = invalid / not available)
+    motionStatus @7 :UInt8;       # 0=invalid 2=moving 3=stationary 4=stopped 5=moving_slowly
+    motionOrientation @8 :UInt8;  # 0=invalid 1=drift_R 3=cross_R 6=oncoming 9=cross_L 11=drift_L 12=preceding
+    laneAssignment @9 :UInt8;     # 0=unknown 1=LL 2=L 3=host 4=R 5=RR
   }
 
   enum ErrorDEPRECATED {
@@ -374,6 +379,7 @@ struct CarControl {
     brake @1: Float32; # [0.0, 1.0]
     torqueOutputCan @8: Float32;   # value sent over can to the car
     speed @6: Float32;  # m/s
+    reengageStatus @9: Bool;  # True when VinFast re-engage override is active
 
     enum LongControlState @0xe40f3a917d908282{
       off @0;

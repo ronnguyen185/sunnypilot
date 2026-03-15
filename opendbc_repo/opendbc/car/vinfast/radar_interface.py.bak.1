@@ -1,0 +1,352 @@
+#!/usr/bin/env python3
+"""VinFast radar interface for MRR + SCAM CAN messages (0x410–0x419).
+
+Parses 10 CAN frames × 2 objects = 20 radar slots.
+Applies noise filtering (existence probability, validity counters, uncertainty
+gates) inspired by Hyundai / Toyota / Ford radar interfaces before emitting
+``RadarData.RadarPoint`` objects consumed by ``radard_new.py``.
+"""
+import math
+import logging
+
+from opendbc.can import CANParser
+from opendbc.car import Bus, structs
+from opendbc.car.interfaces import RadarInterfaceBase
+
+log = logging.getLogger("radar_interface_new")
+
+# ── CAN layout ───────────────────────────────────────────────────────────────
+RADAR_START_ADDR = 0x410
+RADAR_MSG_COUNT = 10
+RADAR_END_ADDR = RADAR_START_ADDR + RADAR_MSG_COUNT - 1  # 0x419
+RADAR_FREQ_HZ = 18  # typical radar frame rate
+
+# ── Object type classification ────────────────────────────────────────────────
+# Focus types receive lenient filtering (lower ExistProb threshold, fewer
+# persistence frames) because false-negatives are more dangerous than
+# false-positives for cars/trucks/pedestrians in the ego lane.
+FOCUS_TYPES = {1, 2, 3, 4, 5}  # Car, Truck, Motorcycle, Pedestrian, Cyclist
+
+# ── Filtering thresholds (tune per radar hardware) ────────────────────────────
+MIN_DX = 2.0             # [m]  minimum reportable distance (DBC offset noise guard)
+MAX_DX = 300.0           # [m]  maximum reportable distance
+MIN_EXIST_PROB_FOCUS = 0.5   # ExistProb threshold for focus types
+MIN_EXIST_PROB_OTHER = 0.65  # ExistProb threshold for non-focus types
+MIN_VALID_CNT_FOCUS = 1      # persistence frames for focus types
+MIN_VALID_CNT_OTHER = 3      # persistence frames for non-focus types
+MAX_DX_STD = 20.0        # [m]  reject non-focus if DxStdDev exceeds this
+MAX_VX_STD = 10.0        # [m/s]  reject non-focus if Rel_VxStdDev exceeds this
+MAX_VY_STD = 5.0          # [m/s]  reject non-focus if Rel_VyStdDev exceeds this
+MAX_AZIMUTH_DEG = 60.0    # [°]  reject non-focus if azimuth exceeds this
+MAX_VREL = 100.0          # [m/s]  clip estimated vRel to this (≈ 360 km/h)
+MAX_AREL = 10.0           # [m/s²]  clip aRel estimate
+VREL_DEADBAND = 0.5       # [m/s]  small vRel treated as static
+
+
+def _extract_signals(msg, prefix):
+    """Extract all DBC signals for a given object prefix into a clean dict.
+
+    DBC signal names look like 'obj01_Dx_oA_CAMERA_OD1_OD2_oMRR_'.
+    This strips the prefix and the '_oA_...' suffix to produce {'Dx': value, ...}.
+    """
+    result = {}
+    plen = len(prefix)
+    for k, v in msg.items():
+        if k.startswith(prefix):
+            field = k[plen:]
+            idx = field.find('_oA_')
+            if idx > 0:
+                field = field[:idx]
+            result[field] = v
+    return result
+
+
+def get_radar_can_parser(CP):
+    """Create ``CANParser`` for VinFast radar messages (0x410–0x419).
+
+    Returns:
+      CANParser instance or None on failure.
+    """
+    dbc_name = "vinfast_vf8_mrr_scam"
+
+    messages = [(addr, RADAR_FREQ_HZ) for addr in range(RADAR_START_ADDR, RADAR_START_ADDR + RADAR_MSG_COUNT)]
+
+    radar_bus = getattr(CP, 'radarBus', 1) if hasattr(CP, 'radarBus') else 1
+
+    try:
+        parser = CANParser(dbc_name, messages, radar_bus)
+        log.info("Created VinFast radar CAN parser: %d msgs on bus %d  addrs=%s",
+                 len(messages), radar_bus, [hex(a) for a in range(RADAR_START_ADDR, RADAR_START_ADDR + RADAR_MSG_COUNT)])
+        return parser
+    except Exception as e:
+        log.error("Failed to create VinFast radar CAN parser: %s", e, exc_info=True)
+        return None
+
+
+class RadarInterface(RadarInterfaceBase):
+    """VinFast MRR+SCAM radar interface.
+
+    Lifecycle: ``__init__`` → ``update(can_packets)`` every CAN frame.
+    Outputs ``structs.RadarData`` with a list of ``RadarPoint``s.
+    """
+
+    def __init__(self, CP, CP_SP=None):
+        super().__init__(CP, CP_SP)
+        self.updated_messages: set[int] = set()
+        self.trigger_msg = RADAR_END_ADDR
+        self.track_id = 0
+
+        self.radar_off_can = CP.radarUnavailable
+        self.rcp = get_radar_can_parser(CP)
+
+        self.obj_id_to_track: dict[int, int] = {}   # obj_id → trackId
+        self.valid_cnt: dict[int, int] = {}           # obj_id → persistence counter
+
+        # Previous frame data per track_id for Δv/Δt estimation.
+        # value: (vRel, dRel, timestamp_nanos, from_can)
+        #   from_can=True if vRel came from CAN Rel_Vx (trusted);
+        #   from_can=False if vRel was estimated from Δd/Δt (use for aRel but not
+        #   as seed for next Δd/Δt to prevent feedback loops).
+        self.prev_data: dict[int, tuple] = {}
+
+    def update(self, can_packets):
+        """Update radar interface with CAN packets.
+
+        Args:
+            can_packets: list of (timestamp_nanos, list[frames]) tuples
+            frames is a list of (address, dat, src) tuples from can_capnp_to_list
+        """
+        if self.radar_off_can or (self.rcp is None):
+            return super().update(None)
+
+        # Convert can_packets to format expected by CANParser.update
+        # can_packets is already in the format: list of (timestamp, list of (address, dat, src) tuples)
+        # CANParser.update expects the same format
+        can_strings = can_packets
+
+        if not can_strings:
+            return None
+
+        vls = self.rcp.update(can_strings)
+        self.updated_messages.update(vls)
+
+        # Wait for trigger message (0x419) before processing
+        # But also process if we have any radar messages (0x410-0x419) to be more lenient
+        has_radar_msgs = any(addr in self.updated_messages for addr in range(RADAR_START_ADDR, RADAR_START_ADDR + RADAR_MSG_COUNT))
+        if self.trigger_msg not in self.updated_messages and not has_radar_msgs:
+            return None
+
+        # If we have radar messages but not the trigger, process anyway (more lenient)
+        # This allows processing even if 0x419 is missing
+
+        # Get timestamp from first CAN packet for acceleration calculation
+        # Safety: ensure can_strings is not empty and first element has expected structure
+        if can_strings and len(can_strings) > 0:
+            try:
+                current_time_nanos = can_strings[0][0] if isinstance(can_strings[0], (list, tuple)) and len(can_strings[0]) > 0 else 0
+            except (IndexError, TypeError):
+                current_time_nanos = 0
+        else:
+            current_time_nanos = 0
+
+        rr = self._update(self.updated_messages, current_time_nanos)
+        self.updated_messages.clear()
+
+        return rr
+
+    def _update(self, updated_messages, current_time_nanos=0):
+        """Process updated CAN messages and create radar tracks."""
+        ret = structs.RadarData()
+        if self.rcp is None:
+            return ret
+
+        if not self.rcp.can_valid:
+            ret.errors.canError = True
+
+        # Track which obj_ids we've seen in this update
+        seen_obj_ids = set()
+
+        # Process each radar message (0x410-0x419)
+        # Check which addresses are actually available in the parser
+        for addr in range(RADAR_START_ADDR, RADAR_START_ADDR + RADAR_MSG_COUNT):
+            # Check if address is in parser's vl (value list)
+            if addr not in self.rcp.vl:
+                continue
+
+            msg = self.rcp.vl[addr]
+
+            # Each message has two objects (obj01, obj02, etc.)
+            base = (addr - RADAR_START_ADDR) * 2 + 1
+            prefixes = [f"obj{base:02d}_", f"obj{base+1:02d}_"]
+
+            for pref in prefixes:
+                # Extract all signals for this object into a clean dict
+                sig = _extract_signals(msg, pref)
+
+                obj_id = sig.get("ID")
+                dx = sig.get("Dx")
+                vrel = sig.get("Rel_Vx")
+                exist_prob = sig.get("ExistProb", 1.0)
+                motion_status = sig.get("Motion_Status")
+                obj_type = sig.get("Type", 0)
+                dx_std = sig.get("DxStdDev")
+                vx_std = sig.get("Rel_VxStdDev")
+                phi_left = sig.get("PhiLeft")
+                phi_right = sig.get("PhiRight")
+                vy_rel = sig.get("Rel_Vy")
+                vy_std = sig.get("Rel_VyStdDev")
+
+                # ── Basic validation ───────────────────────────────────────
+                if dx is None or dx < MIN_DX or dx > MAX_DX:
+                    continue
+                if obj_id is None:
+                    continue
+
+                obj_type_int = int(obj_type) if obj_type is not None else 0
+                is_focus_type = obj_type_int in FOCUS_TYPES
+
+                # ── Lateral position from azimuth ─────────────────────────
+                # openpilot: yRel positive = RIGHT;  ISO azimuth: positive = LEFT
+                yrel = 0.0
+                azimuth = None
+                if phi_left is not None and phi_right is not None:
+                    azimuth = (phi_left + phi_right) / 2.0
+                elif phi_left is not None:
+                    azimuth = phi_left
+                elif phi_right is not None:
+                    azimuth = phi_right
+
+                if azimuth is not None:
+                    yrel = -(dx * math.sin(azimuth))
+
+                # ── Noise filtering (ExistProb / Motion_Status / distance) ─
+                is_valid = True
+
+                if exist_prob is not None:
+                    min_prob = MIN_EXIST_PROB_FOCUS if is_focus_type else MIN_EXIST_PROB_OTHER
+                    if exist_prob < min_prob:
+                        is_valid = False
+
+                if motion_status is not None and motion_status == 0:
+                    is_valid = False
+
+                if dx < MIN_DX:
+                    is_valid = False
+
+                # ── Persistence counter (Toyota / Ford style) ─────────────
+                if obj_id not in self.valid_cnt:
+                    self.valid_cnt[obj_id] = 0
+
+                if is_valid:
+                    self.valid_cnt[obj_id] += 1
+                else:
+                    self.valid_cnt[obj_id] = max(self.valid_cnt[obj_id] - 1, 0)
+
+                min_valid = MIN_VALID_CNT_FOCUS if is_focus_type else MIN_VALID_CNT_OTHER
+                if self.valid_cnt[obj_id] < min_valid:
+                    continue
+
+                # ── Extra gates for non-focus types ───────────────────────
+                if not is_focus_type:
+                    if dx_std is not None and dx_std > MAX_DX_STD:
+                        continue
+                    if vx_std is not None and vx_std > MAX_VX_STD:
+                        continue
+                    if vy_std is not None and vy_std > MAX_VY_STD:
+                        continue
+                    if azimuth is not None:
+                        max_lat = 3.0 if dx < 20.0 else 10.0
+                        if abs(yrel) > max_lat:
+                            continue
+                        if abs(azimuth) > math.radians(MAX_AZIMUTH_DEG):
+                            continue
+
+                # Create or update track
+                # Use obj_id as the key to maintain track consistency
+                if obj_id not in self.obj_id_to_track:
+                    # New track
+                    track_id = self.track_id
+                    self.track_id += 1
+                    self.obj_id_to_track[obj_id] = track_id
+
+                    if track_id not in self.pts:
+                        self.pts[track_id] = structs.RadarData.RadarPoint()
+                        self.pts[track_id].trackId = track_id
+                else:
+                    # Existing track
+                    track_id = self.obj_id_to_track[obj_id]
+                    if track_id not in self.pts:
+                        self.pts[track_id] = structs.RadarData.RadarPoint()
+                        self.pts[track_id].trackId = track_id
+
+                # ── Velocity ───────────────────────────────────────────────
+                # Prefer CAN Rel_Vx; fall back to Δd/Δt if missing.
+                vrel_from_can = vrel is not None
+                if vrel_from_can:
+                    vrel = float(vrel)
+                    if abs(vrel) < VREL_DEADBAND:
+                        vrel = 0.0   # static-object calibration noise
+                else:
+                    # Estimate from distance change — but ONLY if previous
+                    # frame had a CAN-based vRel (prevents feedback loops
+                    # where estimated vRel feeds back into estimated aRel).
+                    prev = self.prev_data.get(track_id)
+                    if prev is not None and prev[3]:   # prev.from_can
+                        prev_dRel, prev_time = prev[1], prev[2]
+                        if current_time_nanos > prev_time > 0 and prev_dRel is not None:
+                            dt = (current_time_nanos - prev_time) / 1e9
+                            if 0.001 < dt < 1.0:
+                                vrel = -(dx - prev_dRel) / dt
+                                if abs(vrel) > MAX_VREL:
+                                    log.debug("Clipped estimated vRel %.1f → 0  obj_id=%s", vrel, obj_id)
+                                    vrel = 0.0
+                            else:
+                                vrel = 0.0
+                        else:
+                            vrel = 0.0
+                    else:
+                        vrel = 0.0
+
+                # ── Acceleration (Δv / Δt) ────────────────────────────────
+                aRel = float('nan')
+                prev = self.prev_data.get(track_id)
+                if prev is not None:
+                    prev_vRel, _, prev_time, _ = prev
+                    if (current_time_nanos > prev_time > 0
+                            and prev_vRel is not None and not math.isnan(prev_vRel)):
+                        dt = (current_time_nanos - prev_time) / 1e9
+                        if 0.001 < dt < 1.0:
+                            a = (vrel - prev_vRel) / dt
+                            if abs(a) <= MAX_AREL:
+                                aRel = a
+                            # else: leave nan — downstream Kalman ignores nan
+
+                # Store for next frame: (vRel, dRel, time, from_can)
+                self.prev_data[track_id] = (vrel, dx, current_time_nanos, vrel_from_can)
+
+                # ── Emit point (sanitise nan / inf before writing) ───────
+                pt = self.pts[track_id]
+                pt.dRel = float(dx)
+                pt.yRel = float(yrel)
+                pt.vRel = float(vrel) if math.isfinite(vrel) else 0.0
+                pt.aRel = float(aRel) if math.isfinite(aRel) else 0.0
+                pt.yvRel = float(vy_rel) if (vy_rel is not None and math.isfinite(vy_rel)) else 0.0
+                pt.measured = True
+
+                seen_obj_ids.add(obj_id)
+
+        # ── Remove stale tracks ───────────────────────────────────────
+        stale_track_ids = []
+        for oid, tid in list(self.obj_id_to_track.items()):
+            if oid not in seen_obj_ids:
+                stale_track_ids.append(tid)
+                del self.obj_id_to_track[oid]
+                self.valid_cnt.pop(oid, None)
+
+        for tid in stale_track_ids:
+            self.pts.pop(tid, None)
+            self.prev_data.pop(tid, None)
+
+        ret.points = list(self.pts.values())
+        return ret
+

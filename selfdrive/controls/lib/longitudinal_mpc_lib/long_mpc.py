@@ -54,9 +54,9 @@ T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 COMFORT_BRAKE = 2.5
-STOP_DISTANCE = 6.0
+STOP_DISTANCE = 4.8
 CRUISE_MIN_ACCEL = -1.2
-CRUISE_MAX_ACCEL = 1.6
+CRUISE_MAX_ACCEL = 2.6
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -69,39 +69,15 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
     raise NotImplementedError("Longitudinal personality not supported")
 
 
-def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard, CP=None, lead_distance_bars=None, v_ego=None):
-  # Base T_FOLLOW values by personality
+def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
-    t_follow = 1.75
+    return 1.5
   elif personality==log.LongitudinalPersonality.standard:
-    t_follow = 1.45
+    return 1.0
   elif personality==log.LongitudinalPersonality.aggressive:
-    t_follow = 1.25
+    return 0.8
   else:
     raise NotImplementedError("Longitudinal personality not supported")
-
-  # VinFast-specific gap adjustments using ADAS_ACC_TimeGapSet
-  # Time gap levels: 1 = closest, 2 = close, 3 = medium, 4 = farthest
-  if CP is not None and CP.brand == "vinfast":
-    if lead_distance_bars is not None and 1 <= lead_distance_bars <= 4:
-      # Map time gap levels to T_FOLLOW multipliers
-      # Level 1 (closest) = 0.7x, Level 2 = 0.85x, Level 3 = 1.0x, Level 4 (farthest) = 1.15x
-      gap_multipliers = {1: 0.7, 2: 0.85, 3: 1.0, 4: 1.15}
-      t_follow = t_follow * gap_multipliers[int(lead_distance_bars)]
-    else:
-      # Default: 20% reduction if no valid time gap setting
-      t_follow = t_follow * 0.8
-    
-    # VF9 needs more following distance at high speeds (>100 km/h)
-    if CP.carFingerprint == "VINFAST_VF9" and v_ego is not None:
-      v_ego_kph = v_ego * 3.6  # Convert m/s to km/h
-      if v_ego_kph > 100.0:
-        # Increase T_FOLLOW by 20-30% at high speeds for VF9
-        # Linear interpolation: 100 km/h = 1.0x, 120+ km/h = 1.3x
-        speed_factor = 1.0 + 0.3 * min(1.0, (v_ego_kph - 100.0) / 20.0)
-        t_follow = t_follow * speed_factor
-
-  return t_follow
 
 def get_stopped_equivalence_factor(v_lead):
   return (v_lead**2) / (2 * COMFORT_BRAKE)
@@ -208,7 +184,7 @@ def gen_long_ocp():
 
   x0 = np.zeros(X_DIM)
   ocp.constraints.x0 = x0
-  ocp.parameter_values = np.array([-1.2, 1.2, 0.0, 0.0, get_T_FOLLOW(log.LongitudinalPersonality.standard, None), LEAD_DANGER_FACTOR])
+  ocp.parameter_values = np.array([-1.2, 1.2, 0.0, 0.0, get_T_FOLLOW(), LEAD_DANGER_FACTOR])
 
 
   # We put all constraint cost weights to 0 and only set them at runtime
@@ -246,11 +222,13 @@ def gen_long_ocp():
 
 
 class LongitudinalMpc:
-  def __init__(self, mode='acc', dt=DT_MDL, CP=None):
+  def __init__(self, mode='acc', dt=DT_MDL):
     self.mode = mode
     self.dt = dt
-    self.CP = CP  # Store CarParams for brand-specific adjustments
     self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
+    # Optional per-car tuning (set by LongitudinalPlanner): shift a stopped lead obstacle closer to reduce standstill gap.
+    # This is a runtime adjustment that does NOT require regenerating the acados solver.
+    self.stop_lead_obstacle_adjust_m = 0.0
     self.reset()
     self.source = SOURCES[2]
 
@@ -352,9 +330,9 @@ class LongitudinalMpc:
     lead_xv = self.extrapolate_lead(x_lead, v_lead, a_lead, a_lead_tau)
     return lead_xv
 
-  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, lead_distance_bars=None):
+  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
+    t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
-    t_follow = get_T_FOLLOW(personality, self.CP, lead_distance_bars, v_ego)
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
@@ -365,6 +343,16 @@ class LongitudinalMpc:
     # and then treat that as a stopped car/obstacle at this new distance.
     lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
     lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
+
+    # Reduce standstill gap behind a stopped lead by shifting the obstacle closer.
+    # Apply only very near standstill (v_ego < 3 m/s) to avoid affecting normal following.
+    stop_adjust = float(getattr(self, "stop_lead_obstacle_adjust_m", 0.0))
+    if stop_adjust > 0.0 and v_ego < 3.0:
+      min_safe = CRASH_DISTANCE + 1.0
+      if lead_xv_0[0, 1] < 0.5:
+        lead_0_obstacle = np.maximum(lead_0_obstacle - stop_adjust, min_safe)
+      if lead_xv_1[0, 1] < 0.5:
+        lead_1_obstacle = np.maximum(lead_1_obstacle - stop_adjust, min_safe)
 
     self.params[:,0] = ACCEL_MIN
     self.params[:,1] = ACCEL_MAX
@@ -418,8 +406,10 @@ class LongitudinalMpc:
     self.params[:,4] = t_follow
 
     self.run()
+    radar_fcw_allowed = (not radarstate.leadOne.radar) or (v_ego >= (30.0 / 3.6))
     if (np.any(lead_xv_0[FCW_IDXS,0] - self.x_sol[FCW_IDXS,0] < CRASH_DISTANCE) and
-            radarstate.leadOne.modelProb > 0.9):
+            radarstate.leadOne.modelProb > 0.9 and
+            radar_fcw_allowed):
       self.crash_cnt += 1
     else:
       self.crash_cnt = 0

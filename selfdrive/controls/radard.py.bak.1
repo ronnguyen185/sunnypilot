@@ -1,0 +1,708 @@
+#!/usr/bin/env python3
+"""VinFast radar–vision fusion daemon (radard_new).
+
+Takes ``liveTracks`` (raw radar points from ``radar_interface_new``) and
+``modelV2`` (vision model) and produces ``radarState`` with up to two fused
+leads for the longitudinal planner.
+
+Design philosophy
+-----------------
+* **Radar-trusted**: radar data that passed RadarInterface filters is reliable.
+  Fusion prefers radar+vision, but trusts radar-only when vision is weak.
+* **Speed-dependent safety**: implausibly close leads are rejected based on ego
+  speed (``min_lead_distance``).
+* **Lead hysteresis**: prevents lead-switch jitter when two tracks score
+  similarly by requiring a margin before swapping.
+"""
+import math
+import numpy as np
+from collections import deque
+from typing import Any
+
+import capnp
+from cereal import messaging, log, car
+from openpilot.common.filter_simple import FirstOrderFilter
+from openpilot.common.params import Params
+from openpilot.common.realtime import DT_MDL, Priority, config_realtime_process
+from openpilot.common.swaglog import cloudlog
+from openpilot.common.simple_kalman import KF1D
+
+
+# ── Kalman / physics constants ────────────────────────────────────────────────
+_LEAD_ACCEL_TAU = 1.5          # acceleration decay: 50 % at 1 s
+SPEED, ACCEL = 0, 1            # KF state indices
+V_EGO_STATIONARY = 4.0         # [m/s] below this → no stationary-object flag
+RADAR_TO_CENTER = 2.7          # (deprecated)
+RADAR_TO_CAMERA = 1.52         # radar → camera mesh frame offset [m]
+
+# ── Fusion thresholds (module-level for easy tuning) ──────────────────────────
+# Radar priority lowered: prefer vision over radar-only leads
+VISION_MATCH_THRESHOLD = 0.35   # min vision prob for radar+vision fusion (was 0.3)
+VISION_ONLY_THRESHOLD  = 0.45  # min vision prob for vision-only lead (was 0.5, lower = vision preferred sooner)
+DIST_MATCH_FACTOR      = 0.35  # vision-radar distance tolerance factor
+DIST_MATCH_MIN         = 7.0   # [m]  minimum distance tolerance
+VEL_MATCH_REL          = 2.0   # [m/s] relative velocity tolerance (tight)
+VEL_MATCH_ABS          = 15.0  # [m/s] absolute velocity tolerance (loose)
+LAT_MATCH_FACTOR       = 3.0   # vision yStd multiplier for lateral tolerance
+LAT_MATCH_MIN          = 2.5   # [m]  minimum lateral tolerance
+RADAR_ONLY_MAX_DIST    = 30.0  # [m]  max distance for radar-only lead (was 50)
+RADAR_ONLY_MAX_LAT     = 1.8   # [m]  max |yRel| for radar-only lead (wider for bikes/motos)
+STATIC_VEL_THRESHOLD   = 0.3   # [m/s] vision speed → static
+STATIC_RADAR_VEL_MIN   = 5.0   # [m/s] radar speed above this triggers override
+LEAD_HYSTERESIS_MARGIN = 0.15  # risk-score margin to switch leads (prevents jitter)
+MAX_LEAD_DIST          = 120.0 # [m]  reject tracks beyond this
+MAX_STATIC_LEAD_DIST   = 50.0  # [m]  reject static tracks beyond this
+MAX_VREL_FILTER        = 15.0  # [m/s] reject high-speed tracks beyond 20 m
+
+# ── Speed-dependent minimum lead distance ─────────────────────────────────────
+# At very low speed radar is noisy (multipath, bumper reflections, ground
+# clutter).  Require a larger minimum distance to reject these.
+LOW_SPEED_CUTOFF = 3       # [m/s] ≈ 5 km/h — below this, tighten filters
+LOW_SPEED_MIN_TRACK_CNT = 8  # frames (~0.4 s) — new tracks ignored at low speed
+
+def min_lead_distance(v_ego: float) -> float:
+  """Minimum acceptable dRel given ego speed.
+
+  At higher speeds a lead at 1–3 m is physically implausible
+  (TTC < 0.3 s → already in contact).
+  At very low speed (< 5 km/h) radar produces ground clutter / multipath
+  noise, so we raise the floor to 3.5 m.
+  """
+  if v_ego < LOW_SPEED_CUTOFF:
+    return 3.5
+  return max(2.0, v_ego * 0.3)
+
+
+class KalmanParams:
+  def __init__(self, dt: float):
+    # Lead Kalman Filter params, calculating K from A, C, Q, R requires the control library.
+    # hardcoding a lookup table to compute K for values of radar_ts between 0.01s and 0.2s
+    assert dt > .01 and dt < .2, "Radar time step must be between .01s and 0.2s"
+    self.A = [[1.0, dt], [0.0, 1.0]]
+    self.C = [1.0, 0.0]
+    #Q = np.matrix([[10., 0.0], [0.0, 100.]])
+    #R = 1e3
+    #K = np.matrix([[ 0.05705578], [ 0.03073241]])
+    dts = [i * 0.01 for i in range(1, 21)]
+    K0 = [0.12287673, 0.14556536, 0.16522756, 0.18281627, 0.1988689,  0.21372394,
+          0.22761098, 0.24069424, 0.253096,   0.26491023, 0.27621103, 0.28705801,
+          0.29750003, 0.30757767, 0.31732515, 0.32677158, 0.33594201, 0.34485814,
+          0.35353899, 0.36200124]
+    K1 = [0.29666309, 0.29330885, 0.29042818, 0.28787125, 0.28555364, 0.28342219,
+          0.28144091, 0.27958406, 0.27783249, 0.27617149, 0.27458948, 0.27307714,
+          0.27162685, 0.27023228, 0.26888809, 0.26758976, 0.26633338, 0.26511557,
+          0.26393339, 0.26278425]
+    self.K = [[np.interp(dt, dts, K0)], [np.interp(dt, dts, K1)]]
+
+
+class Track:
+  """Kalman-filtered radar track.
+
+  Wraps a 1-D Kalman filter on ``vLead`` (absolute lead speed) and exposes
+  smoothed ``vLeadK`` / ``aLeadK``.  Also tracks ``yRel`` history to estimate
+  lateral velocity (``yvRel``) for crossing-traffic detection.
+  """
+
+  def __init__(self, identifier: int, v_lead: float, kalman_params: KalmanParams):
+    self.identifier = identifier
+    self.cnt = 0
+    self.aLeadTau = FirstOrderFilter(_LEAD_ACCEL_TAU, 0.45, DT_MDL)
+    self.K_A = kalman_params.A
+    self.K_C = kalman_params.C
+    self.K_K = kalman_params.K
+    self.kf = KF1D([[v_lead], [0.0]], self.K_A, self.K_C, self.K_K)
+
+    # lateral velocity estimation from yRel history
+    self._prev_yRel: float | None = None
+    self.yvRel: float = 0.0       # estimated lateral velocity [m/s]
+
+  def update(self, d_rel: float, y_rel: float, v_rel: float, v_lead: float, measured: float):
+    self.dRel = d_rel
+    self.yRel = y_rel
+    self.vRel = v_rel
+    self.vLead = v_lead
+    self.measured = measured
+
+    # Estimate lateral velocity: ΔyRel / DT_MDL
+    if self._prev_yRel is not None:
+      raw_yvRel = (y_rel - self._prev_yRel) / DT_MDL
+      # Faster response for new tracks (first 5 frames): 0.6 new / 0.4 old
+      # After that, smoother: 0.4 new / 0.6 old
+      # This lets us detect crossing motorbikes within 2-3 frames (~0.1s)
+      alpha = 0.6 if self.cnt < 5 else 0.4
+      self.yvRel = alpha * raw_yvRel + (1.0 - alpha) * self.yvRel
+    self._prev_yRel = y_rel
+
+    # Kalman update on absolute lead speed
+    if self.cnt > 0:
+      self.kf.update(self.vLead)
+
+    self.vLeadK = float(self.kf.x[SPEED][0])
+    self.aLeadK = float(self.kf.x[ACCEL][0])
+
+    # Guard nan from Kalman (shouldn't happen, but defensive)
+    if not math.isfinite(self.vLeadK):
+      self.vLeadK = v_lead
+    if not math.isfinite(self.aLeadK):
+      self.aLeadK = 0.0
+
+    if abs(self.aLeadK) < 0.5:
+      self.aLeadTau.x = _LEAD_ACCEL_TAU
+    else:
+      self.aLeadTau.update(0.0)
+
+    self.cnt += 1
+
+  def get_RadarState(self, model_prob: float = 0.0) -> dict[str, Any]:
+    return {
+      "dRel": float(self.dRel),
+      "yRel": float(self.yRel),
+      "vRel": float(self.vRel),
+      "vLead": float(self.vLead),
+      "vLeadK": float(self.vLeadK),
+      "aLeadK": float(self.aLeadK),
+      "aLeadTau": float(self.aLeadTau.x),
+      "status": True,
+      "fcw": self.is_potential_fcw(model_prob),
+      "modelProb": model_prob,
+      "radar": True,
+      "radarTrackId": self.identifier,
+    }
+
+  def potential_low_speed_lead(self, v_ego: float) -> bool:
+    """True if track is a plausible stopped-car lead at low ego speed.
+    Excludes objects with significant lateral velocity (crossing pedestrians/bikes).
+    At very low speed (< 5 km/h), requires more persistence and tighter lateral."""
+    if v_ego < LOW_SPEED_CUTOFF:
+      # Very low speed: tighter filters — radar is noisy
+      return (abs(self.yRel) < 1.0 and
+              abs(self.yvRel) < 0.5 and
+              self.cnt >= LOW_SPEED_MIN_TRACK_CNT and
+              (3.5 < self.dRel < 25))
+    return (abs(self.yRel) < 1.5 and
+            abs(self.yvRel) < 0.8 and
+            (v_ego < V_EGO_STATIONARY) and
+            (2.0 < self.dRel < 25))
+
+  def is_potential_fcw(self, model_prob: float) -> bool:
+    return model_prob > .9
+
+  def __repr__(self):
+    return (f"Track(id={self.identifier} x={self.dRel:.1f} y={self.yRel:+.1f} "
+            f"v={self.vRel:+.1f} yvRel={self.yvRel:+.1f})")
+
+
+def calculate_collision_risk(track: Track, v_ego: float) -> float:
+  """Calculate collision risk score for a track — relaxed to avoid hard braking
+  on crossing pedestrians, motorbikes, and cut-ins.
+
+  Higher score = higher priority for lead selection.
+  Heavily favours objects that are:
+    - Dead-centre in our lane (small |yRel|)
+    - Staying in our lane (small |yvRel|)
+    - Genuinely ahead and closing slowly (high TTC)
+  Objects that are lateral, crossing, or only briefly in our path score low.
+  """
+  # ── Lateral position ──────────────────────────────────────────────────────
+  # Tight lane: only objects within ~1.5m of centre score well
+  # Beyond 1.5m the score drops sharply — they're likely in another lane
+  lateral_score = max(0, 1.0 - (abs(track.yRel) / 2.5) ** 2)  # quadratic falloff, 0 at 2.5m
+
+  # ── Distance ──────────────────────────────────────────────────────────────
+  # Gentle curve: don't over-prioritise close objects (avoids snapping to a
+  # pedestrian that briefly appears at 5m)
+  distance_score = max(0, 1.0 - track.dRel / 80.0)  # 0 at 80m (was 150m — less range bias)
+
+  # ── Closing speed ─────────────────────────────────────────────────────────
+  closing_speed = -track.vRel   # positive = approaching
+  is_static = abs(track.vRel) < 0.5
+
+  if is_static and v_ego > 0.5:
+    closing_speed = v_ego
+    closing_score = min(1.0, closing_speed / 30.0)  # softer: normalize to 30 m/s (was 20)
+  elif closing_speed > 0:
+    closing_score = min(1.0, closing_speed / 30.0)
+  else:
+    closing_score = 0.0   # receding → not a threat
+
+  # ── Time to collision (TTC) ───────────────────────────────────────────────
+  # Only score high when TTC is very short (< 4s).  Longer TTC → negligible.
+  if closing_speed > 0.5:
+    ttc = track.dRel / closing_speed
+    ttc_score = max(0, 1.0 - ttc / 4.0)  # 0 at 4s (was 10s — much more relaxed)
+  else:
+    ttc_score = 0.0
+
+  # ── Lateral-velocity penalty ──────────────────────────────────────────────
+  # Objects moving sideways quickly will clear our path — penalise heavily.
+  # Threshold raised to 0.8 m/s: bicycle wobble (~0.3–0.5 m/s) should NOT
+  # reduce score.  Only penalise when lateral motion is clearly dominant.
+  lateral_vel_penalty = 1.0
+  if abs(track.yvRel) > 0.8:
+    # At 1.5 m/s lateral → 0.65×, at 2.5 m/s → 0.30×, at 3.5+ m/s → ~0
+    lateral_vel_penalty = max(0.02, 1.0 - (abs(track.yvRel) / 3.0) ** 1.5)
+
+  # ── Combined score ────────────────────────────────────────────────────────
+  # Lateral position dominates (50%) so off-centre objects rarely win
+  risk_score = (
+    0.50 * lateral_score +     # 50% — must be in our lane
+    0.20 * distance_score +    # 20% — closer is riskier (gentle)
+    0.15 * closing_score +     # 15% — approaching matters
+    0.15 * ttc_score           # 15% — imminent collision matters
+  ) * lateral_vel_penalty
+
+  return risk_score
+
+
+def is_crossing_traffic(track: Track, v_ego: float) -> bool:
+  """Detect crossing / overtaking traffic that should NOT trigger braking,
+  while keeping genuine in-lane objects AND cut-ins as leads.
+
+  Key distinction (uses sign of yRel × yvRel):
+    - **Cut-in**:   yRel × yvRel < 0 → object moving TOWARD centre (merging)
+    - **Leaving**:  yRel × yvRel > 0 → object moving AWAY from centre
+    - **Crossing**: high |yvRel|, passing through our lane
+
+  Cut-ins are protected: most criteria are skipped or relaxed when the
+  object is clearly converging toward our lane centre.
+
+  Returns True → track should be excluded from leads.
+  """
+  is_low_speed = v_ego < 5.6  # ~20 km/h — urban passing zone
+
+  # ── Detect cut-in vs. passing ──────────────────────────────────────────
+  # yRel × yvRel < 0 means the object is moving toward lane centre.
+  # A bike cutting in from the right: yRel > 0, yvRel < 0 → product < 0.
+  # Require some minimum lateral motion to be sure (not just noise).
+  is_cutting_in = (track.yRel * track.yvRel < 0) and abs(track.yvRel) > 0.3
+
+  # A track we're genuinely catching up to is likely a real in-lane object.
+  approach_thresh = -2.0 if is_low_speed else -1.0
+  is_approaching = track.vRel < approach_thresh
+
+  # ── Criterion 1: lateral velocity + offset → crossing ──────────────────
+  # SKIP for cut-ins: a bike at yRel=1.5 moving toward centre is merging,
+  # not crossing.
+  if not is_cutting_in:
+    yvRel_thresh = 2.0 if is_approaching else (1.2 if is_low_speed else 1.5)
+    yRel_thresh  = 1.2 if is_low_speed else 1.5
+    if abs(track.yvRel) > yvRel_thresh and abs(track.yRel) > yRel_thresh:
+      return True
+
+  # ── Criterion 2: very high lateral velocity → sweeping across ──────────
+  # Even a cut-in at > 3 m/s lateral is too fast to be a merge — it's
+  # blasting through.  But raise threshold for cut-ins slightly.
+  sweep_thresh = 4.0 if is_cutting_in else 3.0
+  if abs(track.yvRel) > sweep_thresh:
+    return True
+
+  # ── Criterion 3: far lateral → not in our lane ─────────────────────────
+  # Cut-ins start from the side, so give them more room.
+  far_lat = (3.5 if is_cutting_in else 2.5) if is_low_speed else (4.0 if is_cutting_in else 3.0)
+  if abs(track.yRel) > far_lat and track.dRel < 30.0:
+    return True
+
+  # ── Criterion 4: lateral velocity dominates closing speed ──────────────
+  # SKIP for cut-ins — their lateral speed IS expected to be high.
+  if not is_approaching and not is_cutting_in:
+    closing_speed = max(0.1, -track.vRel)
+    ratio = 1.5 if is_low_speed else 2.0
+    if abs(track.yvRel) > 0.8 and abs(track.yvRel) > closing_speed * ratio:
+      return True
+
+  # ── Criterion 5: offset AND moving AWAY from centre → leaving ──────────
+  # By definition, cut-ins have yRel × yvRel < 0 (toward centre), so this
+  # criterion naturally doesn't fire for them.
+  leaving_lat = 1.5 if is_low_speed else 2.0
+  if abs(track.yRel) > leaving_lat and track.yRel * track.yvRel > 0:
+    return True
+
+  # ── Criterion 6: "stationary but offset" → likely passing motorbike ────
+  # SKIP for cut-ins: a bike merging in may briefly show low vRel.
+  if not is_cutting_in:
+    static_vRel = 2.0 if is_low_speed else 1.0
+    static_yRel = 1.5 if is_low_speed else 2.0
+    if abs(track.vRel) < static_vRel and abs(track.yRel) > static_yRel and v_ego > 1.0:
+      return True
+
+  # ── Criterion 7: new track + offset → wait for velocity to settle ──────
+  # For cut-ins, still require a few frames but use a shorter count.
+  min_cnt = (5 if is_cutting_in else 8) if is_low_speed else (3 if is_cutting_in else 5)
+  new_yRel = (1.8 if is_cutting_in else 1.2) if is_low_speed else (2.5 if is_cutting_in else 1.8)
+  if track.cnt < min_cnt and abs(track.yRel) > new_yRel and not is_approaching:
+    return True
+
+  # ── Criterion 8: new "stationary" track while moving ───────────────────
+  # SKIP for cut-ins: merging bike may briefly show low vRel.
+  if not is_cutting_in:
+    new_vRel = 2.0 if is_low_speed else 0.5
+    min_cnt8 = 8 if is_low_speed else 5
+    if track.cnt < min_cnt8 and abs(track.vRel) < new_vRel and v_ego > 1.0 and not is_approaching:
+      return True
+
+  return False
+
+
+def select_best_radar_track(tracks: dict[int, Track], v_ego: float,
+                            exclude_track_id: int = -1,
+                            current_lead_id: int = -1) -> Track | None:
+  """Select the best radar track for lead following (L2++ style).
+
+  Applies lateral / distance / velocity gates, scores candidates by
+  collision risk, and enforces **hysteresis**: the current lead keeps its
+  position unless a challenger scores ``LEAD_HYSTERESIS_MARGIN`` higher.
+
+  Args:
+    tracks:           Dictionary {track_id: Track}
+    v_ego:            Ego vehicle speed [m/s]
+    exclude_track_id: Track ID to skip (e.g., already used for LeadOne)
+    current_lead_id:  Track ID of the currently selected lead (for hysteresis)
+
+  Returns:
+    Best track or None.
+  """
+  if not tracks:
+    return None
+
+  min_d = min_lead_distance(v_ego)
+  candidates: list[Track] = []
+
+  for tid, track in tracks.items():
+    if tid == exclude_track_id:
+      continue
+    if track.dRel < min_d:
+      continue
+    if is_crossing_traffic(track, v_ego):
+      continue
+
+    # At very low speed (< 5 km/h), radar is noisy — only trust tracks
+    # that have been consistently present for several frames.
+    if v_ego < LOW_SPEED_CUTOFF and track.cnt < LOW_SPEED_MIN_TRACK_CNT:
+      continue
+
+    is_static = abs(track.vRel) < 0.5
+    # Lateral gate: wider for moving objects (bikes/motos ride offset),
+    # tighter for static to avoid roadside false positives.
+    # At very low speed, tighten further — noise tends to scatter laterally.
+    if v_ego < LOW_SPEED_CUTOFF:
+      max_lat = 1.2
+    elif is_static and v_ego > 2.0:
+      max_lat = 2.0
+    elif is_static:
+      max_lat = 2.5
+    else:
+      max_lat = 3.0
+    if abs(track.yRel) > max_lat:
+      continue
+    if track.dRel > MAX_LEAD_DIST:
+      continue
+
+    if is_static:
+      if v_ego < 0.5 or track.dRel < 2.0 or track.dRel > MAX_STATIC_LEAD_DIST:
+        continue
+
+    if abs(track.vRel) > MAX_VREL_FILTER and track.dRel > 20.0:
+      continue
+
+    candidates.append(track)
+
+  if not candidates:
+    return None
+
+  scored = [(calculate_collision_risk(t, v_ego), t) for t in candidates]
+  scored.sort(key=lambda x: x[0], reverse=True)
+
+  best_score, best_track = scored[0]
+
+  # ── Hysteresis: keep current lead unless challenger is clearly better ─────
+  if current_lead_id >= 0 and best_track.identifier != current_lead_id:
+    for score, track in scored:
+      if track.identifier == current_lead_id:
+        if best_score - score < LEAD_HYSTERESIS_MARGIN:
+          cloudlog.debug("radard: hysteresis kept lead %d (Δscore=%.3f)",
+                         current_lead_id, best_score - score)
+          return track
+        break
+
+  return best_track
+
+
+def laplacian_pdf(x: float, mu: float, b: float):
+  b = max(b, 1e-4)
+  return math.exp(-abs(x-mu)/b)
+
+
+def match_vision_to_track(v_ego: float, lead: capnp._DynamicStructReader,
+                          tracks: dict[int, Track]) -> Track | None:
+  """Find the radar track that best matches a vision lead using Laplacian PDFs.
+
+  Returns the best-scoring track if it passes distance / velocity / lateral
+  sanity gates, else None.
+  """
+  if not tracks:
+    return None
+
+  offset_vision_dist = lead.x[0] - RADAR_TO_CAMERA
+
+  min_d = min_lead_distance(v_ego)
+  # Filter out tracks that are too close, crossing, or too young at low speed
+  min_cnt = LOW_SPEED_MIN_TRACK_CNT if v_ego < LOW_SPEED_CUTOFF else 0
+  tracks = {k: v for k, v in tracks.items()
+            if v.dRel >= min_d and not is_crossing_traffic(v, v_ego)
+            and v.cnt >= min_cnt}
+  if not tracks:
+    return None
+
+  def prob(c):
+    return (laplacian_pdf(c.dRel, offset_vision_dist, lead.xStd[0]) *
+            laplacian_pdf(c.yRel, -lead.y[0], lead.yStd[0]) *
+            laplacian_pdf(c.vRel + v_ego, lead.v[0], lead.vStd[0]))
+
+  track = max(tracks.values(), key=prob)
+
+  # Sanity gates — reject physically implausible matches
+  dist_sane = abs(track.dRel - offset_vision_dist) < max(offset_vision_dist * DIST_MATCH_FACTOR, DIST_MATCH_MIN)
+  vel_sane  = (abs(track.vRel + v_ego - lead.v[0]) < VEL_MATCH_REL) or \
+              (abs(track.vRel + v_ego - lead.v[0]) < VEL_MATCH_ABS)
+  lat_sane  = abs(track.yRel - (-lead.y[0])) < max(lead.yStd[0] * LAT_MATCH_FACTOR, LAT_MATCH_MIN)
+
+  if dist_sane and vel_sane and lat_sane:
+    return track
+  return None
+
+
+def get_RadarState_from_vision(lead_msg: capnp._DynamicStructReader, v_ego: float, model_v_ego: float):
+  lead_v_rel_pred = lead_msg.v[0] - model_v_ego
+  dRel = float(lead_msg.x[0] - RADAR_TO_CAMERA)
+
+  # Speed-dependent minimum distance: reject implausibly close vision leads
+  if dRel < min_lead_distance(v_ego):
+    return {'status': False}
+
+  return {
+    "dRel": dRel,
+    "yRel": float(-lead_msg.y[0]),
+    "vRel": float(lead_v_rel_pred),
+    "vLead": float(v_ego + lead_v_rel_pred),
+    "vLeadK": float(v_ego + lead_v_rel_pred),
+    "aLeadK": float(lead_msg.a[0]),
+    "aLeadTau": 0.3,
+    "fcw": False,
+    "modelProb": float(lead_msg.prob),
+    "status": True,
+    "radar": False,
+    "radarTrackId": -1,
+  }
+
+
+def get_lead(v_ego: float, ready: bool, tracks: dict[int, Track],
+             lead_msg: capnp._DynamicStructReader, model_v_ego: float,
+             low_speed_override: bool = True, prioritize_vision: bool = False,
+             exclude_track_id: int = -1,
+             current_lead_id: int = -1) -> dict[str, Any]:
+  """Determine the best lead vehicle from radar tracks + vision.
+
+  Priority:
+    1. Fused radar+vision (highest quality)
+    2. Vision-only (no radar match, vision confident)
+    3. Radar-only (vision weak, radar filters already passed)
+    4. Low-speed override (trust radar for close objects at low ego speed)
+
+  ``current_lead_id`` enables hysteresis: the current lead is preferred unless
+  a challenger scores significantly higher.
+  """
+  # ── Priority 1: radar + vision fusion ──────────────────────────────────────
+  track: Track | None = None
+  if tracks and ready and lead_msg.prob > VISION_MATCH_THRESHOLD:
+    track = match_vision_to_track(v_ego, lead_msg, tracks)
+
+  lead_dict: dict[str, Any] = {'status': False}
+
+  if track is not None:
+    lead_dict = track.get_RadarState(lead_msg.prob)
+
+    # Static velocity override (only when vision says static AND radar is way off)
+    if abs(lead_msg.v[0]) < STATIC_VEL_THRESHOLD and abs(track.vRel + v_ego) > STATIC_RADAR_VEL_MIN:
+      vision_vRel = lead_msg.v[0] - v_ego
+      lead_dict['vRel'] = vision_vRel
+      lead_dict['vLead'] = v_ego + vision_vRel
+      lead_dict['vLeadK'] = v_ego + vision_vRel
+      cloudlog.debug("radard: static override track %d  v_radar=%.1f → v_vision=%.1f",
+                     track.identifier, track.vRel + v_ego, lead_msg.v[0])
+
+  # ── Priority 2: vision-only ────────────────────────────────────────────────
+  elif track is None and ready and lead_msg.prob > VISION_ONLY_THRESHOLD:
+    lead_dict = get_RadarState_from_vision(lead_msg, v_ego, model_v_ego)
+
+  # ── Priority 3: radar-only ─────────────────────────────────────────────────
+  elif tracks and ready and lead_msg.prob <= VISION_ONLY_THRESHOLD:
+    best = select_best_radar_track(tracks, v_ego, exclude_track_id,
+                                   current_lead_id=current_lead_id)
+    if best is not None and best.dRel < RADAR_ONLY_MAX_DIST and abs(best.yRel) < RADAR_ONLY_MAX_LAT:
+      lead_dict = best.get_RadarState(0.0)
+
+  # ── Priority 4: low-speed override (radar priority lowered) ────────────────
+  # Only override vision when there's no vision lead at all, or radar is much closer (0.6x)
+  if low_speed_override:
+    low_speed_tracks = [c for c in tracks.values() if c.potential_low_speed_lead(v_ego)]
+    if low_speed_tracks:
+      closest = min(low_speed_tracks, key=lambda c: c.dRel)
+      vision_ok = lead_dict['status'] and lead_dict.get('modelProb', 0.0) > VISION_ONLY_THRESHOLD
+      if (not lead_dict['status']) or \
+         (not vision_ok and closest.dRel < 15.0) or \
+         (closest.dRel < lead_dict.get('dRel', float('inf')) * 0.6):
+        lead_dict = closest.get_RadarState()
+
+  # ── Final safety gate ──────────────────────────────────────────────────────
+  min_d = min_lead_distance(v_ego)
+  if lead_dict['status'] and lead_dict.get('dRel', 0) < min_d:
+    lead_dict = {'status': False}
+
+  return lead_dict
+
+
+class RadarD:
+  """Radar–vision fusion engine.
+
+  Maintains Kalman-filtered ``Track`` objects, selects up to two leads
+  (``leadOne``, ``leadTwo``) and publishes ``radarState``.
+  """
+
+  def __init__(self, delay: float = 0.0, prioritize_vision: bool = False):
+    self.current_time = 0.0
+
+    self.tracks: dict[int, Track] = {}
+    self.kalman_params = KalmanParams(DT_MDL)
+
+    self.v_ego = 0.0
+    self.v_ego_hist = deque([0.0], maxlen=max(1, int(round(delay / DT_MDL)) + 1))
+    self.last_v_ego_frame = -1
+
+    self.radar_state: capnp._DynamicStructBuilder | None = None
+    self.radar_state_valid = False
+
+    self.ready = False
+    self.prioritize_vision = prioritize_vision
+
+    # Track IDs of the last selected leads (for hysteresis)
+    self._lead_one_id: int = -1
+    self._lead_two_id: int = -1
+
+  def update(self, sm: messaging.SubMaster, rr):
+    """Process new radar + vision data and build radarState."""
+    self.ready = sm.seen['modelV2']
+    self.current_time = 1e-9 * max(sm.logMonoTime.values())
+
+    if sm.recv_frame['carState'] != self.last_v_ego_frame:
+      self.v_ego = sm['carState'].vEgo
+      self.v_ego_hist.append(self.v_ego)
+      self.last_v_ego_frame = sm.recv_frame['carState']
+
+    min_d = min_lead_distance(self.v_ego)
+    ar_pts = {pt.trackId: [pt.dRel, pt.yRel, pt.vRel, pt.measured]
+              for pt in rr.points if pt.dRel >= min_d}
+
+    # Remove stale tracks
+    for tid in list(self.tracks.keys()):
+      if tid not in ar_pts:
+        self.tracks.pop(tid, None)
+
+    # Update / create tracks
+    v_ego_delayed = self.v_ego_hist[0] if self.v_ego_hist else self.v_ego
+    for tid, rpt in ar_pts.items():
+      v_lead = rpt[2] + v_ego_delayed
+      if tid not in self.tracks:
+        self.tracks[tid] = Track(tid, v_lead, self.kalman_params)
+      self.tracks[tid].update(rpt[0], rpt[1], rpt[2], v_lead, rpt[3])
+
+    # Build radarState
+    self.radar_state_valid = sm.all_checks()
+    self.radar_state = log.RadarState.new_message()
+    self.radar_state.mdMonoTime = sm.logMonoTime['modelV2']
+    self.radar_state.radarErrors = rr.errors
+    self.radar_state.carStateMonoTime = sm.logMonoTime['carState']
+
+    model_v_ego = (sm['modelV2'].velocity.x[0]
+                   if len(sm['modelV2'].velocity.x) else self.v_ego)
+
+    leads_v3 = sm['modelV2'].leadsV3
+    if len(leads_v3) > 1:
+      # ── Lead One ──────────────────────────────────────────────────
+      lead_one = get_lead(self.v_ego, self.ready, self.tracks, leads_v3[0],
+                          model_v_ego, low_speed_override=True,
+                          prioritize_vision=self.prioritize_vision,
+                          exclude_track_id=-1,
+                          current_lead_id=self._lead_one_id)
+      self.radar_state.leadOne = lead_one
+      lead_one_tid = (self.radar_state.leadOne.radarTrackId
+                      if self.radar_state.leadOne.status else -1)
+      self._lead_one_id = lead_one_tid
+
+      # ── Lead Two (exclude LeadOne's track) ────────────────────────
+      lead_two = get_lead(self.v_ego, self.ready, self.tracks, leads_v3[1],
+                          model_v_ego, low_speed_override=False,
+                          prioritize_vision=self.prioritize_vision,
+                          exclude_track_id=lead_one_tid,
+                          current_lead_id=self._lead_two_id)
+      self.radar_state.leadTwo = lead_two
+      self._lead_two_id = (self.radar_state.leadTwo.radarTrackId
+                           if self.radar_state.leadTwo.status else -1)
+    elif len(leads_v3) == 1:
+      # Only one vision lead available — still try to fuse
+      lead_one = get_lead(self.v_ego, self.ready, self.tracks, leads_v3[0],
+                          model_v_ego, low_speed_override=True,
+                          prioritize_vision=self.prioritize_vision,
+                          current_lead_id=self._lead_one_id)
+      self.radar_state.leadOne = lead_one
+      self._lead_one_id = (self.radar_state.leadOne.radarTrackId
+                           if self.radar_state.leadOne.status else -1)
+      self._lead_two_id = -1
+    else:
+      # No vision leads — radar-only fallback
+      cloudlog.debug("radard: no vision leads (leadsV3 empty)")
+      best = select_best_radar_track(self.tracks, self.v_ego,
+                                     current_lead_id=self._lead_one_id)
+      if best is not None and best.dRel < RADAR_ONLY_MAX_DIST and abs(best.yRel) < RADAR_ONLY_MAX_LAT:
+        self.radar_state.leadOne = best.get_RadarState(0.0)
+        self._lead_one_id = best.identifier
+      else:
+        self._lead_one_id = -1
+      self._lead_two_id = -1
+
+  def publish(self, pm: messaging.PubMaster):
+    assert self.radar_state is not None
+
+    radar_msg = messaging.new_message("radarState")
+    radar_msg.valid = self.radar_state_valid
+    radar_msg.radarState = self.radar_state
+    pm.send("radarState", radar_msg)
+
+
+# fuses camera and radar data for best lead detection
+def main() -> None:
+  config_realtime_process(5, Priority.CTRL_LOW)
+
+  # wait for stats about the car to come in from controls
+  cloudlog.info("radard is waiting for CarParams")
+  CP = messaging.log_from_bytes(Params().get("CarParams", block=True), car.CarParams)
+  cloudlog.info("radard got CarParams")
+
+  # *** setup messaging
+  sm = messaging.SubMaster(['modelV2', 'carState', 'liveTracks'], poll='modelV2')
+  pm = messaging.PubMaster(['radarState'])
+
+  # Trust radar more for VinFast: DBC now has Rel_Vx on all 20 objects,
+  # DBC is correct, radar data quality is reliable.
+  # prioritize_vision=False allows radar to override vision at low speeds
+  prioritize_vision = False
+  RD = RadarD(CP.radarDelay, prioritize_vision=prioritize_vision)
+
+  while 1:
+    sm.update()
+
+    RD.update(sm, sm['liveTracks'])
+    RD.publish(pm)
+
+
+if __name__ == "__main__":
+  main()

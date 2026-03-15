@@ -2,6 +2,7 @@ from openpilot.common.params import Params
 from openpilot.system.ui.widgets import Widget
 from openpilot.system.ui.widgets.list_view import multiple_button_item, toggle_item
 from openpilot.system.ui.widgets.scroller import Scroller
+from openpilot.selfdrive.ui.ui_state import ui_state
 
 # Description constants
 DESCRIPTIONS = {
@@ -23,6 +24,11 @@ DESCRIPTIONS = {
   'RecordFront': "Upload data from the driver facing camera and help improve the driver monitoring algorithm.",
   "IsMetric": "Display speed in km/h instead of mph.",
   "RecordAudio": "Record and store microphone audio while driving. The audio will be included in the dashcam video in comma connect.",
+  "VinFastLateralOffset": (
+    "Adjust the lateral position of the vehicle within the lane. "
+    "Shift Left moves the vehicle left, Shift Right moves it right. "
+    "Only applies when vehicle speed is below 60 km/h."
+  ),
 }
 
 
@@ -86,6 +92,25 @@ class TogglesLayout(Widget):
       ),
     ]
 
+    # Add VinFast-specific lateral offset control
+    # Check if car brand is VinFast
+    try:
+      if ui_state.sm.valid.get("carParams", False) and ui_state.sm["carParams"].brand == "vinfast":
+        items.append(
+          multiple_button_item(
+            "Lateral Position",
+            DESCRIPTIONS["VinFastLateralOffset"],
+            buttons=["Center", "Left 1", "Left 2", "Left 3", "Right 1", "Right 2", "Right 3"],
+            button_width=180,
+            callback=self._set_lateral_offset,
+            selected_index=int(self._params.get("VinFastLateralOffset", return_default=True)),
+            icon="chffr_wheel.png"
+          )
+        )
+    except Exception:
+      # If carParams not available, skip this control
+      pass
+
     self._scroller = Scroller(items, line_separator=True, spacing=0)
 
   def _render(self, rect):
@@ -93,3 +118,6 @@ class TogglesLayout(Widget):
 
   def _set_longitudinal_personality(self, button_index: int):
     self._params.put("LongitudinalPersonality", button_index)
+
+  def _set_lateral_offset(self, button_index: int):
+    self._params.put("VinFastLateralOffset", button_index)

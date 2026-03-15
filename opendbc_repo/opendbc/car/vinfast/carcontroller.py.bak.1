@@ -5,17 +5,9 @@ from opendbc.car import Bus, structs
 from opendbc.car.interfaces import CarControllerBase
 from opendbc.car.lateral import apply_std_steer_angle_limits
 from opendbc.car.vinfast import vinfastcan
-from opendbc.car.vinfast.values import CarControllerParams, CANBUS
+from opendbc.car.vinfast.values import CarControllerParams, CANBUS, CAR
 
 VisualAlert = structs.CarControl.HUDControl.VisualAlert
-
-# Re-engage lead classes (internal classification for TTC behavior tuning)
-LEAD_CLASS_NONE = 0
-LEAD_CLASS_RECEDING = 1
-LEAD_CLASS_STEADY = 2
-LEAD_CLASS_CLOSING = 3
-LEAD_CLASS_CRITICAL = 4
-
 
 class CarController(CarControllerBase):
   def __init__(self, dbc_names, CP, CP_SP):
@@ -30,9 +22,6 @@ class CarController(CarControllerBase):
     # Reengage state tracking (latched on popup feed)
     self.reengage_active = False
     self.reengage_accel_state = 0.2
-    self.reengage_lead_class = LEAD_CLASS_NONE
-    self.reengage_boost_frames = 0
-    self.reengage_standstill_armed = False
     self.final_accel_cmd = 0.0  # Track final acceleration command (what we send via CAN)
 
   def update(self, CC, CC_SP, CS, now_nanos):
@@ -95,154 +84,94 @@ class CarController(CarControllerBase):
 
         # Reengage latch:
         # - If popup feed == 3 while longActive => latch reengage_active True
-        # - Stays active until: road clear, lead moving away, or vEgo > 10 km/h
-        was_reengage_active = self.reengage_active
+        # - Keep it True until we see the closest lead <= 2.0m (danger zone), then release
+        # This prevents the model from taking back control when acc_popup_feed turns off quickly.
         if (acc_popup_feed == 3) and CC.longActive:
           self.reengage_active = True
-        # Latch a short launch boost window whenever re-engage becomes active, so
-        # every re-engage event gets the same instant 0.6 m/s^2 kick.
-        if self.reengage_active and (not was_reengage_active):
-          self.reengage_boost_frames = 60  # ~1.2s at 50Hz
         if self.reengage_active and (not CC.longActive):
           # Disengaged longitudinal: clear latch
           self.reengage_active = False
-          self.reengage_boost_frames = 0
-          self.reengage_standstill_armed = False
 
-        # ── Lead analysis ──────────────────────────────────────────────
-        lead_vRel = 0.0
-        closing_speed = 0.0
-        lead_ttc = float('inf')
-        if lead_distance != float('inf'):
-          lead_obj = None
-          if CC_SP.leadOne.status and (lead_one_distance <= lead_two_distance):
-            lead_obj = CC_SP.leadOne
-          elif CC_SP.leadTwo.status:
-            lead_obj = CC_SP.leadTwo
-          if lead_obj is not None:
-            lead_vRel = float(getattr(lead_obj, 'vRel', 0.0))
-            closing_speed = max(0.0, -lead_vRel)
-            if closing_speed > 0.1:
-              lead_ttc = lead_distance / closing_speed
-
-        road_clear = (lead_distance == float('inf'))
-        lead_moving_away = (not road_clear) and (lead_vRel > 0.5)
-        REENGAGE_HANDOFF_SPEED = 10.0 / 3.6
-
-        # ── Re-engage exit condition ──────────────────────────────────
-        # Only hand off to model once ego speed is high enough for the
-        # model to produce meaningful acceleration on its own.
-        # Road-clear / lead-moving-away are used below to skip the speed
-        # cap so the car can actually reach handoff speed.
-        if self.reengage_active and CS.out.vEgo > REENGAGE_HANDOFF_SPEED:
+        # If lead is in danger zone, release reengage after we've reacted once
+        if self.reengage_active and (lead_distance != float('inf')) and (lead_distance <= 2.0):
           self.reengage_active = False
-          self.reengage_standstill_armed = False
+
+        # If lead is clearly moving and far away, stop overriding and let the model follow normally.
+        # This avoids fighting the model once traffic is flowing again.
+        # - d_lead > 10m
+        # - v_lead > 6 km/h
+        # - vEgo > 0.5 m/s (car has actually started moving - prevents premature handoff from standstill)
+        if self.reengage_active and (lead_distance != float('inf')) and (lead_distance > 10.0):
+          # pick the closest lead object
+          lead = None
+          if CC_SP.leadOne.status and (lead_one_distance <= lead_two_distance):
+            lead = CC_SP.leadOne
+          elif CC_SP.leadTwo.status:
+            lead = CC_SP.leadTwo
+
+          if lead is not None:
+            # Many lead messages expose vRel (m/s). Estimate absolute lead speed as vEgo + vRel.
+            v_rel = getattr(lead, 'vRel', None)
+            if v_rel is not None:
+              v_lead_kph = (CS.out.vEgo + float(v_rel)) * 3.6
+              # Only hand off if car has actually started moving (vEgo > 0.5 m/s ≈ 1.8 km/h)
+              # This prevents premature handoff when car is still at standstill, allowing reengage to work
+              if v_lead_kph > 6.0 and CS.out.vEgo > 0.5:
+                self.reengage_active = False
         
         # Capture model's acceleration BEFORE our override for logging/debugging
         model_accel_before_override = CC.actuators.accel if CC.longActive else 0.0
         
-        # ── Re-engage acceleration override ──────────────────────────────
-        # Creeping (close/slow lead that isn't moving away): conservative
-        # accel + speed cap at 5 km/h.
-        # Not creeping (road clear or lead far/moving away): stronger accel,
-        # no speed cap — car accelerates freely until handoff.
+        # When reengage is active, completely ignore model acceleration and use a smart distance curve:
+        # - When resuming from stop (standstill): allow acceleration if lead > 3m (faster to follow traffic)
+        # - When moving: use stricter 7m threshold for full acceleration
+        # - 2.0m < lead < threshold: interpolate from +0.4 to -2.0 (steep brake ramp)
+        # - lead <= 2.0m: accel = -2.0
         if self.reengage_active and CC.longActive:
-          # Re-arm launch boost whenever we are back at standstill in re-engage.
-          # Then retrigger boost on the next standstill -> move-off transition.
-          if CS.out.standstill:
-            self.reengage_standstill_armed = True
-          elif self.reengage_standstill_armed and CS.out.vEgo < 1.5:
-            self.reengage_boost_frames = 60  # ~1.2s at 50Hz
-            self.reengage_standstill_armed = False
-
-          is_creeping = (not road_clear) and (lead_distance < 10.0) and (not lead_moving_away)
-          # Launch boost is capped at 0.6 m/s^2 for all re-engage starts.
-          REENGAGE_LAUNCH_ACCEL = 0.6
-          launch_boost_active = (CS.out.standstill or (CS.out.vEgo < 0.3) or
-                                 (self.reengage_boost_frames > 0))
-          launch_accel = REENGAGE_LAUNCH_ACCEL
-          # Keep creep-mode braking softer to reduce harsh stop-go oscillations.
-          REENGAGE_STOP_ACCEL = -1.0 if is_creeping else -1.5
-
-          if is_creeping:
-            resume_accel = launch_accel if launch_boost_active else 0.3
-          else:
-            resume_accel = launch_accel if launch_boost_active else 0.5
+          # Check if lead is moving away (positive vRel) - if so, be more aggressive
+          lead_moving_away = False
+          if lead_distance != float('inf'):
+            lead = None
+            if CC_SP.leadOne.status and (lead_one_distance <= lead_two_distance):
+              lead = CC_SP.leadOne
+            elif CC_SP.leadTwo.status:
+              lead = CC_SP.leadTwo
+            if lead is not None:
+              v_rel = getattr(lead, 'vRel', None)
+              if v_rel is not None and float(v_rel) > 0.5:  # Lead moving away at >1.5 m/s (less sensitive)
+                lead_moving_away = True
           
-          # Distance guardrail: never accelerate hard when the lead is near.
-          dist_full_brake = 4.5
-          dist_resume = 8.0 if is_creeping else 6.0
-          if road_clear:
-            accel_dist = resume_accel
-          elif lead_distance <= dist_full_brake:
-            accel_dist = REENGAGE_STOP_ACCEL
-          elif lead_distance >= dist_resume:
-            accel_dist = resume_accel
+          # Smart threshold: lower only when resuming from stop AND lead is moving away
+          if CS.out.standstill and lead_moving_away:
+            accel_threshold = 3.0  # Lower threshold when starting from stop AND lead moving away
           else:
-            u_dist = (lead_distance - dist_full_brake) / max(0.1, dist_resume - dist_full_brake)
-            accel_dist = REENGAGE_STOP_ACCEL + u_dist * (resume_accel - REENGAGE_STOP_ACCEL)
-
-          # TTC shaping bands (requested):
-          # ttc < 0.9s       -> strong brake
-          # 0.9..2.0s        -> proportional decel
-          # 2.0..4.0s        -> near-zero / gentle
-          # > 4.0s           -> allow resume accel
-          TTC_HARD_BRAKE = 0.9
-          TTC_DECEL_END = 2.0
-          TTC_GENTLE_END = 4.0
-          TTC_STRONG_BRAKE = -1.2 if is_creeping else -2.0
-          TTC_DECEL_AT_2S = -0.20 if is_creeping else -0.35
-          TTC_GENTLE_AT_4S = 0.15 if is_creeping else 0.20
-
-          # Internal lead class for readability/debug tuning.
-          if road_clear:
-            self.reengage_lead_class = LEAD_CLASS_NONE
-          elif lead_moving_away:
-            self.reengage_lead_class = LEAD_CLASS_RECEDING
-          elif closing_speed <= 0.1:
-            self.reengage_lead_class = LEAD_CLASS_STEADY
-          elif lead_ttc < TTC_HARD_BRAKE:
-            self.reengage_lead_class = LEAD_CLASS_CRITICAL
+            accel_threshold = 7.0  # Normal threshold when moving
+          
+          # Use higher acceleration (0.5 m/s²) when resuming from complete stop, otherwise 0.3 m/s²
+          resume_accel = 0.6 if CS.out.standstill else 0.4
+          
+          # VF9-specific stopping distance: 3.0m with -3.0 m/s² deceleration
+          # VF8 uses 4.0m with -2.0 m/s²
+          is_vf9 = self.CP.carFingerprint == CAR.VINFAST_VF9.name
+          if is_vf9:
+            stop_distance = 3.0  # VF9 safe stopping distance
+            stop_accel = -3.0    # VF9 deceleration at stop distance
           else:
-            self.reengage_lead_class = LEAD_CLASS_CLOSING
-
-          # TTC-based accel target by band.
-          if road_clear or not math.isfinite(lead_ttc):
-            accel_ttc = resume_accel
-          elif lead_ttc < TTC_HARD_BRAKE:
-            accel_ttc = TTC_STRONG_BRAKE
-          elif lead_ttc <= TTC_DECEL_END:
-            u_ttc = (lead_ttc - TTC_HARD_BRAKE) / max(0.1, (TTC_DECEL_END - TTC_HARD_BRAKE))
-            accel_ttc = TTC_STRONG_BRAKE + u_ttc * (TTC_DECEL_AT_2S - TTC_STRONG_BRAKE)
-          elif lead_ttc <= TTC_GENTLE_END:
-            u_ttc = (lead_ttc - TTC_DECEL_END) / max(0.1, (TTC_GENTLE_END - TTC_DECEL_END))
-            accel_ttc = TTC_DECEL_AT_2S + u_ttc * (TTC_GENTLE_AT_4S - TTC_DECEL_AT_2S)
+            stop_distance = 2.0  # VF8 safe stopping distance
+            stop_accel = -2.0    # VF8 deceleration at stop distance
+          
+          if lead_distance == float('inf') or lead_distance >= accel_threshold:
+            accel_cmd = resume_accel
+          elif lead_distance <= stop_distance:
+            accel_cmd = stop_accel
           else:
-            accel_ttc = resume_accel
-
-          # Conservative fusion: apply whichever asks for less acceleration.
-          accel_cmd = min(accel_dist, accel_ttc)
-          if lead_moving_away and lead_distance > 6.0:
-            accel_cmd = max(accel_cmd, 0.4 if CS.out.standstill else 0.2)
-
-          if is_creeping and accel_cmd > 0.0:
-            REENGAGE_MAX_SPEED_MS = 5.0 / 3.6
-            REENGAGE_TAPER_START = REENGAGE_MAX_SPEED_MS * 0.7
-            if CS.out.vEgo >= REENGAGE_MAX_SPEED_MS:
-              accel_cmd = 0.0
-            elif CS.out.vEgo >= REENGAGE_TAPER_START:
-              taper = (REENGAGE_MAX_SPEED_MS - CS.out.vEgo) / (REENGAGE_MAX_SPEED_MS - REENGAGE_TAPER_START)
-              accel_cmd = accel_cmd * max(0.0, taper)
-
+            t = (lead_distance - accel_threshold) / (stop_distance - accel_threshold)
+            # Interpolate from resume_accel to stop_accel
+            accel_cmd = resume_accel + t * (stop_accel - resume_accel)
           self.reengage_accel_state = accel_cmd
-          if self.reengage_boost_frames > 0:
-            self.reengage_boost_frames -= 1
         else:
           # Not in reengage mode: use model's acceleration
           accel_cmd = CC.actuators.accel if CC.longActive else 0.0
-          self.reengage_lead_class = LEAD_CLASS_NONE
-          self.reengage_boost_frames = 0
-          self.reengage_standstill_armed = False
         
         # When starting from standstill (normal case, not in reengage), ensure accel is at least 0 to allow acceleration
         # Negative accel (like -2) prevents the car from accelerating from stop
@@ -360,7 +289,6 @@ class CarController(CarControllerBase):
       # This is informational only - the actual CAN command uses our accel_cmd, but this prevents
       # any downstream code from seeing the model's "stopping" state and potentially using it
       new_actuators.longControlState = car.CarControl.Actuators.LongControlState.starting
-    new_actuators.reengageStatus = self.reengage_active
     
     self.frame += 1
 

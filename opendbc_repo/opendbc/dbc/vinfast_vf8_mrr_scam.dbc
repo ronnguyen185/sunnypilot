@@ -211,6 +211,7 @@ BO_ 1040 A_CAMERA_OD1_OD2_oMRR_SCAM: 48 Vector__XXX
  SG_ obj01_Lane_Assignment_oA_CAMERA_ : 35|3@1+ (1,0) [0|7] "" ADAS
  SG_ obj01_BrakeLight_oA_CAMERA_OD1_O : 38|1@1+ (1,0) [0|1] "" ADAS
  SG_ obj01_Dx_oA_CAMERA_OD1_OD2_oMRR_ : 39|14@1+ (0.05,-200) [-200|619.15] "m" ADAS
+ SG_ obj01_Rel_Vx_oA_CAMERA_OD1_OD2_o : 53|13@1+ (0.05,-120) [-120|289.55] "m/s" ADAS
  SG_ obj01_Type_oA_CAMERA_OD1_OD2_oMR : 66|3@1+ (1,0) [0|7] "" ADAS
  SG_ obj01_DirIndicator_oA_CAMERA_OD1 : 69|3@1+ (1,0) [0|7] "" ADAS
  SG_ obj01_Width_oA_CAMERA_OD1_OD2_oM : 72|9@1+ (0.01,0.4) [0.4|5.51] "m" ADAS
