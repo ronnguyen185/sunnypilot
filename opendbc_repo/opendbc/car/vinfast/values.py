@@ -38,13 +38,13 @@ class CarControllerParams:
         ([0., 20., 40.], [7., 5., 3.]),  # ANGLE_RATE_LIMIT_DOWN (speed breakpoints, rate limits)
       )
     elif CP.carFingerprint == CAR.VINFAST_VF9.name:
-      self.STEER_MAX = 90
-      # VF9 steering angle limit is ±90 degrees
+      self.STEER_MAX = 150
+      # VF9 steering angle limit is ±150 degrees
       # Angle rate limits (speed-dependent)
       # Speed breakpoints: 0, 20, 40 m/s
       # Rate limits: up [7, 5, 3] deg/step, down [7, 5, 3] deg/step
       self.ANGLE_LIMITS = AngleSteeringLimits(
-        90.0,  # STEER_ANGLE_MAX (degrees) - VF9 max steering angle = ±90 degrees
+        150.0,  # STEER_ANGLE_MAX (degrees) - VF9 max steering angle = ±150 degrees
     ([0., 20., 40.], [7., 5., 3.]),   # ANGLE_RATE_LIMIT_UP (speed breakpoints, rate limits)
     ([0., 20., 40.], [7., 5., 3.]),  # ANGLE_RATE_LIMIT_DOWN (speed breakpoints, rate limits)
   )
