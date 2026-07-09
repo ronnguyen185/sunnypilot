@@ -240,6 +240,15 @@ def hardware_thread(end_event, hw_queue) -> None:
         onroad_conditions["ignition"] = False
         cloudlog.error("panda timed out onroad")
 
+    # Bench SOC2 desk bring-up: no harness/ignition line.
+    # Config lives in /data/gate_bench/ (Params prunes unknown keys under /data/params/d).
+    try:
+      from openpilot.selfdrive.gate.gate_params import gate_force_ignition
+      if gate_force_ignition(params):
+        onroad_conditions["ignition"] = True
+    except Exception:
+      pass
+
     # Run at 2Hz, plus either edge of ignition
     ign_edge = (started_ts is not None) != all(onroad_conditions.values())
     if (sm.frame % round(SERVICE_LIST['pandaStates'].frequency * DT_HW) != 0) and not ign_edge:

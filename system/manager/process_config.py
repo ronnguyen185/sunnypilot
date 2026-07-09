@@ -1,5 +1,4 @@
 import os
-import operator
 import platform
 
 from cereal import car, custom
@@ -23,6 +22,33 @@ def notcar(started: bool, params: Params, CP: car.CarParams) -> bool:
 
 def iscar(started: bool, params: Params, CP: car.CarParams) -> bool:
   return started and not CP.notCar
+
+def gate_soc2(started: bool, params: Params, CP: car.CarParams) -> bool:
+  """Run soc2d onroad when GateSOC2Enabled and fingerprint is gate (or COMMA_GATE bundle)."""
+  if not started:
+    return False
+  from openpilot.selfdrive.gate.gate_params import gate_soc2_enabled
+  if not gate_soc2_enabled(params):
+    return False
+  if CP.brand == "gate":
+    return True
+  # Before card finishes fingerprinting, CarPlatformBundle already selects COMMA_GATE.
+  bundle = params.get("CarPlatformBundle") or {}
+  if isinstance(bundle, dict) and bundle.get("platform") == "COMMA_GATE":
+    return True
+  return False
+
+def gate_bench_ui(started: bool, params: Params, CP: car.CarParams) -> bool:
+  """Desk gate bench: use Python raylib UI (honors GateForceIgnition). Native Qt ./ui
+  requires real panda ignitionLine/Can and has no source tree to patch without rebuild."""
+  from openpilot.selfdrive.gate.gate_params import gate_force_ignition
+  if gate_force_ignition(params):
+    return True
+  bundle = params.get("CarPlatformBundle") or {}
+  return isinstance(bundle, dict) and bundle.get("platform") == "COMMA_GATE"
+
+def not_gate_bench_ui(started: bool, params: Params, CP: car.CarParams) -> bool:
+  return not gate_bench_ui(started, params, CP)
 
 def logging(started: bool, params: Params, CP: car.CarParams) -> bool:
   run = (not CP.notCar) or not params.get_bool("DisableLogging")
@@ -102,10 +128,10 @@ def uploader_ready(started: bool, params: Params, CP: car.CarParams) -> bool:
   return always_run(started, params, CP)
 
 def or_(*fns):
-  return lambda *args: operator.or_(*(fn(*args) for fn in fns))
+  return lambda *args: any(fn(*args) for fn in fns)
 
 def and_(*fns):
-  return lambda *args: operator.and_(*(fn(*args) for fn in fns))
+  return lambda *args: all(fn(*args) for fn in fns)
 
 procs = [
   DaemonProcess("manage_athenad", "system.athena.manage_athenad", "AthenadPid"),
@@ -126,8 +152,8 @@ procs = [
   PythonProcess("dmonitoringmodeld", "selfdrive.modeld.dmonitoringmodeld", driverview, enabled=(WEBCAM or not PC)),
 
   PythonProcess("sensord", "system.sensord.sensord", only_onroad, enabled=not PC),
-  NativeProcess("ui", "selfdrive/ui", ["./ui"], always_run, watchdog_max_dt=(5 if not PC else None)),
-  PythonProcess("raylib_ui", "selfdrive.ui.ui", always_run, enabled=False, watchdog_max_dt=(5 if not PC else None)),
+  NativeProcess("ui", "selfdrive/ui", ["./ui"], and_(always_run, not_gate_bench_ui), watchdog_max_dt=(5 if not PC else None)),
+  PythonProcess("raylib_ui", "selfdrive.ui.ui", and_(always_run, gate_bench_ui), watchdog_max_dt=(5 if not PC else None)),
   PythonProcess("soundd", "selfdrive.ui.soundd", only_onroad),
   PythonProcess("locationd", "selfdrive.locationd.locationd", only_onroad),
   NativeProcess("_pandad", "selfdrive/pandad", ["./pandad"], always_run, enabled=False),
@@ -137,6 +163,7 @@ procs = [
   PythonProcess("joystickd", "tools.joystick.joystickd", or_(joystick, notcar)),
   PythonProcess("selfdrived", "selfdrive.selfdrived.selfdrived", only_onroad),
   PythonProcess("card", "selfdrive.car.card", only_onroad),
+  PythonProcess("soc2d", "selfdrive.gate.soc2d", and_(only_onroad, gate_soc2)),
   PythonProcess("deleter", "system.loggerd.deleter", always_run),
   PythonProcess("dmonitoringd", "selfdrive.monitoring.dmonitoringd", driverview, enabled=(WEBCAM or not PC)),
   PythonProcess("qcomgpsd", "system.qcomgpsd.qcomgpsd", qcomgps, enabled=TICI),

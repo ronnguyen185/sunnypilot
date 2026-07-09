@@ -4,6 +4,14 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 source "$DIR/launch_env.sh"
 
+# Desk SOC2 bench: pandad getenv("STARTED") spoofs ignition so it applies CarParams
+# safety (soc2Gate) instead of forcing noOutput when ignitionLine/Can are false.
+# Matches GateForceIgnition used by hardwared / raylib UI.
+if [ -f /data/gate_bench/GateForceIgnition ] && \
+   grep -qx '1' /data/gate_bench/GateForceIgnition 2>/dev/null; then
+  export STARTED=1
+fi
+
 function agnos_init {
   # TODO: move this to agnos
   sudo rm -f /data/etc/NetworkManager/system-connections/*.nmmeta

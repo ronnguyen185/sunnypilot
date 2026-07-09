@@ -39,6 +39,15 @@ class CarSpecificEvents:
     if self.CP.brand in ('body', 'mock'):
       events = Events()
 
+    elif self.CP.brand == 'gate':
+      # No OEM PCM cruise. Engage via GateForceEngage (one-shot) —
+      # pcm_enable would permanently emit pcmDisable while cruiseState.enabled=False.
+      events = self.create_common_events(CS, CS_prev, pcm_enable=False)
+      from openpilot.selfdrive.gate.gate_params import gate_force_engage, write_gate_bench
+      if gate_force_engage():
+        events.add(EventName.buttonEnable)
+        write_gate_bench("GateForceEngage", "0")
+
     elif self.CP.brand == 'ford':
       events = self.create_common_events(CS, CS_prev, extra_gears=[GearShifter.low, GearShifter.manumatic])
 

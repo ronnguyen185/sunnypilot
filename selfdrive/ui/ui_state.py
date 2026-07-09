@@ -99,6 +99,14 @@ class UIState:
         # Check ignition status across all pandas
         if self.panda_type != log.PandaState.PandaType.unknown:
           self.ignition = any(state.ignitionLine or state.ignitionCan for state in panda_states)
+          # Desk SOC2 bench: no harness ignition line. Match hardwared GateForceIgnition.
+          if not self.ignition:
+            try:
+              from openpilot.selfdrive.gate.gate_params import gate_force_ignition
+              if gate_force_ignition(self.params):
+                self.ignition = True
+            except Exception:
+              pass
     elif self.sm.frame - self.sm.recv_frame["pandaStates"] > 5 * rl.get_fps():
       self.panda_type = log.PandaState.PandaType.unknown
 

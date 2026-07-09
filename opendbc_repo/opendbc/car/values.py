@@ -2,6 +2,7 @@ from typing import get_args
 from opendbc.car.body.values import CAR as BODY
 from opendbc.car.chrysler.values import CAR as CHRYSLER
 from opendbc.car.ford.values import CAR as FORD
+from opendbc.car.gate.values import CAR as GATE
 from opendbc.car.gm.values import CAR as GM
 from opendbc.car.honda.values import CAR as HONDA
 from opendbc.car.hyundai.values import CAR as HYUNDAI
@@ -16,7 +17,7 @@ from opendbc.car.toyota.values import CAR as TOYOTA
 from opendbc.car.vinfast.values import CAR as VINFAST
 from opendbc.car.volkswagen.values import CAR as VOLKSWAGEN
 
-Platform = BODY | CHRYSLER | FORD | GM | HONDA | HYUNDAI | MAZDA | MOCK | NISSAN | PSA | RIVIAN | SUBARU | TESLA | TOYOTA | VINFAST | VOLKSWAGEN
+Platform = BODY | CHRYSLER | FORD | GATE | GM | HONDA | HYUNDAI | MAZDA | MOCK | NISSAN | PSA | RIVIAN | SUBARU | TESLA | TOYOTA | VINFAST | VOLKSWAGEN
 BRANDS = get_args(Platform)
 
 PLATFORMS: dict[str, Platform] = {str(platform): platform for brand in BRANDS for platform in brand}

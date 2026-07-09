@@ -72,7 +72,20 @@ class Car:
   def __init__(self, CI=None, RI=None) -> None:
     self.can_sock = messaging.sub_sock('can', timeout=20)
     self.sm = messaging.SubMaster(['pandaStates', 'carControl', 'onroadEvents'] + ['carControlSP', 'longitudinalPlanSP'])
-    self.pm = messaging.PubMaster(['sendcan', 'carState', 'carParams', 'carOutput', 'liveTracks'] + ['carParamsSP', 'carStateSP'])
+
+    self.params = Params()
+    # Gate mode: soc2d is the sole sendcan publisher. card must not claim it
+    # (MultiplePublishersError / "Address already in use").
+    from openpilot.selfdrive.gate.gate_params import gate_soc2_enabled
+    bundle = self.params.get("CarPlatformBundle") or {}
+    self.gate_soc2 = gate_soc2_enabled(self.params) or (
+      isinstance(bundle, dict) and bundle.get("platform") == "COMMA_GATE"
+    )
+
+    pubs = ['carState', 'carParams', 'carOutput', 'liveTracks', 'carParamsSP', 'carStateSP']
+    if not self.gate_soc2:
+      pubs = ['sendcan'] + pubs
+    self.pm = messaging.PubMaster(pubs)
 
     self.can_rcv_cum_timeout_counter = 0
 
@@ -83,39 +96,67 @@ class Car:
 
     self.last_actuators_output = structs.CarControl.Actuators()
 
-    self.params = Params()
+    if self.gate_soc2:
+      def _can_recv(wait_for_one: bool = False):
+        ret = []
+        for can in messaging.drain_sock(self.can_sock, wait_for_one=wait_for_one):
+          ret.append([CanData(msg.address, msg.dat, msg.src) for msg in can.can])
+        return ret
 
-    self.can_callbacks = can_comm_callbacks(self.can_sock, self.pm.sock['sendcan'])
+      def _can_send(_msgs):
+        return  # soc2d owns sendcan
+
+      self.can_callbacks = (_can_recv, _can_send)
+    else:
+      self.can_callbacks = can_comm_callbacks(self.can_sock, self.pm.sock['sendcan'])
 
     is_release = self.params.get_bool("IsReleaseBranch")
     is_release_sp = self.params.get_bool("IsReleaseSpBranch")
 
     if CI is None:
-      # wait for one pandaState and one CAN packet
-      print("Waiting for CAN messages...")
-      while True:
-        can = messaging.recv_one_retry(self.can_sock)
-        if len(can.can) > 0:
-          break
-
+      fixed_fingerprint = (self.params.get("CarPlatformBundle") or {}).get("platform", None)
       alpha_long_allowed = self.params.get_bool("AlphaLongitudinalEnabled")
       num_pandas = len(messaging.recv_one_retry(self.sm.sock['pandaStates']).pandaStates)
-
-      cached_params = None
-      cached_params_raw = self.params.get("CarParamsCache")
-      if cached_params_raw is not None:
-        with car.CarParams.from_bytes(cached_params_raw) as _cached_params:
-          cached_params = _cached_params
-
-      fixed_fingerprint = (self.params.get("CarPlatformBundle") or {}).get("platform", None)
       init_params_list_sp = sunnypilot_interfaces.initialize_params(self.params)
 
-      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), alpha_long_allowed, is_release, num_pandas, cached_params,
-                        fixed_fingerprint, init_params_list_sp, is_release_sp)
-      sunnypilot_interfaces.setup_interfaces(self.CI, self.params)
-      self.RI = interfaces[self.CI.CP.carFingerprint].RadarInterface(self.CI.CP, self.CI.CP_SP)
-      self.CP = self.CI.CP
-      self.CP_SP = self.CI.CP_SP
+      if fixed_fingerprint == "COMMA_GATE":
+        # Gate bench: no OEM chassis. Skip CAN wait + FW/CAN fingerprint (would hang).
+        print("COMMA_GATE: fixed fingerprint, skipping CAN/FW query")
+        from opendbc.car.car_helpers import sunnypilot_interfaces as opendbc_sp_setup
+        from opendbc.car.vin import VIN_UNKNOWN
+
+        CarInterface = interfaces["COMMA_GATE"]
+        CP = CarInterface.get_params("COMMA_GATE", {}, [], alpha_long_allowed, is_release, docs=False)
+        CP.carVin = VIN_UNKNOWN
+        CP.carFw = []
+        CP.fingerprintSource = car.CarParams.FingerprintSource.fixed
+        CP.fuzzyFingerprint = False
+        CP_SP = CarInterface.get_params_sp(CP, "COMMA_GATE", {}, [], alpha_long_allowed, is_release_sp, docs=False)
+        opendbc_sp_setup(CarInterface, CP, CP_SP, init_params_list_sp, *self.can_callbacks)
+        self.CI = interfaces[CP.carFingerprint](CP, CP_SP)
+        sunnypilot_interfaces.setup_interfaces(self.CI, self.params)
+        self.RI = interfaces[self.CI.CP.carFingerprint].RadarInterface(self.CI.CP, self.CI.CP_SP)
+        self.CP = self.CI.CP
+        self.CP_SP = self.CI.CP_SP
+      else:
+        print("Waiting for CAN messages...")
+        while True:
+          can = messaging.recv_one_retry(self.can_sock)
+          if len(can.can) > 0:
+            break
+
+        cached_params = None
+        cached_params_raw = self.params.get("CarParamsCache")
+        if cached_params_raw is not None:
+          with car.CarParams.from_bytes(cached_params_raw) as _cached_params:
+            cached_params = _cached_params
+
+        self.CI = get_car(*self.can_callbacks, obd_callback(self.params), alpha_long_allowed, is_release, num_pandas, cached_params,
+                          fixed_fingerprint, init_params_list_sp, is_release_sp)
+        sunnypilot_interfaces.setup_interfaces(self.CI, self.params)
+        self.RI = interfaces[self.CI.CP.carFingerprint].RadarInterface(self.CI.CP, self.CI.CP_SP)
+        self.CP = self.CI.CP
+        self.CP_SP = self.CI.CP_SP
 
       # continue onto next fingerprinting step in pandad
       self.params.put_bool("FirmwareQueryDone", True)
@@ -285,7 +326,8 @@ class Car:
       # send car controls over can
       now_nanos = self.can_log_mono_time if REPLAY else int(time.monotonic() * 1e9)
       self.last_actuators_output, can_sends = self.CI.apply(CC, convert_carControlSP(CC_SP), now_nanos)
-      self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
+      if not self.gate_soc2:
+        self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
 
       self.CC_prev = CC
 
