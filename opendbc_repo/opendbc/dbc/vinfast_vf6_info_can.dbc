@@ -1,0 +1,999 @@
+VERSION "11.5.8"
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: CPD DUMMY_DEBUG DUMMY_ECU FCAM_Info HUD MHU PAS_Info PAS_LITE XGW_Info
+
+
+BO_ 128 ADAS_TSR_STATUS: 8 FCAM_Info
+ SG_ CHKSM_ADAS_TSR_STATUS : 7|8@0+ (1,0) [0|255] ""  HUD,MHU
+ SG_ ADAS_TSR_PopUp_Feed : 15|4@0+ (1,0) [0|15] ""  MHU
+ SG_ ALV_ADAS_TSR_Status : 11|4@0+ (1,0) [0|14] ""  HUD,MHU
+ SG_ ADAS_TSR_Typ2_value : 23|5@0+ (1,0) [0|31] ""  HUD,MHU
+ SG_ ADAS_TSR_SLAert_Feed : 18|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_TSR_Typ1_value : 31|5@0+ (1,0) [0|31] ""  HUD,MHU
+ SG_ ADAS_TSR_Typ1 : 26|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_TSR_AudWarning_Feed : 39|3@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_TSR_Mode_Feed : 36|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_TSR_Typ2_Flashing_Warning : 34|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_TSR_Warning_audible : 32|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_TSR_Typ3 : 47|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ADAS_TSR_Typ1_Flashing_Warning : 41|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_TSR_Typ2 : 51|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ADAS_TSR_State : 63|2@0+ (1,0) [0|3] ""  HUD,MHU
+
+BO_ 130 ADAS_CMP_MHU: 8 FCAM_Info
+ SG_ CHKSM_ADAS_CMP_MHU : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ALV_ADAS_CMP_MHU : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ ADAS_TakeOver_Request : 23|5@0+ (1,0) [0|31] ""  MHU,HUD
+ SG_ ADAS_Sounds_Feed : 28|5@0+ (1,0) [0|31] ""  MHU
+ SG_ SECCAN_ADAS_CMP_MHU : 63|8@0+ (1,0) [0|255] ""  MHU
+
+BO_ 133 ACM_CRASH_INFO: 5 XGW_Info
+ SG_ CHKSM_CRASH_Sts : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,MHU
+ SG_ ALV_CRASH_Sts : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,MHU
+ SG_ ACM_Crash_Intensity : 23|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+ SG_ ACM_Airbag_Deployment_Status : 20|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU
+ SG_ ACM_Crash_Sts : 18|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU
+ SG_ ACM_Rear_Crash : 31|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU
+ SG_ ACM_PassSide_Crash : 29|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU
+ SG_ ACM_DriverSide_Crash : 27|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU
+ SG_ ACM_Front_Crash : 25|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU
+ SG_ ACM_Rollover_Crash : 33|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU
+
+BO_ 217 VCU_HV_DrvSys_status: 6 XGW_Info
+ SG_ CRC_VCU_HV_DrvSys_status : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,PAS_LITE
+ SG_ VCU_HVsystem_status : 14|3@0+ (1,0) [0|7] ""  CPD,FCAM_Info,MHU,PAS_Info,PAS_LITE
+ SG_ ALIV_VCU_HV_DrvSys_status : 11|4@0+ (1,0) [0|14] ""  CPD,FCAM_Info,MHU,PAS_Info,PAS_LITE
+ SG_ VCU_ACPD_Percent : 23|12@0+ (0.0625,0) [0|100] "%"  FCAM_Info,MHU,PAS_Info
+ SG_ VCU_ACPD_Percent_Valid : 27|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU,PAS_Info
+ SG_ VCU_ACTGearValid : 35|1@0+ (1,0) [0|1] ""  HUD,MHU,PAS_LITE
+ SG_ VCU_ACTGear : 34|3@0+ (1,0) [0|7] ""  FCAM_Info,HUD,MHU,PAS_Info,PAS_LITE
+ SG_ VCU_HV_DRVsystem_status : 43|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU,PAS_Info,PAS_LITE
+
+BO_ 256 MHU_Vehicle_Info: 6 MHU
+ SG_ CHKSM_MHU_VEH_INFO : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,XGW_Info
+ SG_ ALV_MHU_VEH_INFO : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,XGW_Info
+ SG_ MHU_Connectivity_Status : 47|3@0+ (1,0) [0|7] ""  FCAM_Info,XGW_Info
+
+BO_ 261 BCM_STAT_DOOR_FLAP: 4 XGW_Info
+ SG_ CHKSM_BCM_STAT_DOOR_FLAP : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info
+ SG_ ALIVE_BCM_STAT_DOOR_FLAP : 11|4@0+ (1,0) [0|14] ""  CPD,FCAM_Info,MHU,PAS_Info
+ SG_ BCM_STAT_DoorAjarRL : 23|2@0+ (1,0) [0|3] "Bit"  CPD,FCAM_Info,MHU,PAS_Info
+ SG_ BCM_STAT_DoorAjarFR : 21|2@0+ (1,0) [0|3] "Bit"  CPD,FCAM_Info,MHU,PAS_Info
+ SG_ BCM_STAT_DoorAjarFL : 19|2@0+ (1,0) [0|3] "Bit"  CPD,FCAM_Info,MHU,PAS_Info
+ SG_ BCM_STAT_TrunkAjar : 17|2@0+ (1,0) [0|3] "Bit"  CPD,FCAM_Info,MHU,PAS_Info
+ SG_ BCM_STAT_BonnetAjar : 27|2@0+ (1,0) [0|3] "Bit"  CPD,FCAM_Info,MHU,PAS_Info
+ SG_ BCM_STAT_DoorAjarRR : 25|2@0+ (1,0) [0|3] "Bit"  CPD,FCAM_Info,MHU,PAS_Info
+
+BO_ 262 BCM_LIGHT: 7 XGW_Info
+ SG_ CHKSM_BCM_LIGHT : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info
+ SG_ ALIVE_BCM_LIGHT : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,MHU,PAS_Info
+ SG_ BCM_StopLightSts : 17|2@0+ (1,0) [0|3] ""  FCAM_Info,HUD,MHU
+ SG_ BCM_HighBeamSts : 31|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ BCM_LowBeamSts : 41|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ BCM_TurnIndicatorSts : 55|2@0+ (1,0) [0|3] ""  FCAM_Info,HUD,MHU,PAS_Info
+
+BO_ 265 BCM_SwitchSts: 4 XGW_Info
+ SG_ CHKSM_BCM_SWITCH_Sts : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,MHU,PAS_Info
+ SG_ BCM_STAT_HazardWarn : 15|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU,PAS_Info
+ SG_ BCM_STAT_BrakeSwitch : 13|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU,PAS_Info
+ SG_ ALV_BCM_SWITCH_Sts : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,MHU,PAS_Info
+ SG_ BCM_TurnIndicator : 25|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU,PAS_Info,HUD
+
+BO_ 266 BCM_VOLTAGE: 8 XGW_Info
+ SG_ CHKSM_BCM_VOLTAGE : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info,PAS_LITE
+ SG_ ALIVE_BCM_VOLTAGE : 11|4@0+ (1,0) [0|14] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info,PAS_LITE
+ SG_ UBatt : 23|14@0+ (0.0009777,3) [3|18] "V"  CPD,FCAM_Info,HUD,MHU,PAS_Info,PAS_LITE
+ SG_ LV_Batt_Temp : 39|8@0+ (1,-40) [-40|105] "Degree C"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ LV_SOC : 47|8@0+ (1,0) [0|100] "%"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ LV_Batt_Current : 55|16@0+ (0.03125,-1536) [-1536|511.90625] "A"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+
+BO_ 274 BCM_CLAMP_STAT: 5 XGW_Info
+ SG_ CHKSM_BCM_CLAMP_STAT : 7|8@0+ (1,0) [0|255] ""  HUD,MHU,PAS_Info,PAS_LITE
+ SG_ STAT_BLS : 15|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ RemoteFunctionState : 13|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ ALIVE_BCM_CLAMP_STAT : 11|4@0+ (1,0) [0|14] ""  HUD,MHU,PAS_Info,PAS_LITE
+ SG_ Clamp50AdviceESS : 21|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ Clamp50AdviceRemoteStart : 19|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ STAT_CL_50_L : 17|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ FobId : 31|2@0+ (1,0) [0|3] "Bit"  HUD,MHU,PAS_Info
+ SG_ STAT_CL_15_1_DME_L : 29|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ STAT_CL_15_1_L : 27|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ STAT_CL_R_L : 25|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info
+ SG_ BCM_Clamp_Transport : 39|3@0+ (1,0) [0|7] ""  HUD,MHU,PAS_Info
+ SG_ STAT_CL30_C_BEV : 36|2@0+ (1,0) [0|3] "Bit"  HUD,MHU,PAS_Info
+ SG_ STAT_Terminal : 34|3@0+ (1,0) [0|7] "Bit"  CPD,HUD,MHU,PAS_Info,PAS_LITE
+
+BO_ 294 MHU_ISA_Speed: 8 MHU
+ SG_ MHU_ISA_Speed_Setting : 7|4@0+ (1,0) [0|15] ""  FCAM_Info
+ SG_ MHU_ISA_SpeedLimitCon_Percent : 3|3@0+ (1,0) [0|7] ""  FCAM_Info
+ SG_ SECCAN_MHU_ISA_Speed : 63|8@0+ (1,0) [0|255] ""  FCAM_Info
+
+BO_ 295 ADAS_LDW_LKA: 8 FCAM_Info
+ SG_ CHKSM_ADAS_LDW_LKA : 7|8@0+ (1,0) [0|255] ""  HUD,MHU
+ SG_ ADAS_LKA_HOD_state : 15|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_Mode1_status : 14|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_ELKA_ON_feed : 12|1@0+ (1,0) [0|1] ""  HUD,MHU,XGW_Info
+ SG_ ALV_ADAS_LDW_LKA : 11|4@0+ (1,0) [0|14] ""  HUD,MHU
+ SG_ ADAS_LKA_ICON_Feed : 23|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_LA_sens_Feed : 21|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_ECU_check : 19|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_LKA_check : 31|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_LDW_check : 25|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_LA_popup : 39|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_ALC_ICON_Feed : 36|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_HWA_ICON_Feed : 47|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_LA_Mode_Feed : 44|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_LA_AudWarning_Feed : 41|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_LA_veh_pos_right : 55|8@0- (0.1,0) [-12.8|12.7] "m"  HUD,MHU
+ SG_ ADAS_LA_veh_pos_left : 63|8@0- (0.1,0) [-12.8|12.7] "m"  HUD,MHU
+
+BO_ 296 ADAS_FCW_RCTA: 7 FCAM_Info
+ SG_ CHKSM_ADAS_FCW_RCTA : 7|8@0+ (1,0) [0|255] ""  HUD,MHU
+ SG_ ADAS_RCTA_IndRight : 15|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_RCTA_IndLeft : 13|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ALV_ADAS_FCW_RCTA : 11|4@0+ (1,0) [0|14] ""  HUD,MHU
+ SG_ ADAS_RCTA_sens_Feed : 23|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_RCTA_state : 21|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_IA_check : 18|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_RCTA_SndWarn : 17|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_FCW_state : 31|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_FCW_Sens_Feed : 28|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_FCW_Mode_Feed : 26|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_IA_Left_warning : 25|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_IA_Mode_Feed : 39|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_IA_Right_warning : 38|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_FCW_check : 36|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_IA_state : 34|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_FCW_warning : 47|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_RCTA_Mode_Feed : 43|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_RCTA_check : 42|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_LA_RightLaneColor_Feed : 53|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_LA_LeftLaneColor_Feed : 50|3@0+ (1,0) [0|7] ""  HUD,MHU
+
+BO_ 297 MHU_LOCALSETTING: 8 MHU
+ SG_ CHKSM_MHU_LocalSetting : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD
+ SG_ ALIVE_MHU_LocalSetting : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD
+ SG_ MHU_SETTING_DMSWarning : 47|2@0+ (1,0) [0|3] ""  FCAM_Info,HUD
+ SG_ MHU_STAT_SelectedCountry : 55|10@0+ (1,0) [0|1023] ""  FCAM_Info,HUD
+
+BO_ 303 BCM_TERMINAL: 5 XGW_Info
+ SG_ CHKSM_BCM_TERMINAL : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU
+ SG_ ST_KL : 15|4@0+ (1,0) [0|15] ""  FCAM_Info,HUD,MHU
+ SG_ ALV_BCM_TERMINAL : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,MHU
+ SG_ ST_VEH_CON : 39|4@0+ (1,0) [0|15] ""  FCAM_Info,HUD
+
+BO_ 307 ADAS_BSD: 5 FCAM_Info
+ SG_ CHKSM_ADAS_BSD : 7|8@0+ (1,0) [0|255] ""  HUD,MHU
+ SG_ ALV_ADAS_BSD : 11|4@0+ (1,0) [0|14] ""  HUD,MHU
+ SG_ ADAS_BSD_AudChime_Feed : 23|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_BSD_state : 22|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_BSD_check : 19|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_BSD_Mode_Feed : 30|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_BSD_SndWarn : 29|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_BSD_IndRight : 27|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_BSD_IndLeft : 25|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_BSD_sens_Feed : 33|2@0+ (1,0) [0|3] ""  HUD,MHU
+
+BO_ 308 ADAS_Speed_Display: 3 FCAM_Info
+ SG_ CHKSM_ADAS_Speed_Display : 7|8@0+ (1,0) [0|255] ""  HUD,MHU
+ SG_ ADAS_ISA_SpeedLimitCnt_Spd_Feed : 15|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ALV_ADAS_Speed_Display : 11|4@0+ (1,0) [0|14] ""  HUD,MHU
+ SG_ ADAS_far_lane_info : 20|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_ISA_SpeedLimitCnt_Per_Feed : 18|3@0+ (1,0) [0|7] ""  HUD,MHU
+
+BO_ 312 PAS_AVM_Sts: 5 PAS_Info
+ SG_ CHKSM_PAS_AVM_Sts : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ANRC_SVSVidSetupStatusToHU : 15|4@0+ (1,0) [0|15] ""  MHU
+ SG_ ALV_PAS_AVM_Sts : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ AVM_Curb_View_status : 23|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_3D_SVSVidSetupStatusToHU : 22|4@0+ (1,0) [0|15] ""  MHU
+ SG_ AVM_Bmpr_view_status : 18|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_SVS_2D_3D_Status : 17|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ANRC_SVSTranspModStatusToHU : 31|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ANRC_SVSObjWarnOLStatusToHU : 29|2@0+ (1,0) [0|3] ""  MHU
+ SG_ AVM_Status : 27|3@0+ (1,0) [0|7] ""  MHU
+ SG_ AVM_DynamiclineSts : 24|1@0+ (1,0) [0|1] ""  MHU
+ SG_ AVM_ShowAVMFeedback : 33|2@0+ (1,0) [0|7] ""  MHU
+
+BO_ 314 FCAM_ESA_Sts: 8 FCAM_Info
+ SG_ CRC_FCAM_ESA_Sts : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ FCAM_ESA_Sts : 14|3@0+ (1,0) [0|7] ""  MHU,XGW_Info
+ SG_ Alive_FCAM_ESA_Sts : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ FCAM_ESA_Popup_Sts : 17|2@0+ (1,0) [0|1] ""  MHU
+ SG_ SECCAN_FCAM_ESA_Sts : 63|8@0+ (1,0) [0|255] ""  MHU
+
+BO_ 346 ANRC_PSDisRi01: 5 PAS_Info
+ SG_ ANRC_PrkgRiSlotDst1_Y : 7|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+ SG_ ANRC_PrkgRiSlot1_VehAngal : 8|9@0+ (1,0) [0|511] "degree"  MHU
+ SG_ ANRC_PrkgRiSlotDst1_X : 31|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+
+BO_ 347 ANRC_PSDisLe03: 5 PAS_Info
+ SG_ ANRC_PrkgLeSlotDst3_Y : 7|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+ SG_ ANRC_PrkgLeSlot3_VehAngal : 8|9@0+ (1,0) [0|511] "degree"  MHU
+ SG_ ANRC_PrkgLeSlotDst3_X : 31|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+
+BO_ 360 MHU_FEEDBACK_APA: 8 MHU
+ SG_ Checksum_MHU_FEEDBACK_APA : 7|8@0+ (1,0) [0|255] ""  PAS_Info,PAS_LITE,XGW_Info
+ SG_ MHU_AVM_AutoDsplReq : 15|1@0+ (1,0) [0|1] ""  PAS_Info
+ SG_ MHU_APA_RecoverParking : 14|1@0+ (1,0) [0|1] ""  PAS_Info
+ SG_ MHU_APA_ShowAPAReq : 13|2@0+ (1,0) [0|3] ""  PAS_Info,XGW_Info
+ SG_ Rolling_Counter_MHU_FEEDBACK_APA : 11|4@0+ (1,0) [0|14] ""  PAS_Info,PAS_LITE,XGW_Info
+ SG_ MHU_PA_Button : 23|1@0+ (1,0) [0|1] ""  PAS_Info
+ SG_ MHU_AVM_ShowAVMReq : 22|2@0+ (1,0) [0|3] ""  PAS_Info,PAS_LITE
+ SG_ MHU_AVM_auxiliarylineReq : 20|1@0+ (1,0) [0|1] ""  PAS_Info
+ SG_ MHU_APA_ParkingStartReq : 19|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ MHU_APAParkOutDircnConfirm : 17|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ MHU_APA_Slotselect : 31|8@0+ (1,0) [0|255] ""  PAS_Info
+ SG_ MHU_APA_ParkOutModeConfirm : 37|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ MHU_APA_ParkOutTypeConfirm : 35|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ MHU_APA_FuncMode : 33|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ SECCAN_MHU_FEEDBACK_APA : 63|8@0+ (1,0) [0|255] ""  PAS_Info
+
+BO_ 375 ANRC_PASInfo_SecOC1: 5 PAS_Info
+ SG_ ANRC_PrkgBckLeSts : 7|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_PrkgProcBarIndcn : 6|7@0+ (1,0) [0|100] "%"  MHU
+ SG_ ANRC_PrkgFrntLeCrssSts : 15|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_PrkgFrntSts : 14|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_PrkgLeSlotTyp2 : 13|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ANRC_PrkgRiSlotTyp1 : 10|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ANRC_PrkgBckRiSts : 23|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_PrkgFrntRiCrssSts : 22|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_PrkgLeSlotTyp1 : 21|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ANRC_PrkgLeSlotTyp3 : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ANRC_PrkgFrntLePrlSts : 31|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_PrkgFrntRiPrlSts : 30|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ANRC_PrkgRiSlotTyp3 : 29|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ANRC_PrkgRiSlotTyp2 : 26|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ANRC_PrkgBckSts : 32|1@0+ (1,0) [0|1] ""  MHU
+
+BO_ 387 FCAM_BCM_Status: 8 FCAM_Info
+ SG_ CHKSM_FCAM_BCM_Status : 7|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ FCAM_BCM_IndicatorlightReq : 15|3@0+ (1,0) [0|7] ""  XGW_Info
+ SG_ ALIVE_FCAM_BCM_Status : 11|4@0+ (1,0) [0|14] ""  XGW_Info
+ SG_ SECCAN_FCAM_BCM_Sts : 63|8@0+ (1,0) [0|255] ""  XGW_Info
+
+BO_ 417 IDB_V_VEH: 5 XGW_Info
+ SG_ CHSKM_V_VEH : 7|8@0+ (1,0) [0|255] ""  MHU,PAS_LITE
+ SG_ ALIV_V_VEH : 11|4@0+ (1,0) [0|14] ""  MHU,PAS_LITE
+ SG_ DVCO_VEH : 35|3@0+ (1,0) [0|7] ""  MHU,PAS_Info,PAS_LITE
+
+BO_ 504 EDS_OutPut_FR: 8 XGW_Info
+ SG_ CHKSM_EDS_OutPut_FR : 7|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_Work_STS_FR : 15|4@0+ (1,0) [0|15] ""  CPD,HUD,MHU,PAS_Info
+ SG_ ALV_EDS_OutPut_FR : 11|4@0+ (1,0) [0|14] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_Spd_FR : 23|16@0+ (1,-20000) [-20000|20000] "rpm"  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_SpdValid_FR : 39|2@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_powoff_req_FR : 37|2@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_MotorDriveSts_FR : 35|2@0+ (1,0) [0|3] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_output_trqValid_FR : 33|2@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_output_trq_FR : 47|16@0+ (1,-2000) [-2000|2000] "Nm"  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_VCU_6SO_flag_FWD : 63|2@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_Info
+
+BO_ 505 EDS_OutPut_RR: 8 XGW_Info
+ SG_ CHKSM_EDS_OutPut_RR : 7|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_Work_STS_RR : 15|4@0+ (1,0) [0|15] ""  CPD,HUD,MHU,PAS_Info
+ SG_ ALV_EDS_OutPut_RR : 11|4@0+ (1,0) [0|14] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_Spd_RR : 23|16@0+ (1,-20000) [-20000|20000] "rpm"  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_SpdValid_RR : 39|2@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_powoff_req_RR : 37|2@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_MotorDriveSts_RR : 35|2@0+ (1,0) [0|3] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_output_trqValid_RR : 33|2@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_output_trq_RR : 47|16@0+ (1,-2000) [-2000|2000] "Nm"  CPD,HUD,MHU,PAS_Info
+ SG_ EDS_VCU_6SO_flag_RWD : 63|2@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_Info
+
+BO_ 506 MHU_DRIVER_INFO: 8 MHU
+ SG_ MHU_TouchEvtTyp : 7|3@0+ (1,0) [0|7] ""  PAS_Info
+ SG_ SECCAN_Drvr_Info : 15|8@0+ (1,0) [0|255] ""  PAS_Info
+ SG_ MHU_Ycoordinate : 39|16@0+ (1,0) [0|65535] ""  PAS_Info
+ SG_ MHU_Xcoordinate : 55|16@0+ (1,0) [0|65535] ""  PAS_Info
+
+BO_ 515 Camera_rightlane: 8 FCAM_Info
+ SG_ CHKSM_Camera_rightlane : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ALV_Camera_rightlane : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ R0_LINE_TYPE : 47|2@0+ (1,0) [0|3] ""  MHU
+ SG_ R1_LINE_TYPE : 43|2@0+ (1,0) [0|3] ""  MHU
+ SG_ SECCAN_Camera_rightlane : 63|8@0+ (1,0) [0|255] ""  MHU
+
+BO_ 516 Camera_leftlane: 8 FCAM_Info
+ SG_ CHKSM_Camera_leftlane : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ALV_Camera_leftlane : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ L0_LINE_TYPE : 47|2@0+ (1,0) [0|3] ""  MHU
+ SG_ L1_LINE_TYPE : 43|2@0+ (1,0) [0|3] ""  MHU
+ SG_ SECCAN_Camera_leftlane : 63|8@0+ (1,0) [0|255] ""  MHU
+
+BO_ 518 ADAS_ELK: 8 FCAM_Info
+ SG_ CHKSM_ADAS_ELK : 7|8@0+ (1,0) [0|255] ""  HUD,MHU,PAS_Info
+ SG_ ADAS_ELK_check : 15|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_ALC_Mode_feed : 13|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ALV_ADAS_ELK : 11|4@0+ (1,0) [0|14] ""  HUD,MHU,PAS_Info
+ SG_ ADAS_HWA_txtpopup : 23|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ADAS_AHB_ICON_Feed : 19|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_handsoff_Warning_Mode_2 : 16|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_HWA_state : 30|3@0+ (1,0) [0|7] ""  HUD,MHU,PAS_Info,XGW_Info
+ SG_ ADAS_AHB_PopUp_Feed : 27|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ADAS_ALC_txtpopup : 39|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ADAS_handsoff_txtpopup : 35|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_Mode2_status : 33|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_LA_Display : 47|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ADAS_ALC_state : 43|3@0+ (1,0) [0|7] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_Lane_Line_Curva_Radius : 55|16@0- (1,0) [-32768|32767] "m"  HUD,MHU
+
+BO_ 521 ADAS_RAEB: 4 PAS_Info
+ SG_ CHKSM_PAS_RAEB : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU
+ SG_ ALV_PAS_RAEB : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,MHU
+ SG_ PAS_RAEB_Mode_Feed : 23|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ PAS_RAEB_check : 17|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ PAS_RAEB_Warning : 29|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ PAS_RAEB_State : 27|4@0+ (1,0) [0|15] ""  FCAM_Info,HUD,MHU
+
+BO_ 524 IC_ODO: 5 MHU
+ SG_ CHKSM_IC_ODO : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,XGW_Info,PAS_LITE
+ SG_ ALIV_IC_ODO : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,XGW_Info,PAS_LITE
+ SG_ MHU_Odometer_IC : 23|20@0+ (1,0) [0|999999] "km"  FCAM_Info,HUD,XGW_Info,PAS_LITE
+
+BO_ 525 IDB_STATUS: 4 XGW_Info
+ SG_ CHKSM_IDB_STATUS : 7|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_LITE
+ SG_ ALV_IDB_STATUS : 11|4@0+ (1,0) [0|14] ""  CPD,HUD,MHU,PAS_LITE
+ SG_ VehicleSpd : 23|13@0+ (0.05625,0) [0|300] "km/h"  CPD,HUD,MHU,PAS_LITE
+ SG_ VehicleSpdSts : 26|1@0+ (1,0) [0|1] ""  CPD,HUD,MHU,PAS_LITE
+
+BO_ 526 PAS_APA_txt: 6 PAS_Info
+ SG_ Chksum_PAS_APA_txt : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ PAS_APA_ReqInfoDispTxt2 : 15|4@0+ (1,0) [0|15] ""  MHU
+ SG_ Alive_PAS_APA_txt : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ PAS_APA_ReqInfoDispTxt4 : 23|5@0+ (1,0) [0|31] ""  MHU
+ SG_ PAS_APA_ReqInfoDispTxt1 : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PAS_APA_ReqInfoDispTxt3 : 29|6@0+ (1,0) [0|63] ""  MHU
+ SG_ PAS_RP_ReqInfoDispTxt1 : 37|6@0+ (1,0) [0|63] ""  MHU
+ SG_ PAS_RP_ReqInfoDispTxt2 : 44|5@0+ (1,0) [0|31] ""  MHU
+
+BO_ 527 ADAS_BCM_Status: 8 PAS_Info
+ SG_ CHKSM_ADAS_BCM_Status : 7|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ ALIVE_ADAS_BCM_Status : 11|4@0+ (1,0) [0|14] ""  XGW_Info
+ SG_ ADAS_BCM_IndicatorlightReq : 23|3@0+ (1,0) [0|7] ""  XGW_Info
+ SG_ ADAS_BCM_Status : 18|3@0+ (1,0) [0|7] ""  XGW_Info
+ SG_ SECCAN_ADAS_BCM_Sts : 63|8@0+ (1,0) [0|255] ""  XGW_Info
+
+BO_ 538 DMS_DMSInfoHUD: 8 PAS_Info
+ SG_ DMS_HeadPitch : 7|8@0+ (1,0) [-45|45] "degree"  DUMMY_DEBUG
+ SG_ DMS_HeadRoll : 15|8@0+ (1,0) [-45|45] "degree"  DUMMY_DEBUG
+ SG_ DMS_HeadYaw : 23|8@0+ (1,0) [-75|180] "degree"  DUMMY_DEBUG
+ SG_ DMS_HeadX : 31|11@0+ (1,0) [-500|1547] "mm"  DUMMY_DEBUG
+ SG_ DMS_HeadY : 34|11@0+ (1,0) [-500|1547] "mm"  DUMMY_DEBUG
+ SG_ DMS_HeadZ : 55|11@0+ (1,0) [-500|1547] "mm"  DUMMY_DEBUG
+
+BO_ 540 FCAM_AEB: 8 FCAM_Info
+ SG_ CHKSM_FCAM_AEB : 7|8@0+ (1,0) [0|255] ""  HUD,MHU
+ SG_ FCAM_AEB_State : 15|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info,XGW_Info
+ SG_ FCAM_AEB_Warning : 13|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ALV_FCAM_AEB : 11|4@0+ (1,0) [0|14] ""  HUD,MHU
+ SG_ FCAM_AEB_check : 19|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ FCAM_AEB_Mode_Feed : 17|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ SECCAN_FCAM_AEB : 63|8@0+ (1,0) [0|255] ""  HUD,MHU
+
+BO_ 565 TRM_STATUS: 3 XGW_Info
+ SG_ CHKSM_TRM_STATUS : 7|8@0+ (1,0) [0|255] ""  HUD,MHU,PAS_Info,FCAM_Info,PAS_LITE
+ SG_ ALIVE_TRM_STATUS : 11|4@0+ (1,0) [0|14] ""  HUD,MHU,PAS_Info,FCAM_Info,PAS_LITE
+ SG_ TrailerDetected : 23|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info,FCAM_Info,PAS_LITE
+ SG_ TowingDetected : 21|2@0+ (1,0) [0|3] ""  HUD,MHU,PAS_Info,FCAM_Info,PAS_LITE
+
+BO_ 570 IDB_WheelSts_FR: 6 XGW_Info
+ SG_ IDB_WheelDirection_FL : 15|2@0+ (1,0) [0|3] ""  PAS_LITE
+ SG_ IDB_WheelDirection_FR : 13|2@0+ (1,0) [0|3] ""  PAS_LITE
+ SG_ IDB_WheelSpeedRC_FL : 23|16@0+ (1,0) [0|65534] ""  PAS_LITE
+ SG_ IDB_WheelSpeedRC_FR : 39|16@0+ (1,0) [0|65534] ""  PAS_LITE
+
+BO_ 571 IDB_WheelSts_RR: 6 XGW_Info
+ SG_ IDB_WheelDirection_RL : 15|2@0+ (1,0) [0|3] ""  PAS_LITE
+ SG_ IDB_WheelDirection_RR : 13|2@0+ (1,0) [0|3] ""  PAS_LITE
+ SG_ IDB_WheelSpeedRC_RL : 23|16@0+ (1,0) [0|65534] ""  PAS_LITE
+ SG_ IDB_WheelSpeedRC_RR : 39|16@0+ (1,0) [0|65534] ""  PAS_LITE
+
+BO_ 596 IDB_AVL_RPM_WHL_REAR: 8 XGW_Info
+ SG_ CRC_AVL_RPM_WHL_REAR : 7|8@0+ (1,0) [0|255] ""  MHU,PAS_LITE
+ SG_ ALIV_AVL_RPM_WHL_REAR : 11|4@0+ (1,0) [0|14] ""  MHU,PAS_LITE
+ SG_ QU_AVL_RPM_WHL_RLH : 55|4@0+ (1,0) [0|15] "Bit"  MHU,PAS_LITE
+ SG_ QU_AVL_RPM_WHL_RRH : 63|4@0+ (1,0) [0|15] "Bit"  MHU,PAS_LITE
+
+BO_ 597 IDB_AVL_RPM_WHL_FRONT: 8 XGW_Info
+ SG_ CRC_AVL_RPM_WHL_FRONT : 7|8@0+ (1,0) [0|255] ""  MHU,PAS_LITE
+ SG_ ALIV_AVL_RPM_WHL_FRONT : 11|4@0+ (1,0) [0|14] ""  MHU,PAS_LITE
+ SG_ QU_AVL_RPM_WHL_FLH : 55|4@0+ (1,0) [0|15] "Bit"  MHU,PAS_LITE
+ SG_ QU_AVL_RPM_WHL_FRH : 63|4@0+ (1,0) [0|15] "Bit"  MHU,PAS_LITE
+
+BO_ 620 HU_MEBSet_SecOC1: 3 MHU
+ SG_ HU_PASDirSel : 15|4@0+ (1,0) [0|15] ""  PAS_Info
+ SG_ HU_AutPrkgSlotSel : 18|3@0+ (1,0) [0|7] ""  PAS_Info
+
+BO_ 640 ANRC_PSDisRi02: 5 PAS_Info
+ SG_ ANRC_PrkgRiSlotDst2_Y : 7|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+ SG_ ANRC_PrkgRiSlot2_VehAngal : 8|9@0+ (1,0) [0|511] "degree"  MHU
+ SG_ ANRC_PrkgRiSlotDst2_X : 31|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+
+BO_ 642 ANRC_PSDisLe01: 5 PAS_Info
+ SG_ ANRC_PrkgLeSlotDst1_Y : 7|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+ SG_ ANRC_PrkgLeSlot1_VehAngal : 8|9@0+ (1,0) [0|511] "degree"  MHU
+ SG_ ANRC_PrkgLeSlotDst1_X : 31|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+
+BO_ 643 ANRC_PSDisLe02: 5 PAS_Info
+ SG_ ANRC_PrkgLeSlotDst2_Y : 7|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+ SG_ ANRC_PrkgLeSlot2_VehAngal : 8|9@0+ (1,0) [0|511] "degree"  MHU
+ SG_ ANRC_PrkgLeSlotDst2_X : 31|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+
+BO_ 644 ANRC_PSDisRi03: 5 PAS_Info
+ SG_ ANRC_PrkgRiSlotDst3_Y : 7|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+ SG_ ANRC_PrkgRiSlot3_VehAngal : 8|9@0+ (1,0) [0|511] "degree"  MHU
+ SG_ ANRC_PrkgRiSlotDst3_X : 31|12@0+ (1,-2047) [-2047|2047] "cm"  MHU
+
+BO_ 714 IC_SENSOR: 6 MHU
+ SG_ CHKSM_IC_SENSOR : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ ALV_IC_SENSOR : 11|4@0+ (1,0) [0|14] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ MHU_STAT_AmbientTempRaw : 23|8@0+ (0.5,-40) [-40|85] "Â°C"  CPD,FCAM_Info,HUD,XGW_Info
+ SG_ MHU_STAT_FuelLevel : 31|8@0+ (1,0) [0|100] "l"  CPD,FCAM_Info,HUD,XGW_Info
+ SG_ MHU_STAT_AmbientTemp : 39|8@0+ (0.5,-40) [-40|85] "Degree C"  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ MHU_STAT_CoolantLevelStatus : 47|2@0+ (1,0) [0|3] ""  CPD,FCAM_Info,HUD,XGW_Info
+
+BO_ 715 IC_TEMP: 2 XGW_Info
+ SG_ TEMP_EX : 7|8@0+ (0.5,-40) [-40|85] "Â°C"  PAS_Info
+ SG_ TEMP_EX_UNFILT : 15|8@0+ (0.5,-40) [-40|87.5] "Â°C"  PAS_Info
+
+BO_ 717 MHU_ADASISv2_Message_Container: 8 MHU
+ SG_ MHU_ADASISv2_Container : 7|64@0+ (1,0) [0|1.84467440737096e+19] ""  FCAM_Info
+
+BO_ 720 FCAM_AESA_Sts: 2 FCAM_Info
+ SG_ CHKSM_FCAM_AESA_Sts : 7|8@0+ (1,0) [0|255] ""  MHU,XGW_Info
+ SG_ FCAM_AESA_Status : 15|2@0+ (1,0) [0|3] ""  MHU,XGW_Info
+ SG_ FCAM_AESA_ECALL_Req : 13|1@0+ (1,0) [0|1] ""  MHU,XGW_Info
+ SG_ FCAM_AESA_DoorUnlock_Req : 12|1@0+ (1,0) [0|1] ""  XGW_Info
+ SG_ ALV_FCAM_AESA_Sts : 11|4@0+ (1,0) [0|14] ""  MHU,XGW_Info
+
+BO_ 760 MHU_DATE_TIME: 8 MHU
+ SG_ DISP_HR : 7|8@0+ (1,0) [0|23] "h"  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ DISP_MN : 15|8@0+ (1,0) [0|59] "min"  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ DISP_SEC : 23|8@0+ (1,0) [0|59] "s"  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ DISP_DATE_DAY : 31|8@0+ (1,0) [1|31] "Day"  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ DISP_DATE_WDAY : 39|4@0+ (1,0) [0|15] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ DISP_DATE_MON : 35|4@0+ (1,0) [1|12] "Month"  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ DISP_DATE_YR : 47|16@0+ (1,0) [1|65534] "Year"  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ ST_DISP_CTI_DATE : 63|4@0+ (1,0) [0|15] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+
+BO_ 769 ADAS_RP_Sts: 4 PAS_Info
+ SG_ Checksum_RP : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,MHU
+ SG_ RP_ReqInfoDispTxt2 : 15|4@0+ (1,0) [0|15] ""  MHU
+ SG_ Rolling_Counter_RP : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,MHU
+ SG_ ADAS_TboxAuthStatus : 23|2@0+ (1,0) [0|3] ""  MHU
+ SG_ RP_Status : 18|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU,XGW_Info
+ SG_ RP_ReqInfoDispTxt1 : 31|5@0+ (1,0) [0|31] ""  MHU
+
+BO_ 770 CCU_TEMP_PRESSURE: 6 XGW_Info
+ SG_ CHKSM_CCU_TEMP_PRESSURE : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ ALV_CCU_TEMP_PRESSURE : 11|4@0+ (1,0) [0|14] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ CCU_Pressure_AC : 23|6@0+ (1,0) [0|62] "bar"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ CCU_InteriorTemp : 31|8@0+ (0.5,-40) [-40|85] "Degree C"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ CCU_TempEx_AC : 39|8@0+ (0.5,-40) [-40|85] "Degree C"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ CCU_EvaporatorTemp : 47|8@0+ (0.5,-40) [-40|85] "Degree C"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+
+BO_ 771 MHU_PAS_FEEDBACK: 8 MHU
+ SG_ Checksum_MHU_PAS_FEEDBACK : 7|8@0+ (1,0) [0|255] ""  PAS_Info
+ SG_ HU_SVS_TransparentModel_Req : 15|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ MHU_AVM_CurbViewReq : 13|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ Rolling_Counter_MHU_PAS_FEEDBACK : 11|4@0+ (1,0) [0|14] ""  PAS_Info
+ SG_ MHU_AVM_ShowAPAReq : 23|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ HU_3D_SVS_ReqFromHU : 21|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ MHU_AVM_DynamiclineReq : 19|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ HU_SVSObjOverlay : 17|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ HU_TRM_button : 31|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ HU_SVSManVidSetupReqFromHU : 29|4@0+ (1,0) [0|15] ""  PAS_Info
+ SG_ MHU_AVM_BmprViewReq : 25|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ SECCAN_MHU_PAS_FEEDBACK : 63|8@0+ (1,0) [0|255] ""  PAS_Info
+
+BO_ 816 IC_MILEAGE: 8 XGW_Info
+ SG_ MILE_KM : 7|24@0+ (1,0) [0|999999] "km"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ FLLV_FUTA : 31|8@0+ (1,0) [0|254] "l"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ ST_FLLV_FUTA_SPAR : 55|2@0+ (1,0) [0|3] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ RNG : 51|12@0+ (1,0) [0|4094] "km"  CPD,FCAM_Info,HUD,MHU,PAS_Info
+
+BO_ 827 Camera_Lane: 8 FCAM_Info
+ SG_ CHKSM_CameraLane : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ALV_ADAS_Cameralane : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ Camera_L1_Line_Type : 23|2@0+ (1,0) [0|3] ""  MHU
+ SG_ Camera_R1_Line_Type : 19|2@0+ (1,0) [0|3] ""  MHU
+ SG_ L0_ExistProbability : 31|4@0+ (0.1,0) [0|1] ""  MHU
+ SG_ R0_ExistProbability : 27|4@0+ (0.1,0) [0|1] ""  MHU
+ SG_ R1_ExistProbability : 39|4@0+ (0.1,0) [0|1] ""  MHU
+ SG_ L1_ExistProbability : 35|4@0+ (0.1,0) [0|1] ""  MHU
+ SG_ SECCAN_CameraLane : 63|8@0+ (1,0) [0|255] ""  MHU
+
+BO_ 833 Camera_Object01: 8 FCAM_Info
+ SG_ SECCAN_Cam_OBJ_1 : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ01_Class : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ01_LgtDis : 29|14@0+ (0.025,-10) [-10|399.575] ""  MHU
+ SG_ ADAS_OBJ01_ID : 47|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ01_Lane : 55|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ01_LatDis : 49|10@0+ (0.0293,-15.0146) [-15.0146|14.9593] ""  MHU
+
+BO_ 835 Camera_Object02: 8 FCAM_Info
+ SG_ SECCAN_Cam_OBJ_2 : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ02_Class : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ02_LgtDis : 29|14@0+ (0.025,-10) [-10|399.575] ""  MHU
+ SG_ ADAS_OBJ02_ID : 47|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ02_Lane : 55|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ02_LatDis : 49|10@0+ (0.0293,-15.0146) [-15.0146|14.985] ""  MHU
+
+BO_ 842 Camera_Object03: 8 FCAM_Info
+ SG_ SECCAN_Cam_OBJ_3 : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ03_Class : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ03_LgtDis : 29|14@0+ (0.025,-10) [-10|399.575] ""  MHU
+ SG_ ADAS_OBJ03_ID : 47|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ03_Lane : 55|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ03_LatDis : 49|10@0+ (0.0293,-15.0146) [-15.0146|14.985] ""  MHU
+
+BO_ 844 Camera_Object04: 8 FCAM_Info
+ SG_ SECCAN_Cam_OBJ_4 : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ04_Class : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ04_LgtDis : 29|14@0+ (0.025,-10) [-10|399.575] ""  MHU
+ SG_ ADAS_OBJ04_ID : 47|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ04_Lane : 55|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ04_LatDis : 49|10@0+ (0.0293,-15.0146) [-15.0146|14.985] ""  MHU
+
+BO_ 845 Camera_Object05: 8 FCAM_Info
+ SG_ SECCAN_Cam_OBJ_5 : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ05_Class : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ05_LgtDis : 29|14@0+ (0.025,-10) [-10|399.575] ""  MHU
+ SG_ ADAS_OBJ05_ID : 47|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ05_Lane : 55|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ05_LatDis : 49|10@0+ (0.0293,-15.0146) [-15.0146|14.985] ""  MHU
+
+BO_ 846 Camera_Object06: 8 FCAM_Info
+ SG_ SECCAN_Cam_OBJ_6 : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ06_Class : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ06_LgtDis : 29|14@0+ (0.025,-10) [-10|399.575] ""  MHU
+ SG_ ADAS_OBJ06_ID : 47|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ADAS_OBJ06_Lane : 55|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_OBJ06_LatDis : 49|10@0+ (0.0293,-15.0146) [-15.0146|14.985] ""  MHU
+
+BO_ 849 ADAS_PA: 8 PAS_Info
+ SG_ CHKSM_ADAS_PA : 7|8@0+ (1,0) [0|255] ""  HUD,MHU
+ SG_ ADAS_PA_AutoOn_Feed : 14|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ALV_ADAS_PA : 11|4@0+ (1,0) [0|14] ""  HUD,MHU
+ SG_ ADAS_PA_AlertFLO : 23|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertFLI : 20|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertFRI : 17|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertFRO : 30|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertRLI : 27|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertRLO : 24|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertRRI : 37|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertRRO : 34|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_state : 45|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_PA_AlertFLS : 42|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertRLS : 53|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertFRS : 50|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_PA_AlertRRS : 58|3@0+ (1,0) [0|7] ""  HUD,MHU
+
+BO_ 850 ADAS_AHB_DOW: 5 FCAM_Info
+ SG_ CHKSM_ADAS_AHB_DOW : 7|8@0+ (1,0) [0|255] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_AHB_Mode_Feed : 14|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ADAS_AHB_sens_Feed : 13|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ALV_ADAS_AHB_DOW : 11|4@0+ (1,0) [0|14] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_DOW_SndWarn : 23|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ADAS_DOW_WarnRight : 21|2@0+ (1,0) [0|3] ""  MHU,XGW_Info
+ SG_ ADAS_AHB_state : 19|2@0+ (1,0) [0|3] ""  XGW_Info
+ SG_ ADAS_AHB_check : 17|2@0+ (1,0) [0|3] ""  MHU,XGW_Info
+ SG_ ADAS_DOW_WarnLeft : 31|2@0+ (1,0) [0|3] ""  MHU,XGW_Info
+ SG_ ADAS_DOW_check : 29|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ADAS_DOW_state : 26|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ADAS_AHB_LBPos : 39|3@0+ (1,0) [0|7] ""  MHU,XGW_Info
+ SG_ ADAS_AHB_RBPos : 36|3@0+ (1,0) [0|7] ""  MHU,XGW_Info
+ SG_ ADAS_DOW_Mode_Feed : 33|2@0+ (1,0) [0|3] ""  MHU
+
+BO_ 851 ADAS_CMP_ACC: 8 FCAM_Info
+ SG_ CHKSM_ADAS_ACC : 7|8@0+ (1,0) [0|255] ""  HUD,MHU,PAS_Info
+ SG_ ADAS_ISA_Mode_SW_Feed : 15|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ISA_check : 14|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ ADAS_ACC_ObjDetec : 12|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ALV_ADAS_ACC : 11|4@0+ (1,0) [0|14] ""  HUD,MHU,PAS_Info
+ SG_ ADAS_ISA_PopUp_Feed : 23|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ADAS_TagSpeed_ICON_Feed : 18|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_ACC_State : 31|3@0+ (1,0) [0|7] ""  HUD,MHU,PAS_Info,XGW_Info
+ SG_ ADAS_ACC_TimeGapSet : 28|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_ACC_DistSet_upper_Feed : 25|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ISA_Btn_Feed : 24|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ACC_TagSpeed : 39|8@0+ (1,0) [0|255] "km/h"  HUD,MHU
+ SG_ ADAS_ACC_check : 47|2@0+ (1,0) [0|3] ""  HUD,MHU,XGW_Info
+ SG_ ADAS_ACC_PopUp_Feed : 43|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ ADAS_ACC_Set_Feed : 55|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ACC_On_Feed : 54|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ACC_SpdSet_lower_Feed : 53|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ACC_SpdSet_upper_Feed : 52|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ACC_DistSet_lower_Feed : 51|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ISA_ICON_Feed : 50|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_ISA_Status : 63|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_ACC_ICON_Feed : 60|3@0+ (1,0) [0|7] ""  HUD,MHU
+ SG_ ADAS_ACC_Res_Feed : 57|1@0+ (1,0) [0|1] ""  HUD,MHU
+ SG_ ADAS_ACC_CnlBtn_Feed : 56|1@0+ (1,0) [0|1] ""  HUD,MHU
+
+BO_ 852 MHU_ADAS_req: 8 MHU
+ SG_ CHKSM_MHU_ADAS_req : 7|8@0+ (1,0) [0|255] ""  XGW_Info,FCAM_Info,PAS_Info,PAS_LITE
+ SG_ MHU_LA_AudWarning : 15|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_RAEB_Mode : 13|2@0+ (1,0) [0|3] ""  FCAM_Info,PAS_Info,XGW_Info
+ SG_ ALV_MHU_ADAS_req : 11|4@0+ (1,0) [0|14] ""  XGW_Info,FCAM_Info,PAS_Info,PAS_LITE
+ SG_ MHU_RCTA_On : 23|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_BSD_AudWarning : 21|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_ALC_ON : 19|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_BSD_On : 17|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_IA_Mode : 31|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_AHB_On : 29|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_PA_On : 27|2@0+ (1,0) [0|3] ""  FCAM_Info,PAS_Info,PAS_LITE,XGW_Info
+ SG_ MHU_RCTA_sens : 25|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_FCW_sens : 39|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_AHB_sens : 37|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_DOW_Mode : 35|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_TSR_Mode : 33|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_SET_TSR_SLAert : 47|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_SET_TSR_AudWarn : 45|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_FCW_Mode : 43|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_LA_Mode : 41|3@0+ (1,0) [0|7] ""  FCAM_Info,XGW_Info
+ SG_ MHU_ESA_ON : 54|1@0+ (1,0) [0|1] ""  FCAM_Info,XGW_Info
+ SG_ MHU_DMS_Warning_level : 53|2@0+ (1,0) [0|3] ""  PAS_Info,XGW_Info
+ SG_ MHU_AEB_Mode : 51|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_LA_sens : 49|2@0+ (1,0) [0|3] ""  FCAM_Info,XGW_Info
+ SG_ MHU_ELKA_ON : 56|1@0+ (1,0) [0|1] ""  FCAM_Info,XGW_Info
+
+BO_ 853 ADAS_CMP_CHECK: 4 PAS_Info
+ SG_ CHKSM_ADAS_CMP_CHECK : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ALV_ADAS_CMP_CHECK : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ ADAS_FPA_check : 23|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ADAS_PAUSS_FaultFRI : 21|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ADAS_PAUSS_FaultRLO : 20|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ADAS_PAUSS_check : 19|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ADAS_PAUSS_FaultFLI : 17|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ADAS_PAUSS_FaultFLO : 16|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ADAS_PAUSS_FaultFRO : 29|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ADAS_RPA_check : 28|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ADAS_PAUSS_FaultRRI : 26|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ADAS_PAUSS_FaultRRO : 25|1@0+ (1,0) [0|1] ""  MHU
+ SG_ ADAS_PAUSS_FaultRLI : 24|1@0+ (1,0) [0|1] ""  MHU
+
+BO_ 883 PDCU_PA_Status: 7 PAS_LITE
+ SG_ CHKSM_PDCU_PA : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ PDCU_PA_AutoOn_Feed : 15|1@0+ (1,0) [0|1] ""  MHU
+ SG_ PDCU_PA_State : 14|3@0+ (1,0) [0|7] ""  MHU
+ SG_ ALV_PDCU_PA : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ PDCU_PA_AlertFLO : 21|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PDCU_PA_AlertFLI : 18|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PDCU_PA_AlertFRO : 29|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PDCU_PA_AlertFRI : 26|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PDCU_PA_AlertRLO : 37|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PDCU_PA_AlertRLI : 34|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PDCU_PA_AlertRRO : 45|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PDCU_PA_AlertRRI : 42|3@0+ (1,0) [0|7] ""  MHU
+ SG_ PDCU_PA_RPA_Check : 51|2@0+ (1,0) [0|3] ""  MHU
+ SG_ PDCU_PA_FPA_Check : 49|2@0+ (1,0) [0|3] ""  MHU
+
+BO_ 884 PDCU_PA_Distance: 8 PAS_LITE
+ SG_ PDCU_FPA_DistFLI : 7|8@0+ (1,0) [0|255] "cm"  MHU
+ SG_ PDCU_FPA_DistFLO : 15|8@0+ (1,0) [0|255] "cm"  MHU
+ SG_ PDCU_FPA_DistFRI : 23|8@0+ (1,0) [0|255] "cm"  MHU
+ SG_ PDCU_FPA_DistFRO : 31|8@0+ (1,0) [0|255] "cm"  MHU
+ SG_ PDCU_RPA_DistRLI : 39|8@0+ (1,0) [0|255] "cm"  MHU
+ SG_ PDCU_RPA_DistRLO : 47|8@0+ (1,0) [0|255] "cm"  MHU
+ SG_ PDCU_RPA_DistRRI : 55|8@0+ (1,0) [0|255] "cm"  MHU
+ SG_ PDCU_RPA_DistRRO : 63|8@0+ (1,0) [0|255] "cm"  MHU
+
+BO_ 896 BCM_VEHICLE_IDENT_NUMBER: 7 XGW_Info
+ SG_ VIN_Byte1 : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ VIN_Byte2 : 15|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ VIN_Byte3 : 23|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ VIN_Byte4 : 31|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ VIN_Byte5 : 39|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ VIN_Byte6 : 47|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ VIN_Byte7 : 55|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+
+BO_ 897 ACM_OCCUPANT_STATUS: 4 XGW_Info
+ SG_ CHKSM_ACM_SEAT_OCCUPATION : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,MHU,PAS_Info
+ SG_ ALV_ACM_SEAT_OCCUPATION : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,MHU,PAS_Info
+ SG_ ACM_Seat_Belt_Status_Driver : 27|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU,PAS_Info
+ SG_ ACM_Seat_Belt_Status_Passenger : 25|2@0+ (1,0) [0|3] ""  FCAM_Info,MHU
+
+BO_ 925 BCM_HighBeam_PosReq: 3 XGW_Info
+ SG_ CHKSM_BCM_HighBeam_PosReq : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU
+ SG_ ALIVE_BCM_HighBeam_PosReq : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,MHU
+ SG_ BCM_ADAS_AHB_LBPos_feed : 23|3@0+ (1,0) [0|7] ""  FCAM_Info
+ SG_ BCM_ADAS_AHB_RBPos_feed : 20|3@0+ (1,0) [0|7] ""  FCAM_Info
+
+BO_ 1015 MFS_Control_Button: 8 XGW_Info
+ SG_ CHSKM_MFS_Control_Button : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU
+ SG_ ALV_MFS_Control_Button : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,MHU
+ SG_ MFS_CruiseSpeedIncrease : 20|3@0+ (1,0) [0|4] "Bit"  FCAM_Info,HUD,MHU
+ SG_ MFS_ISAControl : 17|2@0+ (1,0) [0|3] "Bit"  FCAM_Info,HUD,MHU
+ SG_ MFS_CruiseOn_Off : 31|3@0+ (1,0) [0|4] "Bit"  FCAM_Info,HUD,MHU
+ SG_ MFS_CruiseGapIncrease : 28|3@0+ (1,0) [0|4] "Bit"  FCAM_Info,HUD,MHU
+ SG_ MFS_LKAControl : 25|2@0+ (1,0) [0|3] "Bit"  FCAM_Info,HUD,MHU
+ SG_ MFS_CruiseSpeedDecrease : 39|3@0+ (1,0) [0|4] "Bit"  FCAM_Info,HUD,MHU
+ SG_ MFS_CAN_RESControl : 36|2@0+ (1,0) [0|3] ""  FCAM_Info,HUD
+ SG_ MFS_CruiseGapDecrease : 34|3@0+ (1,0) [0|4] "Bit"  FCAM_Info,HUD,MHU
+ SG_ MFS_M2Control : 41|2@0+ (1,0) [0|3] "Bit"  FCAM_Info,HUD
+ SG_ MFS_Failure : 57|1@0+ (1,0) [0|1] "Bit"  FCAM_Info,HUD,MHU
+
+BO_ 1027 MHU_EvSetting: 6 MHU
+ SG_ CHKSM_MHU_EVSetting : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,XGW_Info
+ SG_ ALV_MHU_EVSetting : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,XGW_Info
+ SG_ MHU_ValetMode_Activation : 47|8@0+ (1,0) [0|255] ""  FCAM_Info,XGW_Info
+
+BO_ 1037 MHU_DIGIT_SPEED: 4 MHU
+ SG_ CHKSM_MHU_DIGIT_SPEED : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ ALV_MHU_DIGIT_SPEED : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+ SG_ MHU_DigitSpeed : 23|9@0+ (1,0) [0|300] "km/h"  FCAM_Info,HUD,PAS_Info,XGW_Info,PAS_LITE
+
+BO_ 1041 FCAM_DDAW_Sts: 3 FCAM_Info
+ SG_ CRC_FCAM_DDAW_Sts__ : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ FCAM_DDAW_DriverAttentionLevel : 15|4@0+ (1,0) [0|15] ""  HUD,MHU
+ SG_ Alive_FCAM_DDAW_Sts : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ FCAM_DDAW_ActivationState : 22|1@0+ (1,0) [0|1] ""  MHU
+ SG_ FCAM_DDAW_WarningDisplay_V2 : 21|2@0+ (1,0) [0|3] ""  HUD,MHU
+ SG_ FCAM_DDAW_StatusDisplay : 19|2@0+ (1,0) [0|3] ""  MHU
+ SG_ FCAM_DDAW_FailureDisplay : 17|2@0+ (1,0) [0|3] ""  MHU
+
+BO_ 1043 FCAM_Sensor_Fault: 4 FCAM_Info
+ SG_ CHKSM_FCAM_SensorFault : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ FCAM_SCAM_Fault : 15|2@0+ (1,0) [0|3] ""  MHU
+ SG_ FCAM_SRR_RR_Fault : 13|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ALV_FCAM_Sensor_Fault : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ FCAM_SRR_FL_Fault : 23|2@0+ (1,0) [0|3] ""  MHU
+ SG_ FCAM_SRR_RL_Fault : 21|2@0+ (1,0) [0|3] ""  MHU
+ SG_ FCAM_MRR_Fault : 19|2@0+ (1,0) [0|3] ""  MHU
+ SG_ FCAM_SRR_FR_Fault : 17|2@0+ (1,0) [0|3] ""  MHU
+ SG_ SECCAN_FCAM_SensorFault : 31|8@0+ (1,0) [0|255] ""  MHU
+
+BO_ 1044 HOD_Status: 8 XGW_Info
+ SG_ CRC_SW_1 : 7|8@0+ (1,0) [0|255] ""  FCAM_Info
+ SG_ Message_Counter_SW_1 : 11|4@0+ (1,0) [0|14] ""  FCAM_Info
+ SG_ RsErr_HOD : 44|1@0+ (1,0) [0|1] ""  FCAM_Info
+ SG_ ERR_ST_HOD : 43|4@0+ (1,0) [0|15] ""  FCAM_Info
+ SG_ HOD_status : 59|4@0+ (1,0) [0|15] ""  FCAM_Info
+
+BO_ 1046 BCM_Mirror_Confirm_sts: 5 XGW_Info
+ SG_ CHKSM_BCM_Mirror_Confirm_sts : 7|8@0+ (1,0) [0|255] ""  PAS_Info
+ SG_ ALIVE_BCM_Mirror_Confirm_sts : 11|4@0+ (1,0) [0|14] ""  PAS_Info
+ SG_ BCM_STAT_Mirror : 37|2@0+ (1,0) [0|3] ""  MHU,PAS_Info
+
+BO_ 1055 PAS_Sensor_Fault: 4 PAS_Info
+ SG_ CHKSM_PAS_SensorFault : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ PAS_SVM_FCamera_Fault : 15|2@0+ (1,0) [0|3] ""  MHU
+ SG_ PAS_SVM_LCamera_Fault : 13|2@0+ (1,0) [0|3] ""  MHU
+ SG_ ALV_PAS_Sensor_Fault : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ SECCAN_PAS_SensorFault : 23|8@0+ (1,0) [0|255] ""  MHU
+ SG_ PAS_SVM_RightCamera_Fault : 27|2@0+ (1,0) [0|3] ""  MHU
+ SG_ PAS_SVM_RCamera_Fault : 25|2@0+ (1,0) [0|3] ""  MHU
+
+BO_ 1058 MHU_STATUS: 8 MHU
+ SG_ CHKSM_MHU_STAT : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,XGW_Info
+ SG_ ALV_MHU_STAT : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,XGW_Info
+ SG_ MHU_STAT_MileageUnit : 21|2@0+ (1,0) [0|3] ""  FCAM_Info,HUD,XGW_Info
+ SG_ MHU_STAT_Infotainment : 19|2@0+ (1,0) [0|3] ""  FCAM_Info,HUD,XGW_Info
+ SG_ MHU_STAT_Cluster : 17|2@0+ (1,0) [0|3] ""  FCAM_Info,HUD,XGW_Info
+ SG_ MHU_Operation_State : 34|3@0+ (1,0) [0|7] ""  FCAM_Info,HUD,XGW_Info
+ SG_ MHU_STAT_EnergyConsumptionUnit : 43|4@0+ (1,0) [0|15] ""  FCAM_Info,HUD,XGW_Info
+ SG_ MHU_STAT_SaleCountry : 55|10@0+ (1,0) [0|1023] ""  FCAM_Info,HUD,XGW_Info
+
+BO_ 1069 XGW_Info_Collect: 1 XGW_Info
+ SG_ TRMFitted : 3|2@0+ (1,0) [0|3] ""  FCAM_Info,PAS_Info,PAS_LITE
+
+BO_ 1074 MHU_FOTA_STATUS: 3 MHU
+ SG_ MHU_FOTA_Checksum : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_FOTA_State : 15|4@0+ (1,0) [0|14] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_FOTA_Alive_Counter : 11|4@0+ (1,0) [0|14] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_FOTA_Error_Code : 23|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+
+BO_ 1092 MHU_ADAS_RP_Ctrl: 8 MHU
+ SG_ Checksum_MHU_ADAS_RP_Ctrl : 7|8@0+ (1,0) [0|255] ""  PAS_Info
+ SG_ MHU_RPParkingstartReq : 15|1@0+ (1,0) [0|1] ""  PAS_Info
+ SG_ Rolling_Counter_MHU_ADAS_RP_Ctrl : 11|4@0+ (1,0) [0|14] ""  PAS_Info
+ SG_ MHU_RemoteconnectionSts : 23|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ MHU_RP_FuncMode : 26|3@0+ (1,0) [0|7] ""  PAS_Info
+ SG_ MHU_RPParkingControlReq : 44|1@0+ (1,0) [0|1] ""  PAS_Info
+ SG_ MHU_RP_QuitReq : 52|2@0+ (1,0) [0|3] ""  PAS_Info
+ SG_ SECCAN_ADAS_RP_Ctrl : 63|8@0+ (1,0) [0|255] ""  PAS_Info
+
+BO_ 1095 MHU_CarMode_Switch: 4 MHU
+ SG_ CHKSM_MHU_SET_CarMode : 7|8@0+ (1,0) [0|255] ""  XGW_Info,PAS_LITE
+ SG_ ALV_MHU_SET_CarMode : 11|4@0+ (1,0) [0|14] ""  XGW_Info,PAS_LITE
+ SG_ MHU_SET_WashMode : 31|2@0+ (1,0) [0|3] ""  XGW_Info,PAS_LITE
+
+BO_ 1105 MHU_ADAS_RSSI: 8 MHU
+ SG_ Checksum_RSSI : 7|8@0+ (1,0) [0|255] ""  FCAM_Info
+ SG_ Rolling_Counter_RSSI : 11|4@0+ (1,0) [0|14] ""  FCAM_Info
+ SG_ RSSI_Value : 23|8@0+ (1,0) [0|255] ""  FCAM_Info
+ SG_ SECCAN_RSSI : 63|8@0+ (1,0) [0|255] ""  FCAM_Info
+
+BO_ 1110 SCM_Raw_Status: 4 XGW_Info
+ SG_ OP_WISW_SZL_LIN : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU
+ SG_ OP_WIPO_SZL_LIN : 15|3@0+ (1,0) [0|7] ""  FCAM_Info,HUD,MHU
+ SG_ BCM_Wiper_Front_Status : 12|3@0+ (1,0) [0|7] ""  FCAM_Info,HUD,MHU
+ SG_ OP_COLS_SZL_LIN : 23|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU
+ SG_ ALIV_WISW_SZL_LIN : 31|4@0+ (1,0) [0|14] ""  FCAM_Info,HUD,MHU
+ SG_ NOD_ERR_SZL_LIN : 25|2@0+ (1,0) [0|3] ""  FCAM_Info,HUD,MHU
+
+BO_ 1115 ADAS_HOD: 8 FCAM_Info
+ SG_ HOD_steering_wheel_type : 5|4@0+ (1,0) [0|15] ""  XGW_Info
+ SG_ HOD_vehicle_type : 15|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ ADAS_HOD_state_requesting : 57|2@0+ (1,0) [0|3] ""  XGW_Info
+
+BO_ 1153 BCM_WarnMsg: 5 XGW_Info
+ SG_ BCM_TurnIndicatorDefect : 32|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU
+
+BO_ 1155 TPMS_TirePressure: 6 XGW_Info
+ SG_ TPMS_FRTirePressAlarm : 38|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+ SG_ TPMS_FLTirePressAlarm : 34|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+ SG_ TPMS_RRTirePressAlarm : 46|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+ SG_ TPMS_RLTirePressAlarm : 42|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+
+BO_ 1156 APA_FEEDBACK_MHU: 8 PAS_Info
+ SG_ CHKSM_APA_FEEDBACK_MHU : 7|8@0+ (1,0) [0|255] ""  MHU
+ SG_ ALV_APA_FEEDBACK_MHU : 11|4@0+ (1,0) [0|14] ""  MHU
+ SG_ APA_ReqInfoDispTxt3 : 19|5@0+ (1,0) [0|31] ""  MHU
+ SG_ APA_ReqInfoDispTxt2 : 30|3@0+ (1,0) [0|7] ""  MHU
+ SG_ APA_ReqInfoDispTxt4 : 27|4@0+ (1,0) [0|15] ""  MHU
+ SG_ APA_FuncModeFdbck : 39|2@0+ (1,0) [0|3] ""  MHU
+ SG_ APA_MHU_Displayparkingtype : 35|1@0+ (1,0) [0|1] ""  MHU
+ SG_ APA_ReqInfoDispTxt1 : 34|3@0+ (1,0) [0|7] ""  MHU
+ SG_ SECCAN_APA_FEEDBACK_MHU : 47|8@0+ (1,0) [0|255] ""  MHU
+ SG_ APA_Currentfunction : 54|3@0+ (1,0) [0|7] ""  MHU
+ SG_ APA_RecommendSlotID : 51|8@0+ (1,0) [0|255] ""  MHU
+ SG_ APA_MHU_Status : 59|3@0+ (1,0) [0|7] ""  MHU,XGW_Info
+
+BO_ 1157 TBox_RemVehCtrlAssist_SecOC3: 2 MHU
+ SG_ TBOX_RPADirSel : 15|4@0+ (1,0) [0|15] ""  PAS_Info
+
+BO_ 1158 TPMS_TirePressure2: 4 XGW_Info
+ SG_ CHKSM_TirePressAlarm : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,MHU
+ SG_ ALV_TirePressAlarm : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,MHU
+ SG_ TPMS_FRTirePressAlarm2 : 21|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+ SG_ TPMS_FLTirePressAlarm2 : 18|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+ SG_ TPMS_RRTirePressAlarm2 : 29|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+ SG_ TPMS_RLTirePressAlarm2 : 26|3@0+ (1,0) [0|7] ""  FCAM_Info,MHU
+
+BO_ 1160 ACM_WarnMsg: 6 XGW_Info
+ SG_ CHKSM_ACM_WARNING_MSG : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,MHU
+ SG_ ALV_ACM_WARNING_MSG : 11|4@0+ (1,0) [0|14] ""  FCAM_Info,MHU
+ SG_ ACM_In_Disposal_Mode : 23|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU
+ SG_ ACM_Development_Calibration : 22|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU
+ SG_ ACM_Airbag_Disabled : 21|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU
+ SG_ ACM_PAB_Suppression : 20|2@0+ (1,0) [0|3] "Bit"  FCAM_Info,MHU
+ SG_ ACM_in_Plant_Mode : 18|1@0+ (1,0) [0|1] "Bit"  FCAM_Info,MHU
+ SG_ ACM_Pre_Drive_Check : 17|1@0+ (1,0) [0|1] "Bit"  FCAM_Info,MHU
+ SG_ ACM_Malfunction : 16|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU
+ SG_ ACM_SBR_Blinking_Req : 42|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU
+ SG_ ACM_SBR_Chime_Req : 41|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU
+ SG_ ACM_Seatbelt_Reminder_Request : 40|1@0+ (1,0) [0|1] ""  FCAM_Info,MHU
+
+BO_ 1282 XGW_NM: 8 XGW_Info
+ SG_ XGW_srcNodeID : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ XGW_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ XGW_usrData0 : 23|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ XGW_usrData1 : 31|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ XGW_usrData2 : 39|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ XGW_usrData3 : 47|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ XGW_usrData4 : 55|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+ SG_ XGW_usrData5 : 63|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,PAS_Info
+
+BO_ 1284 MHU_NM: 8 MHU
+ SG_ MHU_srcNodeID : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_usrData0 : 23|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_usrData1 : 31|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_usrData2 : 39|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_usrData3 : 47|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_usrData4 : 55|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+ SG_ MHU_usrData5 : 63|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,PAS_Info,XGW_Info
+
+BO_ 1293 HUD_NM: 8 HUD
+ SG_ HUD_srcNodeID : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,XGW_Info
+ SG_ HUD_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,XGW_Info
+ SG_ HUD_usrData0 : 23|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,XGW_Info
+ SG_ HUD_usrData1 : 31|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,XGW_Info
+ SG_ HUD_usrData2 : 39|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,XGW_Info
+ SG_ HUD_usrData3 : 47|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,XGW_Info
+ SG_ HUD_usrData4 : 55|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,XGW_Info
+ SG_ HUD_usrData5 : 63|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,MHU,PAS_Info,XGW_Info
+
+BO_ 1302 FCAM_NM: 8 FCAM_Info
+ SG_ FCAM_srcNodeID : 7|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info,XGW_Info
+ SG_ FCAM_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info,XGW_Info
+ SG_ FCAM_usrData0 : 23|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info,XGW_Info
+ SG_ FCAM_usrData1 : 31|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info,XGW_Info
+ SG_ FCAM_usrData2 : 39|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info,XGW_Info
+ SG_ FCAM_usrData3 : 47|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info,XGW_Info
+ SG_ FCAM_usrData4 : 55|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info,XGW_Info
+ SG_ FCAM_usrData5 : 63|8@0+ (1,0) [0|255] ""  CPD,HUD,MHU,PAS_Info,XGW_Info
+
+BO_ 1303 PAS_NM: 8 PAS_Info
+ SG_ PAS_srcNodeID : 7|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,XGW_Info
+ SG_ PAS_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,XGW_Info
+ SG_ PAS_usrData0 : 23|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,XGW_Info
+ SG_ PAS_usrData1 : 31|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,XGW_Info
+ SG_ PAS_usrData2 : 39|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,XGW_Info
+ SG_ PAS_usrData3 : 47|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,XGW_Info
+ SG_ PAS_usrData4 : 55|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,XGW_Info
+ SG_ PAS_usrData5 : 63|8@0+ (1,0) [0|255] ""  CPD,FCAM_Info,HUD,MHU,XGW_Info
+
+BO_ 1327 CPD_NM: 8 CPD
+ SG_ CPD_srcNodeID : 7|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info,XGW_Info
+ SG_ CPD_CtrlBitVector : 15|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info,XGW_Info
+ SG_ CPD_usrData0 : 23|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info,XGW_Info
+ SG_ CPD_usrData1 : 31|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info,XGW_Info
+ SG_ CPD_usrData2 : 39|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info,XGW_Info
+ SG_ CPD_usrData3 : 47|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info,XGW_Info
+ SG_ CPD_usrData4 : 55|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info,XGW_Info
+ SG_ CPD_usrData5 : 63|8@0+ (1,0) [0|255] ""  FCAM_Info,HUD,MHU,PAS_Info,XGW_Info
+
+BO_ 1584 PAS_LITE_DiagResp: 8 PAS_LITE
+ SG_ PAS_LITE_DiagRespData0 : 7|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ PAS_LITE_DiagRespData1 : 15|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ PAS_LITE_DiagRespData2 : 23|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ PAS_LITE_DiagRespData3 : 31|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ PAS_LITE_DiagRespData4 : 39|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ PAS_LITE_DiagRespData5 : 47|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ PAS_LITE_DiagRespData6 : 55|8@0+ (1,0) [0|255] ""  XGW_Info
+ SG_ PAS_LITE_DiagRespData7 : 63|8@0+ (1,0) [0|255] ""  XGW_Info
+
+BO_ 1712 PAS_LITE_DiagReq: 8 XGW_Info
+ SG_ PAS_LITE_DiagReqData0 : 7|8@0+ (1,0) [0|255] ""  PAS_LITE
+ SG_ PAS_LITE_DiagReqData1 : 15|8@0+ (1,0) [0|255] ""  PAS_LITE
+ SG_ PAS_LITE_DiagReqData2 : 23|8@0+ (1,0) [0|255] ""  PAS_LITE
+ SG_ PAS_LITE_DiagReqData3 : 31|8@0+ (1,0) [0|255] ""  PAS_LITE
+ SG_ PAS_LITE_DiagReqData4 : 39|8@0+ (1,0) [0|255] ""  PAS_LITE
+ SG_ PAS_LITE_DiagReqData5 : 47|8@0+ (1,0) [0|255] ""  PAS_LITE
+ SG_ PAS_LITE_DiagReqData6 : 55|8@0+ (1,0) [0|255] ""  PAS_LITE
+ SG_ PAS_LITE_DiagReqData7 : 63|8@0+ (1,0) [0|255] ""  PAS_LITE
+
+BO_ 1803 SEED_CAN_Req6_BCM: 8 XGW_Info
+ SG_ SEED_CAN_Req6 : 7|64@0+ (1,0) [0|1.84467440737096e+19] ""  FCAM_Info,MHU,PAS_Info
+
+BO_ 1805 SEED_CAN_Req7_VCU_PT: 8 XGW_Info
+ SG_ SEED_CAN_Req7 : 7|64@0+ (1,0) [0|1.84467440737096e+19] ""  MHU,PAS_Info
+
+BO_ 1843 SEED_CAN_Req18_MHU: 8 MHU
+ SG_ SEED_CAN_Req18 : 7|64@0+ (1,0) [0|1.84467440737096e+19] ""  FCAM_Info,HUD,PAS_Info,XGW_Info
+
+BO_ 1850 SEED_CAN_Req25_FCAM: 8 FCAM_Info
+ SG_ SEED_CAN_Req25 : 7|64@0+ (1,0) [0|1.84467440737096e+19] ""  MHU,XGW_Info
+
+BO_ 1853 SEED_CAN_Req29_PAS: 8 PAS_Info
+ SG_ SEED_CAN_Req29 : 7|64@0+ (1,0) [0|1.84467440737096e+19] ""  MHU,XGW_Info
+
+BO_ 1888 FCAM_Debug_DID: 8 FCAM_Info
+ SG_ FCAM_Debug_DID_1 : 7|64@0+ (1,0) [0|1.84467440737096e+19] ""  DUMMY_ECU

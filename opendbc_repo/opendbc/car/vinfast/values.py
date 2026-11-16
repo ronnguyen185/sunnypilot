@@ -10,10 +10,24 @@ from opendbc.car.fw_query_definitions import FwQueryConfig, Request, StdQueries
 
 Ecu = CarParams.Ecu
 
+# VF6 OEM steering limits — "Current" column from EPS table (deg / deg/s @ km/h).
+# Rates are deg/step @ 100 Hz (e.g. 1.8 = 180 deg/s @ 0 km/h, 0.4 = 40 deg/s @ 100+ km/h).
+VF6_STEER_SPEED_BP_MS = [0., 5.556, 11.111, 16.667, 22.222, 27.778, 33.333, 41.667]  # 0–150 km/h
+VF6_STEER_ANGLE_MAX_V_DEG = [180., 120., 90., 70., 50., 40., 40., 40.]
+VF6_STEER_RATE_V_DEG_PER_STEP = [1.8, 1.2, 0.9, 0.7, 0.5, 0.4, 0.4, 0.4]  # 180–40 deg/s
+
 
 class CarControllerParams:
   ACCEL_MIN = -3.5  # m/s
   ACCEL_MAX = 2.0   # m/s
+
+  # Driver torque hysteresis (Nm): press above ON, release below OFF (noise ~1 Nm).
+  STEER_DRIVER_PRESS_NM = 2.0
+  STEER_DRIVER_RELEASE_NM = 0.8
+  STEER_PRESSED_MIN_COUNT = 5    # ~50 ms @ 100 Hz
+  STEER_RELEASE_MIN_COUNT = 50   # ~500 ms @ 100 Hz
+  STEER_PRESS_RATE_GAIN = 0.02   # Nm per deg/s
+  STEER_PRESS_NM_MAX = 4.0
 
   STEER_DELTA_UP = 3
   STEER_DELTA_DOWN = 7
@@ -24,32 +38,26 @@ class CarControllerParams:
   STEER_STEP = 1  # 100 Hz
 
   def __init__(self, CP):
-    # Set steering limits based on car model
-    # VF8: EPS steering max = 470 degrees
-    # VF9: max steering angle = ±90 degrees
-    if CP.carFingerprint == CAR.VINFAST_VF8.name:
-      self.STEER_MAX = 470
-  # Angle rate limits matching vinfast.h safety code (speed-dependent)
-  # Speed breakpoints: 0, 20, 40 m/s
-  # Rate limits: up [7, 5, 3] deg/step, down [7, 5, 3] deg/step
+    if is_vf6_safety_platform(CP.carFingerprint):
+      # VF6/VF7 Plus: speed-dependent angle (180° @0 → 40° @100+) and rate (180 → 40 deg/s)
+      steer_max = 180.0
+      self.STEER_MAX = int(steer_max)
       self.ANGLE_LIMITS = AngleSteeringLimits(
-        470.0,  # STEER_ANGLE_MAX (degrees) - VF8 EPS accepts up to ~470 degrees
-        ([0., 20., 40.], [7., 5., 3.]),   # ANGLE_RATE_LIMIT_UP (speed breakpoints, rate limits)
-        ([0., 20., 40.], [7., 5., 3.]),  # ANGLE_RATE_LIMIT_DOWN (speed breakpoints, rate limits)
+        steer_max,
+        (VF6_STEER_SPEED_BP_MS, VF6_STEER_RATE_V_DEG_PER_STEP),
+        (VF6_STEER_SPEED_BP_MS, VF6_STEER_RATE_V_DEG_PER_STEP),
       )
+      self.ANGLE_MAX_LOOKUP = (VF6_STEER_SPEED_BP_MS, VF6_STEER_ANGLE_MAX_V_DEG)
     elif CP.carFingerprint == CAR.VINFAST_VF9.name:
+      # Keep the local VF9 150° cap already tuned on this C3X
       self.STEER_MAX = 150
-      # VF9 steering angle limit is ±150 degrees
-      # Angle rate limits (speed-dependent)
-      # Speed breakpoints: 0, 20, 40 m/s
-      # Rate limits: up [7, 5, 3] deg/step, down [7, 5, 3] deg/step
       self.ANGLE_LIMITS = AngleSteeringLimits(
-        150.0,  # STEER_ANGLE_MAX (degrees) - VF9 max steering angle = ±150 degrees
-    ([0., 20., 40.], [7., 5., 3.]),   # ANGLE_RATE_LIMIT_UP (speed breakpoints, rate limits)
-    ([0., 20., 40.], [7., 5., 3.]),  # ANGLE_RATE_LIMIT_DOWN (speed breakpoints, rate limits)
-  )
+        150.0,
+        ([0., 20., 40.], [7., 5., 3.]),
+        ([0., 20., 40.], [7., 5., 3.]),
+      )
     else:
-      # Default to VF8 values for unknown models
+      # VF8 EPS accepts up to ~470 degrees
       self.STEER_MAX = 470
       self.ANGLE_LIMITS = AngleSteeringLimits(
         470.0,
@@ -59,8 +67,6 @@ class CarControllerParams:
 
 
 class VinFastFlags(IntFlag):
-  # Static flags
-  # Add flags as needed
   pass
 
 
@@ -73,35 +79,62 @@ class VinFastCarDocs(CarDocs):
 class VinFastPlatformConfig(PlatformConfig):
   dbc_dict: DbcDict = field(default_factory=lambda: {
     Bus.chassis: "vinfast_vf8_chassis_can",
-    Bus.cam: "vinfast_vf8_chassis_can",  # Camera bus uses same DBC (SCAM messages)
-    Bus.radar: "vinfast_vf8_mrr_scam",  # Radar bus (CAN-FD) - MRR with SCAM integration
-    Bus.body: "vinfast_vf8_info_can",  # Info CAN bus (turn signals, blind spot monitor, etc.)
+    Bus.cam: "vinfast_vf8_chassis_can",
+    Bus.radar: "vinfast_vf8_mrr_scam",
+    Bus.body: "vinfast_vf8_info_can",
   })
 
 
 class CAR(Platforms):
   VINFAST_VF8 = VinFastPlatformConfig(
     [VinFastCarDocs("VinFast VF8 2023-24", "All", car_parts=CarParts.common([CarHarness.custom]))],
-    CarSpecs(mass=2600, wheelbase=2.95, steerRatio=13.3, tireStiffnessFactor=0.82), 
+    CarSpecs(mass=2600, wheelbase=2.95, steerRatio=13.3, tireStiffnessFactor=0.82),
   )
   VINFAST_VF9 = VinFastPlatformConfig(
     [VinFastCarDocs("VinFast VF9 2023-24", "All", car_parts=CarParts.common([CarHarness.custom]))],
     CarSpecs(mass=2928, wheelbase=3.15, steerRatio=15.0, tireStiffnessFactor=0.85),
   )
+  VINFAST_VF6 = VinFastPlatformConfig(
+    [VinFastCarDocs("VinFast VF6 2024-25", "All", car_parts=CarParts.common([CarHarness.custom]))],
+    CarSpecs(mass=2050, wheelbase=2.73, steerRatio=15.5, tireStiffnessFactor=0.82),
+    dbc_dict={
+      Bus.chassis: "vinfast_vf6_chassis_can",
+      Bus.cam: "vinfast_vf6_chassis_can",
+      Bus.body: "vinfast_vf6_info_can",
+    },
+  )
+  VINFAST_VF7_PLUS = VinFastPlatformConfig(
+    [VinFastCarDocs("VinFast VF7 Plus 2024-26", "All", car_parts=CarParts.common([CarHarness.custom]))],
+    CarSpecs(mass=2205, wheelbase=2.84, steerRatio=15.5, tireStiffnessFactor=0.82),
+    dbc_dict={
+      Bus.chassis: "vinfast_vf6_chassis_can",
+      Bus.cam: "vinfast_vf6_chassis_can",
+      Bus.body: "vinfast_vf6_info_can",
+    },
+  )
+
+VF6_SAFETY_PLATFORMS = (CAR.VINFAST_VF6, CAR.VINFAST_VF7_PLUS)
+
+def is_vf6_safety_platform(candidate) -> bool:
+  if isinstance(candidate, str):
+    return candidate in {p.name for p in VF6_SAFETY_PLATFORMS}
+  return candidate in VF6_SAFETY_PLATFORMS
 
 
 class CANBUS:
-  # Note: Due to wiring, bus assignments are reversed:
-  # - Bus 2 = Chassis bus (physical chassis CAN) on first panda
-  # - Bus 0 = SCAM bus (camera/SCAM CAN) on first panda
-  # - Bus 1 = Radar bus (CAN-FD) on first panda
-  # - Info CAN bus: Second panda connected via USB, physical bus 2
-  #   If pandad applies bus_offset=4 to second panda, messages appear on bus 6 (2+4)
-  #   Adjust this value based on actual bus number in aggregated CAN stream
-  chassis = 2  # Bus 2 is chassis bus (due to wiring) on first panda
-  cam = 0      # Bus 0 is SCAM/camera bus (due to wiring) on first panda
-  radar = 1    # Bus 1 is radar bus (CAN-FD) on first panda
-  info = 6     # Info CAN bus: bus 2 on second panda (USB) -> bus 6 if bus_offset=4 is applied by pandad
+  # First panda: 0 chassis, 1 radar (CAN-FD), 2 SCAM
+  # Second panda: 4 / 5 / 6. VF6 InfoCAN is physical bus 1 → logical bus 5.
+  chassis = 0
+  cam = 2
+  radar = 1
+  info = 4      # VF8/VF9 InfoCAN
+  info_vf6 = 5  # VF6 InfoCAN
+
+  @staticmethod
+  def info_bus(car_fingerprint: str) -> int:
+    if is_vf6_safety_platform(car_fingerprint):
+      return CANBUS.info_vf6
+    return CANBUS.info
 
 FW_QUERY_CONFIG = FwQueryConfig(
   requests=[
@@ -114,4 +147,3 @@ FW_QUERY_CONFIG = FwQueryConfig(
 )
 
 DBC = CAR.create_dbc_map()
-

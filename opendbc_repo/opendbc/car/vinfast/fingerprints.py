@@ -5,7 +5,7 @@ from opendbc.car.vinfast.values import CAR
 Ecu = CarParams.Ecu
 
 # Basic fingerprints for VinFast VF8 and VF9
-# These are common messages seen on the chassis bus (bus 2)
+# These are common messages seen on the chassis bus (bus 0)
 # VF8 and VF9 use the same DBC files, so they share the same fingerprints
 # TODO: Collect more complete fingerprints from actual vehicles
 # Common VinFast fingerprint (used by both VF8 and VF9 since they share DBC)
@@ -26,9 +26,14 @@ _COMMON_FINGERPRINT = {
   796: 8,   # 0x31C - EPS_SteeringHoldState
 }
 
+# VF6 uses 8-byte ADAS_ACC_Status (VF8/VF9 use 5-byte)
+_VF6_FINGERPRINT = {**_COMMON_FINGERPRINT, 813: 8}
+
 FINGERPRINTS = {
   CAR.VINFAST_VF8: [_COMMON_FINGERPRINT],
   CAR.VINFAST_VF9: [_COMMON_FINGERPRINT],  # VF9 uses same DBC and fingerprints as VF8
+  CAR.VINFAST_VF6: [_VF6_FINGERPRINT],
+  CAR.VINFAST_VF7_PLUS: [_VF6_FINGERPRINT],  # VF7 Plus shares VF6 chassis CAN layout
 }
 
 FW_VERSIONS = {
@@ -45,6 +50,12 @@ FW_VERSIONS = {
     # (Ecu.eps, 0x730, None): [
     #   b'FW_VERSION_STRING\x00\x00\x00\x00\x00\x00\x00\x00\x00',
     # ],
+  },
+  CAR.VINFAST_VF6: {
+    # TODO: Add firmware versions when available
+  },
+  CAR.VINFAST_VF7_PLUS: {
+    # TODO: Add firmware versions when available
   },
 }
 

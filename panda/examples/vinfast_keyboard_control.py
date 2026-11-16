@@ -19,9 +19,9 @@ from opendbc.car.vinfast.vinfastcan import (
 from opendbc.car.vinfast.values import CAR
 from opendbc.car.vinfast.carstate import CarState
 
-# VinFast CAN buses (matches safety_vinfast.h defaults)
-VINFAST_CHASSIS_BUS = 2
-VINFAST_CAMERA_BUS = 0
+# VinFast CAN buses (matches safety_vinfast.h / CANBUS)
+VINFAST_CHASSIS_BUS = 0
+VINFAST_CAMERA_BUS = 2
 
 # Steering constraints
 STEER_MIN = -470.0

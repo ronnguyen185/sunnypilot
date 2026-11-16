@@ -3,7 +3,7 @@ from opendbc.can import CANParser
 from opendbc.car import Bus, structs, create_button_events
 from opendbc.car.common.conversions import Conversions as CV
 from opendbc.car.interfaces import CarStateBase
-from opendbc.car.vinfast.values import DBC
+from opendbc.car.vinfast.values import CAR, CarControllerParams, DBC, is_vf6_safety_platform
 
 ButtonType = structs.CarState.ButtonEvent.Type
 
@@ -15,14 +15,22 @@ class CarState(CarStateBase):
     # Track previous button states for detecting transitions
     self.prev_speed_button_upper = 0
     self.prev_speed_button_lower = 0
-    # Track last valid cruise speed to preserve it when tag speed is invalid
-    self.last_valid_cruise_speed = 0.0
     # Track last valid speed limit
     self.last_valid_speed_limit = 0.0
     # Track last valid time gap setting (1-4) for fallback when info CAN is unavailable
     self.last_valid_time_gap = 3  # Default to level 3 (medium distance)
     # ACC popup feed from ADAS_CMP_ACC message
     self.acc_popup_feed = 0
+    # Latest IDB_Info_Flag from chassis (used for hybrid long-control bridge)
+    self.idb_info_flag = {}
+    # Stock SCAM ACC on cam bus (hybrid mode mirror — same as joystick working --vinfast)
+    self.scam_acc_mode = None
+    self.scam_accel_cmd = 0.0
+    # Sticky steeringPressed: engage fast, release only after sustained low torque
+    self.steering_pressed_latched = False
+    self.steering_pressed = False
+    self.steering_press_cnt = 0
+    self.steering_release_cnt = 0
 
   def get_can_parsers(self, CP, CP_SP):
     ret = {}
@@ -33,15 +41,17 @@ class CarState(CarStateBase):
       ("SAS_Sensor", 50),
       ("EPS_ADAS_Steering_Trq", 50),
       ("IDB_STATUS", 50),
+      ("IDB_Info_Flag", 50),
       ("IDB_AVL_RPM_WHL_FRONT", 50),
       ("IDB_AVL_RPM_WHL_REAR", 50),
       ("EPS_SteeringHoldState", 50),
       ("EPS_Advanced", 50),  # EPS_Advanced for EPSAngRespSts (steering fault detection)
       ("YSS_YawRate", 50),  # Yaw rate sensor from YSS (Yaw Stability System)
-      ("VCU_AVAS_GearPosition_ECU", 50),  # Gear position from VCU
     ]
+    if not is_vf6_safety_platform(CP.carFingerprint):
+      messages_chassis.append(("BCM_CLAMP_STAT", 10))
 
-    # Camera/SCAM bus (bus 0) - ADAS_ACC_Status is sent by car when longActive is False
+    # Camera/SCAM bus (bus 2) - ADAS_ACC_Status is sent by car when longActive is False
     # When longActive is True, openpilot sends this message, so we don't need to read it
     messages_cam = [
       ("ADAS_ACC_Status", 50),
@@ -52,26 +62,25 @@ class CarState(CarStateBase):
     ret[Bus.chassis] = CANParser(DBC[CP.carFingerprint][Bus.chassis], messages_chassis, CANBUS.chassis)
     ret[Bus.cam] = CANParser(DBC[CP.carFingerprint][Bus.cam], messages_cam, CANBUS.cam)
 
-    # Info CAN bus (turn signals, blind spot monitor, etc.)
-    # Accessible via second panda or if info CAN is available
-
+    # InfoCAN bus (bus 5): turn signals, BSM, cruise set-speed buttons, TSR
     if Bus.body in DBC[CP.carFingerprint]:
       messages_info = [
         ("BCM_LIGHT", 10),      # Turn indicator status (BCM_TurnIndicatorSts)
         ("BCM_SwitchSts", 10),  # Turn indicator switch (BCM_TurnIndicator)
+        ("BCM_CLAMP_STAT", 10), # Brake light switch (STAT_BLS) on VF6 info bus
         ("ADAS_BSD", 10),       # Blind spot detection (ADAS_BSD)
         ("ADAS_CMP_ACC", 20),   # ADAS ACC status (ADAS_ACC_TagSpeed, ADAS_ACC_TimeGapSet)
-        ("ADAS_TSR_STATUS", 10), # Traffic Sign Recognition status (ADAS_TSR_Typ1, ADAS_TSR_Typ1_value for speed limits)
-        ("ADAS_Speed_Display", 10), # ISA speed limit display (ADAS_ISA_SpeedLimitCnt_Spd_Feed)
+        ("ADAS_TSR_STATUS", 10), # Traffic Sign Recognition status
+        ("ADAS_Speed_Display", 10), # ISA speed limit display
       ]
-      ret[Bus.body] = CANParser(DBC[CP.carFingerprint][Bus.body], messages_info, CANBUS.info)
+      ret[Bus.body] = CANParser(DBC[CP.carFingerprint][Bus.body], messages_info, CANBUS.info_bus(CP.carFingerprint))
 
     return ret
 
   def update(self, can_parsers) -> tuple[structs.CarState, structs.CarStateSP]:
     cp_chassis = can_parsers[Bus.chassis]
     cp_cam = can_parsers[Bus.cam]
-    cp_info = can_parsers.get(Bus.body)  # Info CAN bus (may not be available)
+    cp_info = can_parsers.get(Bus.body)  # InfoCAN bus (may not be available)
 
     ret = structs.CarState()
     ret_sp = structs.CarStateSP()
@@ -114,39 +123,66 @@ class CarState(CarStateBase):
       ret.steeringTorque = 0.0
       ret.steeringTorqueEps = 0.0
 
-    # Driver torque threshold: 2 Nm to detect driver input (driver torque is around 1 Nm)
-    # Use debounced detection (5 frames) to prevent chattering when torque fluctuates around threshold
-    # This matches how other angle control cars (Tesla, PSA, Rivian, Hyundai, Ford) handle steering detection
-    ret.steeringPressed = self.update_steering_pressed(abs(ret.steeringTorque) > 1.2, 5)
+    # Sticky driver takeover detection:
+    # - torque hysteresis (noise ~1 Nm) + OEM EPS_Drive_Intervention
+    # - fast engage / slow release so steerOverride does not ping-pong mid-turn
+    # - when EPS is angle-active, raise press threshold with |steerRate| so
+    #   torsion-bar reaction during OP large turns is not treated as driver input
+    eps_angle_active = False
+    if "EPS_Advanced" in cp_chassis.vl:
+      # EPSAngRespSts: 2 = active (lat control engaged)
+      eps_angle_active = cp_chassis.vl["EPS_Advanced"].get("EPSAngRespSts", 0) == 2
 
-    # Gear position from VCU_AVAS_GearPosition_ECU message on chassis bus
-    # ActualGearShiftPosition: 0-7 (3 bits)
-    # Typical mapping: 0=Park, 1=Reverse, 2=Neutral, 3=Drive, 4=Sport, etc.
-    if "VCU_AVAS_GearPosition_ECU" in cp_chassis.vl:
-      gear_value = cp_chassis.vl["VCU_AVAS_GearPosition_ECU"].get("ActualGearShiftPosition", 3)
-      # Map gear values to GearShifter enum
-      # 0 = Park, 1 = Reverse, 2 = Neutral, 3 = Drive, 4+ = Sport/other modes
-      gear_map = {
-        0: structs.CarState.GearShifter.park,
-        1: structs.CarState.GearShifter.reverse,
-        2: structs.CarState.GearShifter.neutral,
-        3: structs.CarState.GearShifter.drive,
-        4: structs.CarState.GearShifter.sport,  # Sport mode
-        5: structs.CarState.GearShifter.sport,  # Additional sport modes
-        6: structs.CarState.GearShifter.low,     # Low gear
-        7: structs.CarState.GearShifter.drive,   # Fallback to drive
-      }
-      ret.gearShifter = gear_map.get(gear_value, structs.CarState.GearShifter.unknown)
+    press_nm = CarControllerParams.STEER_DRIVER_PRESS_NM
+    if eps_angle_active:
+      press_nm = min(
+        CarControllerParams.STEER_PRESS_NM_MAX,
+        press_nm + CarControllerParams.STEER_PRESS_RATE_GAIN * abs(ret.steeringRateDeg),
+      )
+
+    torque_abs = abs(ret.steeringTorque)
+    if torque_abs > press_nm:
+      self.steering_pressed_latched = True
+    elif torque_abs < CarControllerParams.STEER_DRIVER_RELEASE_NM:
+      self.steering_pressed_latched = False
+
+    eps_drive_intervention = False
+    if "EPS_SteeringHoldState" in cp_chassis.vl:
+      # Only trust OEM intervention when torque also clears the rate-aware press
+      # threshold — the flag alone can follow torsion-bar spikes on OP turns.
+      eps_drive_intervention = (
+        cp_chassis.vl["EPS_SteeringHoldState"].get("EPS_Drive_Intervention", 0) == 1
+        and torque_abs > press_nm
+      )
+
+    raw_pressed = self.steering_pressed_latched or eps_drive_intervention
+    if raw_pressed:
+      self.steering_release_cnt = 0
+      self.steering_press_cnt = min(
+        self.steering_press_cnt + 1, CarControllerParams.STEER_PRESSED_MIN_COUNT
+      )
+      if self.steering_press_cnt >= CarControllerParams.STEER_PRESSED_MIN_COUNT:
+        self.steering_pressed = True
     else:
-      # Fallback to drive if message not available
-      ret.gearShifter = structs.CarState.GearShifter.drive
+      self.steering_press_cnt = 0
+      self.steering_release_cnt = min(
+        self.steering_release_cnt + 1, CarControllerParams.STEER_RELEASE_MIN_COUNT
+      )
+      if self.steering_release_cnt >= CarControllerParams.STEER_RELEASE_MIN_COUNT:
+        self.steering_pressed = False
+    ret.steeringPressed = self.steering_pressed
+
+    # Gear - not accessible on comma3x (Body CAN not connected)
+    # TODO: Implement proper gear detection from CAN messages
+    # For now, fake gear position as always Drive (D)
+    ret.gearShifter = structs.CarState.GearShifter.drive
 
     # Doors - not accessible on comma3x (Body CAN not connected)
     # Set to False as fallback
     ret.doorOpen = False
 
     # Cruise control
-    # ADAS_ACC_Status on camera bus (bus 0):
+    # ADAS_ACC_Status on camera bus (bus 2):
     # - When longActive is False: car sends this message, read it to determine cruise state
     # - When longActive is True: openpilot sends this message, ignore car's message
     # Read from camera bus to get cruise control status from car
@@ -170,8 +206,7 @@ class CarState(CarStateBase):
       ret.cruiseState.enabled = False
     ret.cruiseState.standstill = ret.standstill
 
-    # Set speed and distance gap from ADAS_CMP_ACC on InfoCAN bus (bus 6)
-    # Always read these values regardless of openpilotLongitudinalControl status
+    # Set speed / distance gap / cruise buttons from ADAS_CMP_ACC on InfoCAN (bus 5)
     # ADAS_ACC_TagSpeed: Set speed in km/h (0-255, 0xFF = invalid)
     # ADAS_ACC_TimeGapSet: Time gap setting (0 = no gap, 1-4 = distance levels 1-4)
     # ADAS_ACC_SpdSet_upper_Feed: Speed increase button (0 = not pressed, 1 = pressed)
@@ -179,38 +214,33 @@ class CarState(CarStateBase):
     button_events = []
     if cp_info is not None and "ADAS_CMP_ACC" in cp_info.vl:
       adas_acc = cp_info.vl["ADAS_CMP_ACC"]
-      # Get set speed from ADAS_ACC_TagSpeed (in km/h)
-      # This is used by openpilot longitudinal when pcmCruiseSpeed is True
-      # Only update cruiseState.speed when we have a valid tag speed
-      tag_speed_kmh = adas_acc.get("ADAS_ACC_TagSpeed", 0)
+
+      # SpdSet feed from ADAS_CMP_ACC (MFS_Control_Button 0x3F7 is not on VF6 comma3x info bus)
+      speed_button_upper = int(adas_acc.get("ADAS_ACC_SpdSet_upper_Feed", 0) or 0)
+      speed_button_lower = int(adas_acc.get("ADAS_ACC_SpdSet_lower_Feed", 0) or 0)
+      button_events.extend(create_button_events(
+        speed_button_upper, self.prev_speed_button_upper,
+        {1: ButtonType.accelCruise},
+      ))
+      button_events.extend(create_button_events(
+        speed_button_lower, self.prev_speed_button_lower,
+        {1: ButtonType.decelCruise},
+      ))
+      self.prev_speed_button_upper = speed_button_upper
+      self.prev_speed_button_lower = speed_button_lower
+
+      # Set speed from raw ADAS_ACC_TagSpeed (km/h); 0 = off, 255 = invalid
+      tag_speed_kmh = int(adas_acc.get("ADAS_ACC_TagSpeed", 0) or 0)
       if tag_speed_kmh != 255:
-        # Valid value (including 0): update cruise speed
-        # 0 means cruise is off, > 0 means valid set speed
         if tag_speed_kmh > 0:
-          # Valid speed: convert from km/h to m/s and set cruise speed
-          # Clamp to openpilot's maximum (145 km/h) to allow speeds above car's limit
           from openpilot.selfdrive.car.cruise import V_CRUISE_MAX
-          tag_speed_kmh_clamped = min(tag_speed_kmh, V_CRUISE_MAX)
-          cruise_speed_ms = tag_speed_kmh_clamped * CV.KPH_TO_MS
+          tag_speed_kmh = min(tag_speed_kmh, V_CRUISE_MAX)
+          cruise_speed_ms = tag_speed_kmh * CV.KPH_TO_MS
           ret.cruiseState.speed = cruise_speed_ms
           ret.cruiseState.speedCluster = cruise_speed_ms
-          # Store as last valid speed
-          self.last_valid_cruise_speed = cruise_speed_ms
         else:
-          # tag_speed == 0: cruise is off, but preserve last valid speed for UI display
-          # Set to 0 only if we've never seen a valid speed
-          if self.last_valid_cruise_speed > 0:
-            ret.cruiseState.speed = self.last_valid_cruise_speed
-            ret.cruiseState.speedCluster = self.last_valid_cruise_speed
-          else:
-            ret.cruiseState.speed = 0.0
-            ret.cruiseState.speedCluster = 0.0
-      else:
-        # If tag_speed is 255 (invalid/unset), use last valid speed to preserve UI display
-        if self.last_valid_cruise_speed > 0:
-          ret.cruiseState.speed = self.last_valid_cruise_speed
-          ret.cruiseState.speedCluster = self.last_valid_cruise_speed
-        # If no last valid speed, don't update (preserves previous value or defaults to 0)
+          ret.cruiseState.speed = 0.0
+          ret.cruiseState.speedCluster = 0.0
 
       # ACC popup feed from ADAS_CMP_ACC message
       # ADAS_ACC_PopUp_Feed: 3 = "Press gas pedal to re-engage the function"
@@ -231,28 +261,6 @@ class CarState(CarStateBase):
           ret_sp.leadDistanceBars = self.last_valid_time_gap
         # Otherwise, don't set leadDistanceBars (keep default)
 
-      # Parse speed set buttons from car
-      # ADAS_ACC_SpdSet_upper_Feed: 0 = not pressed, 1 = pressed (speed increase)
-      # ADAS_ACC_SpdSet_lower_Feed: 0 = not pressed, 1 = pressed (speed decrease)
-      # Detect transitions from 0 to 1 (button press) to create button events
-      speed_button_upper = adas_acc.get("ADAS_ACC_SpdSet_upper_Feed", 0)
-      speed_button_lower = adas_acc.get("ADAS_ACC_SpdSet_lower_Feed", 0)
-
-      # Create button events when buttons transition from 0 to 1 (pressed)
-      # Use create_button_events helper: (current, previous, mapping_dict)
-      # Mapping: 1 = button pressed -> ButtonType.accelCruise or ButtonType.decelCruise
-      button_events.extend(create_button_events(
-        speed_button_upper, self.prev_speed_button_upper,
-        {1: ButtonType.accelCruise}
-      ))
-      button_events.extend(create_button_events(
-        speed_button_lower, self.prev_speed_button_lower,
-        {1: ButtonType.decelCruise}
-      ))
-
-      # Store current state for next iteration
-      self.prev_speed_button_upper = speed_button_upper
-      self.prev_speed_button_lower = speed_button_lower
     else:
       # ADAS_CMP_ACC not available - set acc_popup_feed to 0
       self.acc_popup_feed = 0
@@ -292,10 +300,8 @@ class CarState(CarStateBase):
     else:
       ret.yawRate = 0.0
 
-    # Turn signals and blind spot monitor from Info CAN bus
-    # BCM_TurnIndicatorSts: 0 = OFF, 1 = LEFT, 2 = RIGHT, 3 = INVALID
-    # BCM_TurnIndicator: 0 = OFF, 1 = LEFT, 2 = RIGHT, 3 = INVALID
-    # ADAS_BSD_IndLeft/IndRight: 0 = off, 1 = on (warning stage 1), 2 = flashing (warning stage 2), 3 = sensor fault
+    # Turn signals + BSM from InfoCAN (bus 5)
+    # BCM_TurnIndicatorSts: 0=OFF, 1=LEFT, 2=RIGHT; ADAS_BSD_IndLeft/IndRight: 0/3=off, 1=on, 2=flash
     if cp_info is not None:
       # Turn signals - prefer BCM_TurnIndicatorSts (status) over BCM_TurnIndicator (switch)
       if "BCM_LIGHT" in cp_info.vl:
@@ -323,7 +329,7 @@ class CarState(CarStateBase):
         ret.leftBlindspot = False
         ret.rightBlindspot = False
     else:
-      # Info CAN bus not available - set defaults
+      # InfoCAN bus not available - set defaults
       ret.leftBlinker = False
       ret.rightBlinker = False
       ret.leftBlindspot = False
@@ -361,6 +367,24 @@ class CarState(CarStateBase):
       ret_sp.speedLimit = 0.0
       self.last_valid_speed_limit = 0.0
 
-    # TODO: Add more signals as needed (brake, gas, seatbelt, etc.)
+    if "IDB_Info_Flag" in cp_chassis.vl:
+      self.idb_info_flag = dict(cp_chassis.vl["IDB_Info_Flag"])
+
+    if "ADAS_ACC_Status" in cp_cam.vl:
+      cam_acc = cp_cam.vl["ADAS_ACC_Status"]
+      mode = cam_acc.get("ADAS_ACC_Mode")
+      if mode is not None:
+        self.scam_acc_mode = int(mode)
+      cmd = cam_acc.get("ADAS_ACC_AccelDecel_Cmd", 0)
+      if cmd is not None:
+        self.scam_accel_cmd = float(cmd)
+
+    if "BCM_CLAMP_STAT" in cp_chassis.vl:
+      ret.brakePressed = cp_chassis.vl["BCM_CLAMP_STAT"].get("STAT_BLS", 0) == 1
+    elif cp_info is not None and "BCM_CLAMP_STAT" in cp_info.vl:
+      ret.brakePressed = cp_info.vl["BCM_CLAMP_STAT"].get("STAT_BLS", 0) == 1
+    else:
+      ret.brakePressed = False
 
     return ret, ret_sp
+

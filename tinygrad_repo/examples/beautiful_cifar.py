@@ -2,7 +2,6 @@ import time
 start_tm = time.perf_counter()
 import math
 from typing import Tuple, cast
-import numpy as np
 from tinygrad import Tensor, nn, GlobalCounters, TinyJit, dtypes, Device
 from tinygrad.helpers import partition, trange, getenv, Context
 from extra.lr_scheduler import OneCycleLR
@@ -11,7 +10,7 @@ GPUS = [f'{Device.DEFAULT}:{i}' for i in range(getenv("GPUS", 1))]
 
 # override tinygrad defaults
 dtypes.default_float = dtypes.half
-Context(FUSE_ARANGE=1, FUSE_OPTIM=1).__enter__()
+Context(FUSE_OPTIM=1).__enter__()
 
 # from https://github.com/tysam-code/hlb-CIFAR10/blob/main/main.py
 batchsize = getenv("BS", 1024)
@@ -68,8 +67,8 @@ class ConvGroup:
     self.conv2 = nn.Conv2d(channels_out, channels_out, kernel_size=3, padding=1, bias=False)
     self.norm1 = nn.BatchNorm(channels_out, track_running_stats=False, eps=1e-12, momentum=hyp['net']['batch_norm_momentum'])
     self.norm2 = nn.BatchNorm(channels_out, track_running_stats=False, eps=1e-12, momentum=hyp['net']['batch_norm_momentum'])
-    cast(Tensor, self.norm1.weight).requires_grad = False
-    cast(Tensor, self.norm2.weight).requires_grad = False
+    cast(Tensor, self.norm1.weight).is_param_(False)
+    cast(Tensor, self.norm2.weight).is_param_(False)
   def __call__(self, x:Tensor) -> Tensor:
     x =    self.norm1(self.conv1(x).max_pool2d().float()).cast(dtypes.default_float).quick_gelu()
     return self.norm2(self.conv2(x).float()).cast(dtypes.default_float).quick_gelu() + x
@@ -150,13 +149,12 @@ if __name__ == "__main__":
       acc.append((out.argmax(-1) == Y).sum() / eval_batchsize)
     return Tensor.stack(*loss).mean() / (batchsize*loss_batchsize_scaler), Tensor.stack(*acc).mean()
 
-  np.random.seed(1337)
+  Tensor.manual_seed(1337)
+  num_train_samples = X_train.shape[0]
+
   for epoch in range(math.ceil(hyp['misc']['train_epochs'])):
-    # TODO: move to tinygrad
     gst = time.perf_counter()
-    idxs = np.arange(X_train.shape[0])
-    np.random.shuffle(idxs)
-    tidxs = Tensor(idxs, dtype='int')[:num_steps_per_epoch*batchsize].reshape(num_steps_per_epoch, batchsize)  # NOTE: long doesn't fold
+    tidxs = Tensor.randperm(num_train_samples, dtype='int')[:num_steps_per_epoch*batchsize].reshape(num_steps_per_epoch, batchsize)
     train_loss:float = 0
     for epoch_step in (t:=trange(num_steps_per_epoch)):
       st = time.perf_counter()

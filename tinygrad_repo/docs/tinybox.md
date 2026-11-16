@@ -6,7 +6,7 @@ If you don't have a tinybox and you want one, see [tinygrad.org](https://tinygra
 
 ## Welcome
 
-Welcome to your tinybox! The tinybox is the universal system purpose-built for all AI infrastructure and workloads, from training to inference. The red box includes six 7900XTX GPUs, and the green box includes six 4090 GPUs. Whether you bought a red one or a green one, we want you to love it.
+Welcome to your tinybox! The tinybox is the universal system purpose-built for all AI infrastructure and workloads, from training to inference. The red box includes six 7900XTX GPUs, the green box includes six 4090 GPUs, and the green v2 box includes four 5090 GPUs. Whether you bought a red one or a green one, we want you to love it.
 
 We don't have a stupid cloud service, you don't have to create a tiny account to set it up, and we aren't tracking how you use the box. We're just happy you bought one. This petaflop is your petaflop.
 
@@ -41,7 +41,7 @@ The BMC also has a web interface you can use if you find that easier.
 It is recommended that you change the BMC password after setting up the box, as the password on the screen is only the initial password.
 
 If you do decide to change the BMC password and no longer want the initial password to be displayed, remove the `/root/.bmc_password` file.
-Reboot after making these changes or restart the `displayservice.service` service.
+Reboot after making these changes or restart the `tinybox-display.service` service.
 
 ## What do I use it for?
 

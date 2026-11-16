@@ -6,7 +6,7 @@ import time
 import signal
 import subprocess
 
-from panda import Panda, PandaDFU, PandaProtocolMismatch, FW_PATH
+from panda import Panda, PandaDFU, PandaProtocolMismatch, FW_PATH, McuType
 from openpilot.common.basedir import BASEDIR
 from openpilot.common.params import Params
 from openpilot.system.hardware import HARDWARE
@@ -15,7 +15,8 @@ from openpilot.common.swaglog import cloudlog
 
 def get_expected_signature(panda: Panda) -> bytes:
   try:
-    fn = os.path.join(FW_PATH, panda.get_mcu_type().config.app_fn)
+    mcu = panda.get_mcu_type() if hasattr(panda, "get_mcu_type") else McuType.H7
+    fn = os.path.join(FW_PATH, mcu.config.app_fn)
     return Panda.get_signature_from_firmware(fn)
   except Exception:
     cloudlog.exception("Error computing expected signature")
@@ -72,8 +73,7 @@ def check_panda_support(panda) -> bool:
   # A panda is supported if it's not deprecated
   if hw_type in Panda.DEPRECATED_DEVICES:
     return False
-
-    return True
+  return True
 
 
 def main() -> None:
@@ -144,6 +144,12 @@ def main() -> None:
       # * as a last resort, sort by serial number
       pandas.sort(key=lambda x: (not x.is_internal(), x.get_type(), x.get_usb_serial()))
       panda_serials = [p.get_usb_serial() for p in pandas]
+
+      # Dual-Panda A/B: internal first. Set SINGLE_PANDA=1 to use only the first panda.
+      if os.environ.get("SINGLE_PANDA"):
+        pandas = pandas[:1]
+        panda_serials = [p.get_usb_serial() for p in pandas]
+        cloudlog.warning("SINGLE_PANDA: using first Panda only: %s", panda_serials)
 
       # log panda fw versions
       params.put("PandaSignatures", b','.join(p.get_signature() for p in pandas))

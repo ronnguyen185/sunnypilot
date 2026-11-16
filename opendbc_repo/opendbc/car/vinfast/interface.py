@@ -3,7 +3,7 @@ from opendbc.car.interfaces import CarInterfaceBase
 from opendbc.car.vinfast.carcontroller import CarController
 from opendbc.car.vinfast.carstate import CarState
 from opendbc.car.vinfast.radar_interface import RadarInterface
-from opendbc.car.vinfast.values import CAR, CANBUS
+from opendbc.car.vinfast.values import CAR, CANBUS, is_vf6_safety_platform
 from openpilot.common.params import Params
 
 
@@ -15,7 +15,10 @@ class CarInterface(CarInterfaceBase):
   @staticmethod
   def _get_params(ret: structs.CarParams, candidate, fingerprint, car_fw, alpha_long, is_release, docs) -> structs.CarParams:
     ret.brand = "vinfast"
-    ret.safetyConfigs = [get_safety_config(structs.CarParams.SafetyModel.vinfast)]
+    safety_model = (structs.CarParams.SafetyModel.vinfastVf6
+                    if is_vf6_safety_platform(candidate)
+                    else structs.CarParams.SafetyModel.vinfast)
+    ret.safetyConfigs = [get_safety_config(safety_model)]
 
     # Angle-based lateral control setup (VF8 uses angle controller)
     ret.steerControlType = structs.CarParams.SteerControlType.angle
@@ -31,7 +34,8 @@ class CarInterface(CarInterfaceBase):
 
     # Longitudinal control setup
     # Default to stock longitudinal (car's ACC) - user can enable openpilot longitudinal via alpha_long
-    ret.radarUnavailable = False  # Disable radar interface (set to False to enable)
+    # VF6: enable radar bus 1 and InfoCAN bus 5 in hardware; no radar DBC yet.
+    ret.radarUnavailable = is_vf6_safety_platform(candidate)
     ret.alphaLongitudinalAvailable = True  # Enable experimental longitudinal control toggle
 
     # Check for temporary override to use stock longitudinal even when alpha_long is enabled
@@ -96,93 +100,76 @@ class CarInterface(CarInterfaceBase):
     # AutoLaneChangeTimer enum: TWO_SECONDS = 4.
     if params.get("AutoLaneChangeTimer") is None:
       params.put("AutoLaneChangeTimer", "4")
+    # VF6/VF7 Plus: default alpha longitudinal + experimental mode on first boot
+    if is_vf6_safety_platform(CP.carFingerprint):
+      if params.get("AlphaLongitudinalEnabled") is None:
+        params.put_bool("AlphaLongitudinalEnabled", True)
+      if params.get("ExperimentalMode") is None:
+        params.put_bool("ExperimentalMode", True)
 
-    def configure_bus1():
-      """Configure bus 1 for CAN-FD on the SPI panda. Returns True if successful."""
-      try:
-        from panda import Panda
+    def _open_pandas():
+      from panda import Panda
 
-        # Find and connect to the SPI panda specifically
-        # CAN-FD must be configured on the panda with SPI interface
-        panda = None
-        spi_serial = None
-
-        # Try to get SPI panda serial
+      pandas = []
+      seen = set()
+      for serial in Panda.list() or []:
         try:
-          spi_list = Panda.spi_list()
-          if spi_list:
-            spi_serial = spi_list[0]
+          p = Panda(serial=serial)
+          pandas.append(p)
+          seen.add(p.get_usb_serial())
         except Exception:
-          pass
+          continue
+      # SPI/internal last-resort if list() missed it
+      try:
+        for serial in (Panda.spi_list() or []):
+          if serial in seen:
+            continue
+          pandas.append(Panda(serial=serial))
+      except Exception:
+        pass
+      pandas.sort(key=lambda x: (not getattr(x, "is_internal", lambda: False)(), x.get_usb_serial() or ""))
+      return pandas
 
-        # Try to connect to SPI panda
-        if spi_serial:
-          try:
-            # Connect to specific SPI panda by serial
-            panda = Panda(serial=spi_serial)
-            # Verify it's actually connected via SPI
-            if not panda.spi:
-              # Not SPI, try to find SPI panda from list
-              panda.close()
-              panda = None
-          except Exception:
-            panda = None
-
-        # If we couldn't connect to SPI panda by serial, try connecting without serial
-        # (Panda() tries USB first, then SPI, so this should find SPI if available)
-        if panda is None:
-          try:
-            panda = Panda()
-            # If it connected via USB, we need to find the SPI one
-            if not panda.spi:
-              panda.close()
-              # List all pandas and try to find SPI one
-              all_pandas = Panda.list()
-              for serial in all_pandas:
-                try:
-                  test_panda = Panda(serial=serial)
-                  if test_panda.spi:
-                    panda = test_panda
-                    break
-                  test_panda.close()
-                except Exception:
-                  continue
-          except Exception:
-            pass
-
-        if panda is None or not panda.spi:
-          # Could not find SPI panda
+    def configure_buses():
+      """Enable radar bus 1 (CAN-FD) and VF6 InfoCAN bus 5. Returns True if any panda was configured."""
+      try:
+        pandas = _open_pandas()
+        if not pandas:
           return False
 
-        # Enable bus 1 for radar (required for CAN-FD to work)
-        panda.set_can_enable(CANBUS.radar, True)
-
-        # Set CAN-FD speeds explicitly (like vinfast_set_safety.py does)
-        panda.set_can_speed_kbps(CANBUS.radar, 500)  # Nominal: 500 kbps
-        panda.set_can_data_speed_kbps(CANBUS.radar, 2000)  # Data: 2000 kbps (enables CAN-FD)
-
-        # Disable auto-detection to use explicit speeds
-        panda.set_canfd_auto(CANBUS.radar, False)
-
-        panda.close()
-        return True
+        ok = False
+        for i, panda in enumerate(pandas):
+          try:
+            if i == 0:
+              # First panda: radar on physical bus 1 (logical bus 1)
+              panda.set_can_enable(CANBUS.radar, True)
+              panda.set_can_speed_kbps(CANBUS.radar, 500)
+              panda.set_can_data_speed_kbps(CANBUS.radar, 2000)
+              panda.set_canfd_auto(CANBUS.radar, False)
+              ok = True
+            else:
+              # Second panda: InfoCAN on physical bus 1 (logical bus 5)
+              if is_vf6_safety_platform(CP.carFingerprint):
+                panda.set_can_enable(1, True)
+                panda.set_can_speed_kbps(1, 500)
+                ok = True
+          finally:
+            try:
+              panda.close()
+            except Exception:
+              pass
+        return ok
       except Exception:
         return False
 
     def delayed_config_thread():
-      """Wait 10 seconds after safety mode is set, then try to configure CAN-FD once."""
-      # Wait 10 seconds for pandad to finish setting safety mode
+      """Wait 10 seconds after safety mode is set, then configure buses once."""
       time.sleep(10.0)
-
-      # Try to configure CAN-FD once
       try:
-        configure_bus1()
+        configure_buses()
       except Exception:
         pass
 
-      # Thread exits after one attempt - no background checking
-
-    # Start thread that waits 10 seconds then tries once
-    config_thread = threading.Thread(target=delayed_config_thread, daemon=True, name="VinFastBus1Config")
+    config_thread = threading.Thread(target=delayed_config_thread, daemon=True, name="VinFastBusConfig")
     config_thread.start()
 

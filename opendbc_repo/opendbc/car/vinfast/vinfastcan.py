@@ -1,6 +1,10 @@
 from opendbc.can import CANPacker
 from opendbc.car import structs
-from opendbc.car.vinfast.values import CarControllerParams, CANBUS
+from opendbc.car.vinfast.values import CAR, CarControllerParams, CANBUS, is_vf6_safety_platform
+
+
+def _vf6_combined_long(CP) -> bool:
+  return is_vf6_safety_platform(CP.carFingerprint)
 
 # CRC-8 lookup table for VinFast checksum (from /data/card implementation)
 VINFAST_CRC8_TABLE = [
@@ -61,20 +65,18 @@ def create_steering_control(packer, CP, frame, apply_angle, lat_active):
     VF8 uses angle-based steering control
     """
     alive = frame % 15
-    
-    # Adaptive torque factor based on angle request
-    # Min: 0.2 for small angles, Max: 0.5 for large angles
-    # Scale linearly from 0.2 to 0.5 based on absolute angle
-    # Use 30 degrees as the reference for maximum torque (full lock is typically ~90 degrees)
-    abs_angle = abs(apply_angle) if lat_active else 0.0
-    max_angle_for_full_torque = 300.0  # degrees - angle at which we reach max torque factor
-    min_torque_factor = 0.5
-    max_torque_factor = 0.6
-    
-    if abs_angle >= max_angle_for_full_torque:
-        torque_factor = max_torque_factor
+
+    if _vf6_combined_long(CP):
+      torque_factor = 0.6
     else:
-        # Linear interpolation: 0 degrees -> 0.2, max_angle_for_full_torque degrees -> 0.5
+      # VF8/VF9: adaptive torque factor based on angle request
+      abs_angle = abs(apply_angle) if lat_active else 0.0
+      max_angle_for_full_torque = 300.0
+      min_torque_factor = 0.5
+      max_torque_factor = 0.6
+      if abs_angle >= max_angle_for_full_torque:
+        torque_factor = max_torque_factor
+      else:
         torque_factor = min_torque_factor + (max_torque_factor - min_torque_factor) * (abs_angle / max_angle_for_full_torque)
     
     values = {
@@ -90,37 +92,118 @@ def create_steering_control(packer, CP, frame, apply_angle, lat_active):
     return _apply_checksum(packer, "ADAS_EPS_LATE_CON", CANBUS.chassis, "CHKSM_ADAS_EPS_LATE_CON", values)
 
 
-def create_acc_control(packer, CP, frame, accel, long_active, standstill, acc_popup_feed=0, reengage_active=False):
+def create_acc_control(packer, CP, frame, accel, long_active, standstill, acc_popup_feed=0,
+                       reengage_active=False, brake_pressed=False, transition_flag=False,
+                       scam_acc_mode=None):
     """
     Create ACC control message (ADAS_ACC_Status)
     Message ID: 0x32D (813 decimal)
+
+    VF6 openpilot long: combined joystick hybrid stop-and-go timing.
+    VF8/VF9 openpilot long: original standstill-aligned ACC control.
     """
     alive = frame % 15
+    op_long = CP.openpilotLongitudinalControl
 
-    # Clip acceleration within allowed range (-6 to 6 m/s^2 based on DBC)
-    accel_cmd = max(-6.0, min(6.0, accel)) if long_active else 0.0
+    if op_long and _vf6_combined_long(CP):
+      # Hybrid mirror: follow SCAM acc_mode; send planner accel only in mode 4 (working.py)
+      ready_from_scam = (scam_acc_mode == 4)
+      if not ready_from_scam:
+        acc_mode = 3
+      elif brake_pressed:
+        acc_mode = 2
+        transition_flag = False
+      else:
+        acc_mode = scam_acc_mode if scam_acc_mode is not None else 3
 
-    # Keep standstill request aligned with actual vehicle state:
-    # if the vehicle is physically at standstill and long control is active,
-    # StandstillReq must be 1 (including during re-engage sessions).
-    standstill_req = 1 if (standstill and long_active) else 0
+      if acc_mode == 4 and long_active:
+        accel_cmd = max(-6.0, min(6.0, accel))
+      else:
+        accel_cmd = 0.0
+
+      if transition_flag:
+        standstill_req = 1
+      elif acc_mode == 4 and accel_cmd > 0:
+        standstill_req = 0
+      elif reengage_active and long_active and standstill:
+        standstill_req = 1
+      else:
+        standstill_req = 0
+
+      if acc_mode == 4:
+        if transition_flag:
+          dec_cmd_act = 1
+        elif accel_cmd < 0:
+          dec_cmd_act = 1
+        else:
+          dec_cmd_act = 0
+      else:
+        dec_cmd_act = 0
+
+      main_mode = 1 if acc_mode == 4 else 0
+    elif op_long:
+      accel_cmd = max(-6.0, min(6.0, accel)) if long_active else 0.0
+      standstill_req = 1 if (standstill and long_active) else 0
+      acc_mode = 4 if long_active else 2
+      dec_cmd_act = 1 if accel_cmd < 0 else 0
+      main_mode = 1 if long_active else 0
+    else:
+      accel_cmd = max(-6.0, min(6.0, accel)) if long_active else 0.0
+      standstill_req = 1 if (standstill and long_active) else 0
+      acc_mode = 4 if long_active else 2
+      dec_cmd_act = 1 if accel_cmd < 0 else 0
+      main_mode = 1 if long_active else 0
 
     values = {
         "CRC_ACC_STATUS": 0,  # will be calculated
         "Alive_ACC_STATUS": alive,
         "ADAS_ACC_Information": 0,
-        "ADAS_ACC_Main_Mode": 1 if long_active else 0,
+        "ADAS_ACC_Main_Mode": main_mode,
         "ADAS_ACC_AccelDecel_Cmd": accel_cmd,
         "ADAS_ACC_StandstillReq": standstill_req,
-        "ADAS_ACC_Mode": 4 if long_active else 2,
-        "ADAS_ACC_IDB_DecCmdAct": 1 if accel_cmd < 0 else 0,
+        "ADAS_ACC_Mode": acc_mode,
+        "ADAS_ACC_IDB_DecCmdAct": dec_cmd_act,
+    }
+    # VF6 only: 8-byte ADAS_ACC_Status includes SECCAN at byte 7 (VF8/VF9 use 5-byte)
+    if _vf6_combined_long(CP):
+        values["SECCAN_ADAS_ACC_Status"] = 0
+
+    bus = CANBUS.chassis if op_long else CANBUS.cam
+    return _apply_checksum(packer, "ADAS_ACC_Status", bus, "CRC_ACC_STATUS", values)
+
+
+def create_idb_info_flag(packer, frame, idb_info: dict, scam_acc_mode=None, scam_accel_cmd=0.0):
+    """
+    Create modified IDB_Info_Flag for SCAM bus (hybrid long-control bridge).
+
+    Forwards IDB status from chassis; a/d flags follow stock SCAM accel when SCAM
+    is Active (mode 4) — same as vinfast_combined_joystick_working.py --vinfast.
+    Message ID: 0x32F (815 decimal)
+    """
+    if scam_acc_mode == 4:
+      acc_decel_flag = 1 if scam_accel_cmd <= 0 else 0
+      acc_accel_flag = 1 if scam_accel_cmd > 0 else 0
+    else:
+      acc_decel_flag = 0
+      acc_accel_flag = 0
+
+    driver_override = idb_info.get("IDB_ACC_DriverOverride", 0)
+
+    values = {
+        "CHKSM_IDB_Info_Flag": 0,
+        "ALV_IDB_Info_Flag": frame % 15,
+        "IDB_ACC_Available_Flag": idb_info.get("IDB_ACC_Available_Flag", 1),
+        "IDB_ACC_Deceleration_Flag": acc_decel_flag,
+        "IDB_ACC_Acceleration_Flag": acc_accel_flag,
+        "IDB_RAEB_Active_Flag": idb_info.get("IDB_RAEB_Active_Flag", 0),
+        "IDB_RAEB_Available_Flag": idb_info.get("IDB_RAEB_Available_Flag", 0),
+        "IDB_AEB_Active_Flag": idb_info.get("IDB_AEB_Active_Flag", 0),
+        "IDB_AEB_Available_Flag": idb_info.get("IDB_AEB_Available_Flag", 0),
+        "IDB_ACC_DriverOverride": driver_override,
+        "SECCAN_IDB_Info_Flag": idb_info.get("SECCAN_IDB_Info_Flag", 0),
     }
 
-    # Send on chassis bus (bus 0) for longitudinal control
-    # When openpilot controls longitudinal, the message needs to be on chassis bus (bus 0)
-    # When using stock longitudinal, send on SCAM bus (bus 2) to match car's behavior
-    bus = CANBUS.chassis if CP.openpilotLongitudinalControl else CANBUS.cam
-    return _apply_checksum(packer, "ADAS_ACC_Status", bus, "CRC_ACC_STATUS", values)
+    return _apply_checksum(packer, "IDB_Info_Flag", CANBUS.cam, "CHKSM_IDB_Info_Flag", values)
 
 
 def create_lka_control(packer, CP, frame, lat_active):

@@ -1,11 +1,12 @@
 import math
+import numpy as np
 from cereal import car
 from opendbc.can import CANPacker
 from opendbc.car import Bus, structs
 from opendbc.car.interfaces import CarControllerBase
-from opendbc.car.lateral import apply_std_steer_angle_limits
+from opendbc.car.lateral import AngleSteeringLimits, apply_std_steer_angle_limits
 from opendbc.car.vinfast import vinfastcan
-from opendbc.car.vinfast.values import CarControllerParams, CANBUS
+from opendbc.car.vinfast.values import CAR, CarControllerParams, CANBUS, is_vf6_safety_platform
 
 VisualAlert = structs.CarControl.HUDControl.VisualAlert
 
@@ -33,7 +34,16 @@ class CarController(CarControllerBase):
     self.reengage_lead_class = LEAD_CLASS_NONE
     self.reengage_boost_frames = 0
     self.reengage_standstill_armed = False
+    self.reengage_popup_prev = False
+    self.prev_long_engaged = False
+    self.prev_scam_acc_mode = None
     self.final_accel_cmd = 0.0  # Track final acceleration command (what we send via CAN)
+
+  def _steer_angle_max(self, v_ego: float) -> float:
+    lookup = getattr(self.params, 'ANGLE_MAX_LOOKUP', None)
+    if lookup is not None:
+      return float(np.interp(v_ego, lookup[0], lookup[1]))
+    return self.params.ANGLE_LIMITS.STEER_ANGLE_MAX
 
   def update(self, CC, CC_SP, CS, now_nanos):
     can_sends = []
@@ -42,28 +52,36 @@ class CarController(CarControllerBase):
     # Get desired steering angle from actuators (in degrees)
     desired_angle = CC.actuators.steeringAngleDeg
 
-    # Check if desired angle exceeds limit - if so, don't send angle command
-    angle_limit = self.params.ANGLE_LIMITS.STEER_ANGLE_MAX
-    angle_exceeds_limit = abs(desired_angle) > angle_limit if CC.latActive else False
+    angle_limit = self._steer_angle_max(CS.out.vEgoRaw)
+    # Clip to speed-dependent max (VF6) or static STEER_ANGLE_MAX (VF8/VF9), then rate-limit.
+    # Do not drop lat_active when planner requests past limit — that sent AOLReq=0 and released EPS.
+    if CC.latActive:
+      desired_angle = float(np.clip(desired_angle, -angle_limit, angle_limit))
 
-    # Apply angle rate limiting using standard function
-    # This function automatically sets angle to current steering angle when latActive is False
-    # Rate limiting is speed-dependent and matches vinfast.h safety code limits
+    # VF6: pass speed-dependent max into rate limiter (OEM current table, not static 180°)
+    angle_limits = self.params.ANGLE_LIMITS
+    if getattr(self.params, 'ANGLE_MAX_LOOKUP', None) is not None:
+      angle_limits = AngleSteeringLimits(
+        angle_limit,
+        self.params.ANGLE_LIMITS.ANGLE_RATE_LIMIT_UP,
+        self.params.ANGLE_LIMITS.ANGLE_RATE_LIMIT_DOWN,
+      )
+
     apply_angle = apply_std_steer_angle_limits(
       desired_angle,
       self.apply_angle_last,
       CS.out.vEgoRaw,
       CS.out.steeringAngleDeg,
       CC.latActive,
-      self.params.ANGLE_LIMITS
+      angle_limits,
     )
+    apply_angle = float(np.clip(apply_angle, -angle_limit, angle_limit))
 
     # Store for next iteration (rate limiting)
     self.apply_angle_last = apply_angle
 
     # Send steering control at 100Hz (every frame at 100Hz loop)
-    # When angle exceeds limit, don't send angle command (set lat_active to False)
-    effective_lat_active = CC.latActive and not angle_exceeds_limit
+    effective_lat_active = CC.latActive
     can_sends.append(vinfastcan.create_steering_control(
       self.packer,
       self.CP,
@@ -83,8 +101,21 @@ class CarController(CarControllerBase):
 
     # Longitudinal control at 50Hz
     if self.frame % 2 == 0:
+      vf6_combined_long = is_vf6_safety_platform(self.CP.carFingerprint)
+      brake_pressed = getattr(CS.out, 'brakePressed', False) if vf6_combined_long else False
+      scam_acc_mode = getattr(CS, 'scam_acc_mode', None) if vf6_combined_long else None
+      scam_accel_cmd = getattr(CS, 'scam_accel_cmd', 0.0) if vf6_combined_long else 0.0
+      # Hybrid: Standby→Active edge on SCAM (working.py --vinfast)
+      transition_flag = (
+        vf6_combined_long and self.prev_scam_acc_mode == 3 and scam_acc_mode == 4
+      )
+      long_engaged = (
+        CC.longActive and not brake_pressed and scam_acc_mode == 4
+        if vf6_combined_long else CC.longActive
+      )
+
       if self.CP.openpilotLongitudinalControl:
-        # OpenPilot longitudinal: send acceleration commands on chassis bus (bus 2)
+        # OpenPilot longitudinal: send acceleration commands on chassis bus
         # Get acc_popup_feed for standstill request logic FIRST
         acc_popup_feed = getattr(CS, 'acc_popup_feed', 0)
         
@@ -95,13 +126,15 @@ class CarController(CarControllerBase):
 
         # Reengage latch:
         # - If popup feed == 3 while longActive => latch reengage_active True
-        # - Stays active until: road clear, lead moving away, or vEgo > 10 km/h
+        # - Stays active until: road clear, lead moving away, or speed-based handoff
+        popup_reengage_req = (acc_popup_feed == 3) and CC.longActive
+        popup_reengage_trigger = popup_reengage_req and (not self.reengage_popup_prev)
         was_reengage_active = self.reengage_active
-        if (acc_popup_feed == 3) and CC.longActive:
+        if popup_reengage_req:
           self.reengage_active = True
         # Latch a short launch boost window whenever re-engage becomes active, so
         # every re-engage event gets the same instant 0.6 m/s^2 kick.
-        if self.reengage_active and (not was_reengage_active):
+        if popup_reengage_trigger or (self.reengage_active and (not was_reengage_active)):
           self.reengage_boost_frames = 60  # ~1.2s at 50Hz
         if self.reengage_active and (not CC.longActive):
           # Disengaged longitudinal: clear latch
@@ -127,14 +160,16 @@ class CarController(CarControllerBase):
 
         road_clear = (lead_distance == float('inf'))
         lead_moving_away = (not road_clear) and (lead_vRel > 0.5)
-        REENGAGE_HANDOFF_SPEED = 10.0 / 3.6
+        is_creeping = (not road_clear) and (lead_distance < 10.0) and (not lead_moving_away)
+        is_fast_resume = road_clear or lead_moving_away
+        REENGAGE_HANDOFF_SPEED = (5.0 / 3.6) if is_creeping else ((10.0 / 3.6) if is_fast_resume else (6.0 / 3.6))
 
         # ── Re-engage exit condition ──────────────────────────────────
         # Only hand off to model once ego speed is high enough for the
         # model to produce meaningful acceleration on its own.
-        # Road-clear / lead-moving-away are used below to skip the speed
-        # cap so the car can actually reach handoff speed.
-        if self.reengage_active and CS.out.vEgo > REENGAGE_HANDOFF_SPEED:
+        # Use a lower threshold in creeping traffic to keep re-engage
+        # conservative while still guaranteeing handoff.
+        if self.reengage_active and (not popup_reengage_trigger) and CS.out.vEgo > REENGAGE_HANDOFF_SPEED:
           self.reengage_active = False
           self.reengage_standstill_armed = False
         
@@ -144,8 +179,8 @@ class CarController(CarControllerBase):
         # ── Re-engage acceleration override ──────────────────────────────
         # Creeping (close/slow lead that isn't moving away): conservative
         # accel + speed cap at 5 km/h.
-        # Not creeping (road clear or lead far/moving away): stronger accel,
-        # no speed cap — car accelerates freely until handoff.
+        # Not creeping (road clear or lead far/moving away): stronger accel
+        # + speed cap at 6 km/h before handoff.
         if self.reengage_active and CC.longActive:
           # Re-arm launch boost whenever we are back at standstill in re-engage.
           # Then retrigger boost on the next standstill -> move-off transition.
@@ -155,7 +190,6 @@ class CarController(CarControllerBase):
             self.reengage_boost_frames = 60  # ~1.2s at 50Hz
             self.reengage_standstill_armed = False
 
-          is_creeping = (not road_clear) and (lead_distance < 10.0) and (not lead_moving_away)
           # Launch boost is capped at 0.6 m/s^2 for all re-engage starts.
           REENGAGE_LAUNCH_ACCEL = 0.6
           launch_boost_active = (CS.out.standstill or (CS.out.vEgo < 0.3) or
@@ -225,8 +259,8 @@ class CarController(CarControllerBase):
           if lead_moving_away and lead_distance > 6.0:
             accel_cmd = max(accel_cmd, 0.4 if CS.out.standstill else 0.2)
 
-          if is_creeping and accel_cmd > 0.0:
-            REENGAGE_MAX_SPEED_MS = 5.0 / 3.6
+          if accel_cmd > 0.0:
+            REENGAGE_MAX_SPEED_MS = (5.0 / 3.6) if is_creeping else ((10.0 / 3.6) if is_fast_resume else (6.0 / 3.6))
             REENGAGE_TAPER_START = REENGAGE_MAX_SPEED_MS * 0.7
             if CS.out.vEgo >= REENGAGE_MAX_SPEED_MS:
               accel_cmd = 0.0
@@ -277,18 +311,38 @@ class CarController(CarControllerBase):
           accel_cmd = max(self.params.ACCEL_MIN, min(self.params.ACCEL_MAX, accel_cmd))
         # Store final acceleration command for actuators override
         self.final_accel_cmd = accel_cmd
+
         # CRITICAL: Use our accel_cmd (not CC.actuators.accel) when sending CAN message
-        # During reengage, accel_cmd should be 0.2 (not -2.0 from model)
+        acc_kwargs = {}
+        if vf6_combined_long:
+          acc_kwargs = dict(
+            brake_pressed=brake_pressed,
+            transition_flag=transition_flag,
+            scam_acc_mode=scam_acc_mode,
+          )
         can_sends.append(vinfastcan.create_acc_control(
             self.packer,
             self.CP,
             self.frame // 2,
-            accel_cmd,  # Our override, NOT CC.actuators.accel
+            accel_cmd,
             CC.longActive,
             CS.out.standstill,
             acc_popup_feed,
-            self.reengage_active  # Pass reengage_active to ensure standstill_req is unset during reengage
+            self.reengage_active,
+            **acc_kwargs,
         ))
+
+        if vf6_combined_long:
+          idb_info = getattr(CS, 'idb_info_flag', None)
+          if idb_info:
+            can_sends.append(vinfastcan.create_idb_info_flag(
+              self.packer,
+              self.frame // 2,
+              idb_info,
+              scam_acc_mode=scam_acc_mode,
+              scam_accel_cmd=scam_accel_cmd,
+            ))
+
       else:
         # Stock longitudinal: enable/disable ACC, car handles speed control
         # When cancel is requested, disable ACC immediately
@@ -317,32 +371,45 @@ class CarController(CarControllerBase):
         ))
 
       # Send IDB control message at 50Hz (always send to keep message alive)
-      # Drive off request activates when:
-      # - OpenPilot is engaged (CC.enabled)
-      # - Car is at standstill (CS.out.standstill)
-      # - Long control state is "starting" (model says not shouldStop = time to go)
-      # OR when ACC popup feed = 3 (re-engage request - "Press gas pedal to re-engage the function")
       drive_off_request = 0
       acc_popup_feed = getattr(CS, 'acc_popup_feed', 0)
-      
-      # When ACC popup feed = 3, send IDB drive off request (re-engage) - requires CC.enabled
-      if CC.enabled and acc_popup_feed == 3:
-        drive_off_request = 1
-      # Normal drive off from standstill case
-      elif (CC.enabled and
-            CS.out.standstill and
-            CC.actuators.longControlState == car.CarControl.Actuators.LongControlState.starting):
-        drive_off_request = 1
 
-      # Always send IDB message at 50Hz to keep it alive (even when drive_off_request = 0)
-      # Send directly on chassis bus (bus 2) - safety code blocks IDB from SCAM->Chassis to prevent conflicts
-      # but openpilot sends its own IDB messages directly on chassis bus
+      if self.CP.openpilotLongitudinalControl:
+        if CC.enabled and acc_popup_feed == 3:
+          drive_off_request = 1
+        elif vf6_combined_long:
+          accel_for_drive = self.final_accel_cmd if CC.longActive else 0.0
+          if transition_flag:
+            drive_off_request = 0
+          elif long_engaged and accel_for_drive > 0:
+            drive_off_request = 1
+        elif (CC.enabled and
+              CS.out.standstill and
+              CC.actuators.longControlState == car.CarControl.Actuators.LongControlState.starting):
+          drive_off_request = 1
+      else:
+        if CC.enabled and acc_popup_feed == 3:
+          drive_off_request = 1
+        elif (CC.enabled and
+              CS.out.standstill and
+              CC.actuators.longControlState == car.CarControl.Actuators.LongControlState.starting):
+          drive_off_request = 1
+
+      # ADAS_IDB on chassis @ 50Hz (vinfastVf6 blocks SCAM ADAS_IDB cam→chassis)
       can_sends.append(vinfastcan.create_idb_control(
         self.packer,
         self.frame // 2,
         drive_off_request,
-        bus=CANBUS.chassis  # ADAS_IDB sent directly on Chassis bus (bus 2)
+        bus=CANBUS.chassis,
       ))
+      self.reengage_popup_prev = (acc_popup_feed == 3)
+      if self.CP.openpilotLongitudinalControl and vf6_combined_long:
+        self.prev_long_engaged = long_engaged
+        if scam_acc_mode is not None:
+          self.prev_scam_acc_mode = scam_acc_mode
+      else:
+        self.prev_long_engaged = False
+        self.prev_scam_acc_mode = None
 
     new_actuators = CC.actuators.as_builder()
     # For angle control, steeringAngleDeg is already set by actuators

@@ -20,8 +20,9 @@ from opendbc.car.vinfast.carstate import CarState
 from opendbc.car.vinfast.values import CAR, CANBUS
 from opendbc.car.structs import CarParams
 
-# VinFast CAN buses (matches safety_vinfast.h defaults)
-VINFAST_CHASSIS_BUS = 2  # Bus 2 is chassis bus (due to wiring)
+# VinFast CAN buses (matches safety_vinfast.h / CANBUS)
+VINFAST_CHASSIS_BUS = 0  # Chassis CAN
+VINFAST_CAMERA_BUS = 2   # SCAM/camera side of chassis CAN
 
 
 def format_value(value, unit=""):

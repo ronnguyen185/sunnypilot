@@ -4,6 +4,7 @@ import numpy as np
 from cereal import car
 from openpilot.common.constants import CV
 from openpilot.common.params import Params
+from opendbc.car.vinfast.values import is_vf6_safety_platform
 from openpilot.sunnypilot.selfdrive.car.cruise_ext import VCruiseHelperSP
 
 
@@ -47,6 +48,9 @@ class VCruiseHelper(VCruiseHelperSP):
     self.v_initial_experimental_mode = V_CRUISE_INITIAL_EXPERIMENTAL_MODE
     # Track last tag speed to sync with experimental mode max speed
     self.last_tag_speed_kph = 0
+    # VF8/VF9: openpilot owns the set speed via the steering wheel +/- buttons.
+    # VF6/VF7 keep following ADAS_ACC_TagSpeed on info CAN.
+    self.op_set_speed = CP.brand == "vinfast" and not is_vf6_safety_platform(CP.carFingerprint)
 
   @property
   def v_cruise_initialized(self):
@@ -77,7 +81,19 @@ class VCruiseHelper(VCruiseHelperSP):
 
     if CS.cruiseState.available:
       _enabled = self.update_enabled_state(CS, enabled)
-      if not self.CP.pcmCruise or (not self.CP_SP.pcmCruiseSpeed and _enabled):
+      # VF6/VF7 follow ADAS_ACC_TagSpeed even when openpilot longitudinal is on.
+      follow_car_set_speed = self.CP_SP.pcmCruiseSpeed and not self.op_set_speed
+      if follow_car_set_speed:
+        self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
+        self.v_cruise_cluster_kph = CS.cruiseState.speedCluster * CV.MS_TO_KPH
+        if CS.cruiseState.speed == 0:
+          self.v_cruise_kph = V_CRUISE_UNSET
+          self.v_cruise_cluster_kph = V_CRUISE_UNSET
+        elif CS.cruiseState.speed == -1:
+          self.v_cruise_kph = -1
+          self.v_cruise_cluster_kph = -1
+        self.update_button_timers(CS, enabled)
+      elif not self.CP.pcmCruise or (not self.CP_SP.pcmCruiseSpeed and _enabled):
         # if stock cruise is completely disabled, then we can use our own set speed logic
         self._update_v_cruise_non_pcm(CS, _enabled, is_metric)
         self.update_speed_limit_assist_v_cruise_non_pcm()
@@ -293,8 +309,10 @@ class VCruiseHelper(VCruiseHelperSP):
     return False
 
   def initialize_v_cruise(self, CS, experimental_mode: bool, dynamic_experimental_control: bool) -> None:
-    # initializing is handled by the PCM
+    # initializing is handled by the PCM / car tag speed
     if self.CP.pcmCruise:
+      return
+    if self.CP_SP.pcmCruiseSpeed and not self.op_set_speed:
       return
 
     initial_experimental_mode = experimental_mode and not dynamic_experimental_control

@@ -11,9 +11,11 @@ import time
 ADAS_EPS_LATE_CON = 0x37A  # Lateral control (steering angle)
 ADAS_LKA = 0x132  # LKA status message
 
-# In safety_vinfast.h you set:
+# In safety vinfast.h:
+# #define VINFAST_CHASSIS_BUS 0U
 # #define VINFAST_CAMERA_BUS  2U
-VINFAST_CAMERA_BUS = 0  # change to 0 if your LKA is actually on chassis bus for bench testing
+VINFAST_CAMERA_BUS = 2
+VINFAST_CHASSIS_BUS = 0
 
 
 def heartbeat_thread_10hz(p):

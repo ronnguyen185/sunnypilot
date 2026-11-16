@@ -12,8 +12,34 @@ import logging
 from opendbc.can import CANParser
 from opendbc.car import Bus, structs
 from opendbc.car.interfaces import RadarInterfaceBase
+from opendbc.car.vinfast.values import is_vf6_safety_platform
 
 log = logging.getLogger("radar_interface_new")
+
+_radar_motion_fields_supported: bool | None = None
+_radar_schema_warned = False
+
+
+def _radar_point_supports_motion_fields() -> bool:
+    global _radar_motion_fields_supported, _radar_schema_warned
+    if _radar_motion_fields_supported is not None:
+        return _radar_motion_fields_supported
+    try:
+        _p = structs.RadarData.RadarPoint()
+        _p.motionStatus = 0
+        _p.motionOrientation = 0
+        _p.laneAssignment = 0
+        _radar_motion_fields_supported = True
+    except Exception:
+        _radar_motion_fields_supported = False
+        if not _radar_schema_warned:
+            _radar_schema_warned = True
+            log.warning(
+                "RadarPoint has no motionStatus/motionOrientation/laneAssignment in loaded car.capnp; "
+                "radar metadata omitted."
+            )
+    return _radar_motion_fields_supported
+
 
 # ── CAN layout ───────────────────────────────────────────────────────────────
 RADAR_START_ADDR = 0x410
@@ -143,8 +169,16 @@ class RadarInterface(RadarInterfaceBase):
         self.trigger_msg = RADAR_END_ADDR
         self.track_id = 0
 
-        self.radar_off_can = CP.radarUnavailable
-        self.rcp = get_radar_can_parser(CP)
+        self._info_radar = None
+        if is_vf6_safety_platform(CP.carFingerprint):
+            # No radar DBC on bus 1 yet. Keep InfoCAN camera objects on bus 5.
+            from opendbc.car.vinfast.info_radar_interface import InfoRadarInterface
+            self._info_radar = InfoRadarInterface(CP, CP_SP)
+            self.rcp = self._info_radar.rcp
+            self.radar_off_can = self.rcp is None
+        else:
+            self.radar_off_can = CP.radarUnavailable
+            self.rcp = get_radar_can_parser(CP)
 
         self.obj_id_to_track: dict[int, int] = {}   # obj_id → trackId
         self.valid_cnt: dict[int, int] = {}           # obj_id → persistence counter
@@ -163,6 +197,9 @@ class RadarInterface(RadarInterfaceBase):
             can_packets: list of (timestamp_nanos, list[frames]) tuples
             frames is a list of (address, dat, src) tuples from can_capnp_to_list
         """
+        if self._info_radar is not None:
+            return self._info_radar.update(can_packets)
+
         if self.radar_off_can or (self.rcp is None):
             return super().update(None)
 
